@@ -4,6 +4,7 @@ from subprocess import check_output
 from sklearn.model_selection import train_test_split
 from random import randrange
 import tensorflow as tf
+from multiprocessing.dummy import Pool as ThreadPool
 
 
 def input_fn(df, labels):
@@ -17,9 +18,25 @@ def input_predict(df):
     return feature_cols
 
 
-print(check_output(["ls", "./input"]).decode("utf8"))
+class ObjetoResultado(object):
+  def __init__(self, dnn, evaluation):
+     self.dnn = dnn
+     self.evaluation = evaluation
 
-iris = pd.read_csv("./input/Iris.csv")
+def classifier_outputs(i):
+
+    dnn = tf.contrib.learn.DNNClassifier(feature_columns=feature_columns,
+                                                     hidden_units=[randrange(29) + 1, randrange(29) + 1,
+                                                                   randrange(29) + 1], n_classes=3)
+
+    dnn.fit(input_fn=lambda: input_fn(X_train, y_train), steps=1000)
+
+    #dnn.evaluate(input_fn=lambda: input_fn(X_test, y_test), steps=1)
+    return ObjetoResultado(dnn , dnn.evaluate)
+
+#print(check_output(["ls", "./input"]).decode("utf8"))
+
+iris = pd.read_csv(".\input\Iris.csv")
 iris.head()
 
 print(iris.shape)
@@ -40,18 +57,17 @@ feature_columns = [tf.contrib.layers.real_valued_column(k) for k in columns]
 
 classifier = []
 ev = []
-for i in range(5):
-    classifier.append(tf.contrib.learn.DNNClassifier(feature_columns=feature_columns, hidden_units=[randrange(29) + 1, randrange(29) + 1, randrange(29) + 1 ], n_classes=3))
+inputs = [1,2,3,4]
+pool = ThreadPool(4)
+results = pool.map(classifier_outputs, inputs)
+pool.close()
+pool.join()
 
-    classifier[i].fit(input_fn=lambda: input_fn(X_train, y_train), steps=1000)
-
-    ev.append(classifier[i].evaluate(input_fn=lambda: input_fn(X_test, y_test), steps=1))
-    # print(ev)
-
-    #pred = classifier.predict_classes(input_fn=lambda: input_predict(X_test))
 
 for i in range(5):
-    print("o valor " + str(i) + " tem a accuracy: " + str(ev[i]['accuracy']))
+
+    print(" o resultado foi: " + str(results[i].evaluation["accuracy"]))
+    #print("o valor " + str(i) + " tem a accuracy: " + str(ev[i]['accuracy']))
 
 print("máximo é:" + str(max(evaluation['accuracy'] for evaluation in ev)))
 
