@@ -67,7 +67,7 @@ with graph.as_default():
     rel_1 = tf.nn.relu(logits_1)
     logits_2 = tf.matmul(rel_1, weights_2) + bias_2
 
-    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits_2, tf_train_labels))
+    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits_2, labels=tf_train_labels))
     optimizer = tf.train.GradientDescentOptimizer(.005).minimize(loss)
 
     ## Training prediction
@@ -90,7 +90,7 @@ with tf.Session(graph=graph) as session:
     tf.initialize_all_variables().run()
     print(loss.eval())
     for step in range(num_steps):
-        _, l, predictions = session.run([optimizer, loss, predict_train])
+        _, l, predictions = session.run([optimizer,loss, predict_train])
 
         if (step % 2000 == 0):
             print('Loss at step %d: %f' % (step, l))

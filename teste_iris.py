@@ -65,4 +65,3 @@ for i in range(4):
     print(" o resultado foi: " + str(results[i].evaluation))
 
 print("máximo é:" + str(max(evaluation['accuracy'] for evaluation in ev)))
-
