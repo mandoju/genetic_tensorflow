@@ -120,17 +120,32 @@ def nn_example():
     h_size = 256  # Number of hidden nodes
     y_size = train_y.shape[1]  # Number of outcomes (3 iris flowers)
 
+
     # Symbols
     X = tf.placeholder("float", shape=[None, x_size])
     y = tf.placeholder("float", shape=[None, y_size])
+
+    y_size_original = y_size
+    y_size = y_size * 2  # Number of parallel networks
 
     # Weight initializations
     w_1 = init_weights((x_size, h_size))
     w_2 = init_weights((h_size, y_size))
 
     # Forward propagation
-    #yhat = forwardprop(X, w_1, w_2)
-    #predict = tf.argmax(yhat, axis=1)
+    yhat = forwardprop(X, w_1, w_2)
+
+    print(yhat)
+    split0 = yhat[:,0:2]
+    split1 = yhat[:,3:5]
+    #split0 = tf.split(yhat,2)
+
+    #print(yhat)
+    #split0, split1 = tf.split(yhat, [tf.shape(yhat)[0],y_size_original], 1)
+    #predict = tf.argmax(split0, axis=1)
+    predict = tf.argmax(split0, axis=1)
+    predict_2 = tf.argmax(split1,axis=1)
+
 
     # Backward propagation
     #cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=yhat))
@@ -143,16 +158,26 @@ def nn_example():
 
     for epoch in range(100):
         # Train with each example
-        for i in range(len(train_X)):
-            sess.run(updates, feed_dict={X: train_X[i: i + 1], y: train_y[i: i + 1]})
+        #for i in range(len(train_X)):
+            #sess.run(updates, feed_dict={X: train_X[i: i + 1], y: train_y[i: i + 1]})
 
         train_accuracy = np.mean(np.argmax(train_y, axis=1) ==
                                  sess.run(predict, feed_dict={X: train_X, y: train_y}))
+
         test_accuracy = np.mean(np.argmax(test_y, axis=1) ==
                                 sess.run(predict, feed_dict={X: test_X, y: test_y}))
 
+        train_accuracy_2 = np.mean(np.argmax(train_y, axis=1) ==
+                                 sess.run(predict_2, feed_dict={X: train_X, y: train_y}))
+
+        test_accuracy_2 = np.mean(np.argmax(test_y, axis=1) ==
+                                sess.run(predict_2, feed_dict={X: test_X, y: test_y}))
+
+
         print("Epoch = %d, train accuracy = %.2f%%, test accuracy = %.2f%%"
               % (epoch + 1, 100. * train_accuracy, 100. * test_accuracy))
+        print("Epoch = %d, train accuracy = %.2f%%, test accuracy = %.2f%%"
+              % (epoch + 1, 100. * train_accuracy_2, 100. * test_accuracy_2))
 
 
     sess.close()

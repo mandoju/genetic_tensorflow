@@ -44,7 +44,7 @@ def run_tests():
         'c']
 
     genetic_pool_settings = {
-        'populationSize' : 30,
+        'populationSize' : 4,
         'tournamentSize' : 4,
         'memberDimensions' : [4, 3, 2, 3, 4],
         'mutationRate' : 0.05,
