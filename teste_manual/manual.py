@@ -5,6 +5,15 @@ from tensorflow.examples.tutorials.mnist import input_data
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 
+
+def diag_block_mat_slicing(L):
+    shp = L[0].shape
+    N = len(L)
+    r = range(N)
+    out = np.zeros((N,shp[0],N,shp[1]),dtype='f')
+    out[r,:,r,:] = L
+    return out.reshape(np.asarray(shp)*N)
+
 def init_weights(shape):
     """ Weight initialization """
     weights = tf.random_normal(shape, stddev=0.1)
@@ -112,32 +121,33 @@ def simple_with_tensor_board():
         train_writer.add_graph(sess.graph)
 
 
-def nn_example():
+def nn_example(weight_1,weight_2):
     train_X, test_X, train_y, test_y = get_iris_data()
 
     # Layer's sizes
     x_size = train_X.shape[1]  # Number of input nodes: 4 features and 1 bias
-    h_size = 256  # Number of hidden nodes
+    h_size = 4 * 2  # Number of hidden nodes
     y_size = train_y.shape[1]  # Number of outcomes (3 iris flowers)
 
 
     # Symbols
     X = tf.placeholder("float", shape=[None, x_size])
     y = tf.placeholder("float", shape=[None, y_size])
-
+    #y = tf.concat([y,y],1)
     y_size_original = y_size
     y_size = y_size * 2  # Number of parallel networks
 
     # Weight initializations
-    w_1 = init_weights((x_size, h_size))
-    w_2 = init_weights((h_size, y_size))
+    #w_1 = init_weights((x_size, h_size))
+    #w_2 = init_weights((h_size, y_size))
+    w_1 = tf.Variable(weight_1)
+    w_2 = tf.Variable(weight_2)
 
     # Forward propagation
     yhat = forwardprop(X, w_1, w_2)
 
-    print(yhat)
-    split0 = yhat[:,0:2]
-    split1 = yhat[:,3:5]
+    split0 = yhat[:,0:int(yhat.get_shape().as_list()[1]/2)]
+    split1 = yhat[:,int((yhat.get_shape().as_list()[1]/2)+1):yhat.get_shape().as_list()[1]]
     #split0 = tf.split(yhat,2)
 
     #print(yhat)
@@ -156,28 +166,29 @@ def nn_example():
     init = tf.global_variables_initializer()
     sess.run(init)
 
-    for epoch in range(100):
+    #for epoch in range(100):
         # Train with each example
         #for i in range(len(train_X)):
             #sess.run(updates, feed_dict={X: train_X[i: i + 1], y: train_y[i: i + 1]})
 
-        train_accuracy = np.mean(np.argmax(train_y, axis=1) ==
-                                 sess.run(predict, feed_dict={X: train_X, y: train_y}))
+    train_accuracy = np.mean(np.argmax(train_y, axis=1) ==
+                             sess.run(predict, feed_dict={X: train_X, y: train_y}))
 
-        test_accuracy = np.mean(np.argmax(test_y, axis=1) ==
-                                sess.run(predict, feed_dict={X: test_X, y: test_y}))
+    test_accuracy = np.mean(np.argmax(test_y, axis=1) ==
+                             sess.run(predict, feed_dict={X: test_X, y: test_y}))
 
-        train_accuracy_2 = np.mean(np.argmax(train_y, axis=1) ==
-                                 sess.run(predict_2, feed_dict={X: train_X, y: train_y}))
+    train_accuracy_2 = np.mean(np.argmax(train_y, axis=1) ==
+                             sess.run(predict_2, feed_dict={X: train_X, y: train_y}))
 
-        test_accuracy_2 = np.mean(np.argmax(test_y, axis=1) ==
-                                sess.run(predict_2, feed_dict={X: test_X, y: test_y}))
+    test_accuracy_2 = np.mean(np.argmax(test_y, axis=1) ==
+                             sess.run(predict_2, feed_dict={X: test_X, y: test_y}))
 
 
-        print("Epoch = %d, train accuracy = %.2f%%, test accuracy = %.2f%%"
-              % (epoch + 1, 100. * train_accuracy, 100. * test_accuracy))
-        print("Epoch = %d, train accuracy = %.2f%%, test accuracy = %.2f%%"
-              % (epoch + 1, 100. * train_accuracy_2, 100. * test_accuracy_2))
+    print("train accuracy = %.2f%%, test accuracy = %.2f%%"
+          % (100. * train_accuracy, 100. * test_accuracy))
+    print(predict_2)
+    print("train accuracy = %.2f%%, test accuracy = %.2f%%"
+          % (100. * train_accuracy_2, 100. * test_accuracy_2))
 
 
     sess.close()
@@ -187,4 +198,13 @@ if __name__ == "__main__":
     # run_simple_graph_multiple()
     # simple_with_tensor_board()
 
-    nn_example()
+    w_1 = np.array([[1.0,2.0,3.0,4.0],[1.0,2.0,3.0,4.0],[1.0,2.0,3.0,4.0],[1.0,2.0,3.0,4.0],[1.0,2.0,3.0,4.0]],dtype='f')
+    w_2 = np.array([[1.0,1.0,10.0,1.0,1.0,1.0],[1.0,1.0,10.0,1.0,1.0,1.0],[1.0,1.0,10.0,1.0,1.0,1.0],[1.0,1.0,10.0,1.0,1.0,1.0]],dtype='f')
+
+    w_1_2 = np.array([[10.0, 0.0, 0.0, 10.0], [10.0, 0.0, 0.0, 10.0], [10.0, 10.0, 0.0, 10.0], [0.0, 3.0, 0.0, 10.0], [0.0, 0.0, 0.0, 10.0]],dtype='f')
+    w_2_2 = np.array([[0.0, 0.0, 0.0, 10.0, 5.0, 6.0], [0.0, 0.0, 0.0, 10.0, 5.0, 6.0] , [0.0, 0.0, 0.0, 10.0, 5.0, 6.0] , [0.0, 0.0, 0.0, 10.0, 5.0, 6.0]],dtype='f')
+
+    #w_1 =   diag_block_mat_slicing(( w_1,w_1_2) )
+    w_1 = np.concatenate([w_1,w_1_2],1)
+    w_2 = diag_block_mat_slicing( (w_2, w_2_2) )
+    nn_example(w_1,w_2)
