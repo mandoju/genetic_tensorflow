@@ -28,6 +28,15 @@ def forwardprop(X, w_1, w_2):
     yhat = tf.matmul(h, w_2)  # The \varphi function
     return yhat
 
+def forwardprop_hidden(w_1, w_2):
+    """
+    Forward-propagation.
+    IMPORTANT: yhat is not softmax since TensorFlow's softmax_cross_entropy_with_logits() does that internally.
+    """
+    h    = tf.nn.sigmoid(w_1)  # The \sigma function
+    yhat = tf.matmul(h, w_2)  # The \varphi function
+    return yhat
+
 def get_iris_data():
     """ Read the iris data set and split them into training and test sets """
     iris   = datasets.load_iris()
@@ -121,55 +130,52 @@ def simple_with_tensor_board():
         train_writer.add_graph(sess.graph)
 
 
-def nn_example(weight_1,weight_2):
+def nn_example(neural_networks):
     train_X, test_X, train_y, test_y = get_iris_data()
+
+    #Defining number of layers
+    layer_size = len(neural_networks[0])
+    print(layer_size)
+    #Merging neural networks
+    w = []
+    w.append(tf.Variable(np.concatenate([item[0] for item in neural_networks],1)))
+    for i in range(layer_size-1):
+        w.append(tf.Variable(diag_block_mat_slicing([item[i+1] for item in neural_networks])))
+        print(diag_block_mat_slicing([item[i+1] for item in neural_networks]))
 
     # Layer's sizes
     x_size = train_X.shape[1]  # Number of input nodes: 4 features and 1 bias
-    h_size = 4 * 2  # Number of hidden nodes
     y_size = train_y.shape[1]  # Number of outcomes (3 iris flowers)
-
 
     # Symbols
     X = tf.placeholder("float", shape=[None, x_size])
     y = tf.placeholder("float", shape=[None, y_size])
-    #y = tf.concat([y,y],1)
-    y_size_original = y_size
-    y_size = y_size * 2  # Number of parallel networks
 
     # Weight initializations
-    #w_1 = init_weights((x_size, h_size))
-    #w_2 = init_weights((h_size, y_size))
-    w_1 = tf.Variable(weight_1)
-    w_2 = tf.Variable(weight_2)
+    #w_1 = tf.Variable(weight_1)
+    #w_2 = tf.Variable(weight_2)
 
     # Forward propagation
-    yhat = forwardprop(X, w_1, w_2)
+    yhat = forwardprop(X, w[0], w[1])
+    for i in range(layer_size-2):
+        yhat = tf.Print(yhat,[yhat],message="Yhat é: ")
+        yhat = forwardprop_hidden(w[i+1], w[i+2])
 
-    split0 = yhat[:,0:int(yhat.get_shape().as_list()[1]/2)]
-    split1 = yhat[:,int((yhat.get_shape().as_list()[1]/2)+1):yhat.get_shape().as_list()[1]]
-    #split0 = tf.split(yhat,2)
+    yhat = tf.Print(yhat, [yhat], message="Yhat é: ")
 
-    #print(yhat)
-    #split0, split1 = tf.split(yhat, [tf.shape(yhat)[0],y_size_original], 1)
-    #predict = tf.argmax(split0, axis=1)
+    split0 = yhat[:, 0:int(((yhat.get_shape().as_list()[1])-1)/len(neural_networks))]
     predict = tf.argmax(split0, axis=1)
-    predict_2 = tf.argmax(split1,axis=1)
+    predict_yhat = tf.argmax(yhat, axis=1)
+    if(len(neural_networks) > 1):
+       split1 = yhat[:, int((yhat.get_shape().as_list()[1]/len(neural_networks))):yhat.get_shape().as_list()[1]]
+       predict_2 = tf.argmax(split1, axis=1)
 
-
-    # Backward propagation
-    #cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=yhat))
-    #updates = tf.train.GradientDescentOptimizer(0.01).minimize(cost)
 
     # Run SGD
     sess = tf.Session()
     init = tf.global_variables_initializer()
     sess.run(init)
 
-    #for epoch in range(100):
-        # Train with each example
-        #for i in range(len(train_X)):
-            #sess.run(updates, feed_dict={X: train_X[i: i + 1], y: train_y[i: i + 1]})
 
     train_accuracy = np.mean(np.argmax(train_y, axis=1) ==
                              sess.run(predict, feed_dict={X: train_X, y: train_y}))
@@ -177,20 +183,32 @@ def nn_example(weight_1,weight_2):
     test_accuracy = np.mean(np.argmax(test_y, axis=1) ==
                              sess.run(predict, feed_dict={X: test_X, y: test_y}))
 
-    train_accuracy_2 = np.mean(np.argmax(train_y, axis=1) ==
-                             sess.run(predict_2, feed_dict={X: train_X, y: train_y}))
+    if(len(neural_networks) > 1):
 
-    test_accuracy_2 = np.mean(np.argmax(test_y, axis=1) ==
-                             sess.run(predict_2, feed_dict={X: test_X, y: test_y}))
+        train_accuracy_2 = np.mean(np.argmax(train_y, axis=1) ==
+                                 sess.run(predict_2, feed_dict={X: train_X, y: train_y}))
+
+        test_accuracy_2 = np.mean(np.argmax(test_y, axis=1) ==
+                                 sess.run(predict_2, feed_dict={X: test_X, y: test_y}))
 
 
     print("train accuracy = %.2f%%, test accuracy = %.2f%%"
           % (100. * train_accuracy, 100. * test_accuracy))
-    print(predict_2)
-    print("train accuracy = %.2f%%, test accuracy = %.2f%%"
-          % (100. * train_accuracy_2, 100. * test_accuracy_2))
+    if(len(neural_networks) > 1):
+        print("train accuracy = %.2f%%, test accuracy = %.2f%%"
+              % (100. * train_accuracy_2, 100. * test_accuracy_2))
+    print(sess.run(predict, feed_dict={X: train_X, y: train_y}))
+    if(len(neural_networks) > 1):
+        print(sess.run(predict_2, feed_dict={X: train_X, y: train_y}))
 
+    print("os pesos são:")
+    print(sess.run(w, feed_dict={X: train_X, y: train_y}))
 
+    print("o yhat devia ser:")
+    print(sess.run(yhat, feed_dict={X: train_X, y: train_y}))
+
+    print("o teste devia ser:")
+    print(np.argmax(train_y, axis=1))
     sess.close()
 
 if __name__ == "__main__":
@@ -198,13 +216,24 @@ if __name__ == "__main__":
     # run_simple_graph_multiple()
     # simple_with_tensor_board()
 
-    w_1 = np.array([[1.0,2.0,3.0,4.0],[1.0,2.0,3.0,4.0],[1.0,2.0,3.0,4.0],[1.0,2.0,3.0,4.0],[1.0,2.0,3.0,4.0]],dtype='f')
-    w_2 = np.array([[1.0,1.0,10.0,1.0,1.0,1.0],[1.0,1.0,10.0,1.0,1.0,1.0],[1.0,1.0,10.0,1.0,1.0,1.0],[1.0,1.0,10.0,1.0,1.0,1.0]],dtype='f')
+    w_1 = np.array([[1.0,2.0,3.0,4.0],[1.0,1.0,1.0,1.0],[1.0,1.0,3.0,4.0],[1.0,2.0,3.0,4.0],[1.0,2.0,3.0,4.0]],dtype='f')
+    w_2 = np.array([[1.0,1.0,1.0,1.0,1.0,1.0],[1.0,1.0,10.0,1.0,1.0,1.0],[1.0,1.0,10.0,1.0,1.0,1.0],[1.0,1.0,10.0,1.0,1.0,1.0]],dtype='f')
+    w_3 = np.array([[1.0,1.0,1.0],[1.0,1.0,10.0],[1.0,1.0,10.0],[1.0,1.0,10.0],[1.0,1.0,10.0],[1.0,1.0,10.0]],dtype='f')
 
-    w_1_2 = np.array([[10.0, 0.0, 0.0, 10.0], [10.0, 0.0, 0.0, 10.0], [10.0, 10.0, 0.0, 10.0], [0.0, 3.0, 0.0, 10.0], [0.0, 0.0, 0.0, 10.0]],dtype='f')
-    w_2_2 = np.array([[0.0, 0.0, 0.0, 10.0, 5.0, 6.0], [0.0, 0.0, 0.0, 10.0, 5.0, 6.0] , [0.0, 0.0, 0.0, 10.0, 5.0, 6.0] , [0.0, 0.0, 0.0, 10.0, 5.0, 6.0]],dtype='f')
 
-    #w_1 =   diag_block_mat_slicing(( w_1,w_1_2) )
-    w_1 = np.concatenate([w_1,w_1_2],1)
-    w_2 = diag_block_mat_slicing( (w_2, w_2_2) )
-    nn_example(w_1,w_2)
+    w_1_2 = np.array([[10.0, 0.0, 0.0, 15.0], [10.0, 5.0, 0.0, 10.0], [10.0, 10.0, 0.0, 10.0], [0.0, 3.0, 0.0, 10.0], [0.0, 0.0, 0.0, 10.0]],dtype='f')
+    w_2_2 = np.array([[5.0, 3.0, 10.0, 10.0, 5.0, 6.0], [0.0, 0.0, 0.0, 10.0, 5.0, 6.0] , [0.0, 5.0, 0.0, 10.0, 5.0, 6.0], [0.0, 0.0, 0.0, 10.0, 5.0, 6.0]],dtype='f')
+    w_3_2 = np.array([[1.0,1.0,1.0],[1.0,1.0,10.0],[1.0,1.0,10.0],[1.0,1.0,10.0],[1.0,1.0,10.0],[1.0,1.0,10.0]],dtype='f')
+
+    #w_1 = diag_block_mat_slicing(( w_1,w_1_2) )
+    #w_1 = np.concatenate([w_1,w_1_2],1)
+    #w_2 = diag_block_mat_slicing( (w_2, w_2_2) )
+
+    neural_network_1 = [w_1,w_2,w_3]
+    neural_network_2 = [w_1_2,w_2_2,w_3_2]
+
+    nn_example([neural_network_1,neural_network_2])
+
+    nn_example([neural_network_1])
+
+    nn_example([neural_network_2])
