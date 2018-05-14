@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import time
 import pandas as pd
 from tensorflow.examples.tutorials.mnist import input_data
 from sklearn import datasets
@@ -134,14 +135,24 @@ def nn_example(neural_networks):
     train_X, test_X, train_y, test_y = get_iris_data()
 
     #Defining number of layers
-    layer_size = len(neural_networks[0])
-    print(layer_size)
+    number_neural_networks = len(neural_networks)
+    number_neural_networks_remaining = number_neural_networks
+    print(number_neural_networks)
+    layer_size = 0
+    for neural_network in neural_networks:
+        if(len(neural_network) > layer_size):
+            layer_size = len(neural_network)
+
+    layers_sizes = []
+    for neural_network in neural_networks:
+        layers_sizes.append(len(neural_network))
+
     #Merging neural networks
     w = []
     w.append(tf.Variable(np.concatenate([item[0] for item in neural_networks],1)))
     for i in range(layer_size-1):
         w.append(tf.Variable(diag_block_mat_slicing([item[i+1] for item in neural_networks])))
-        print(diag_block_mat_slicing([item[i+1] for item in neural_networks]))
+        #print(diag_block_mat_slicing([item[i+1] for item in neural_networks]))
 
     # Layer's sizes
     x_size = train_X.shape[1]  # Number of input nodes: 4 features and 1 bias
@@ -158,10 +169,10 @@ def nn_example(neural_networks):
     # Forward propagation
     yhat = forwardprop(X, w[0], w[1])
     for i in range(layer_size-2):
-        yhat = tf.Print(yhat,[yhat],message="Yhat é: ")
-        yhat = forwardprop_hidden(w[i+1], w[i+2])
+        #yhat = tf.Print(yhat,[yhat],message="Yhat é: ")
+        yhat = forwardprop_hidden(yhat, w[i+2])
 
-    yhat = tf.Print(yhat, [yhat], message="Yhat é: ")
+    #yhat = tf.Print(yhat, [yhat], message="Yhat é: ")
 
     split0 = yhat[:, 0:int(((yhat.get_shape().as_list()[1])-1)/len(neural_networks))]
     predict = tf.argmax(split0, axis=1)
@@ -170,6 +181,9 @@ def nn_example(neural_networks):
        split1 = yhat[:, int((yhat.get_shape().as_list()[1]/len(neural_networks))):yhat.get_shape().as_list()[1]]
        predict_2 = tf.argmax(split1, axis=1)
 
+    for i in range(number_neural_networks):
+        split = yhat[:, int(i*(yhat.get_shape().as_list()[1]/len(neural_networks))):int((i+1)*((yhat.get_shape().as_list()[1]) - 1) / len(neural_networks))]
+        predict = tf.argmax(split, axis=1)
 
     # Run SGD
     sess = tf.Session()
@@ -177,38 +191,41 @@ def nn_example(neural_networks):
     sess.run(init)
 
 
-    train_accuracy = np.mean(np.argmax(train_y, axis=1) ==
-                             sess.run(predict, feed_dict={X: train_X, y: train_y}))
+    for i in range(number_neural_networks):
+        train_accuracy = np.mean(np.argmax(train_y, axis=1) ==
+                                 sess.run(predict[i], feed_dict={X: train_X, y: train_y}))
 
-    test_accuracy = np.mean(np.argmax(test_y, axis=1) ==
-                             sess.run(predict, feed_dict={X: test_X, y: test_y}))
-
-    if(len(neural_networks) > 1):
-
-        train_accuracy_2 = np.mean(np.argmax(train_y, axis=1) ==
-                                 sess.run(predict_2, feed_dict={X: train_X, y: train_y}))
-
-        test_accuracy_2 = np.mean(np.argmax(test_y, axis=1) ==
-                                 sess.run(predict_2, feed_dict={X: test_X, y: test_y}))
-
-
-    print("train accuracy = %.2f%%, test accuracy = %.2f%%"
-          % (100. * train_accuracy, 100. * test_accuracy))
-    if(len(neural_networks) > 1):
+        test_accuracy = np.mean(np.argmax(test_y, axis=1) ==
+                                 sess.run(predict[i], feed_dict={X: test_X, y: test_y}))
         print("train accuracy = %.2f%%, test accuracy = %.2f%%"
-              % (100. * train_accuracy_2, 100. * test_accuracy_2))
-    print(sess.run(predict, feed_dict={X: train_X, y: train_y}))
-    if(len(neural_networks) > 1):
-        print(sess.run(predict_2, feed_dict={X: train_X, y: train_y}))
+            % (100. * train_accuracy, 100. * test_accuracy))
 
-    print("os pesos são:")
-    print(sess.run(w, feed_dict={X: train_X, y: train_y}))
+    #if(len(neural_networks) > 1):
 
-    print("o yhat devia ser:")
-    print(sess.run(yhat, feed_dict={X: train_X, y: train_y}))
+    #    train_accuracy_2 = np.mean(np.argmax(train_y, axis=1) ==
+    #                             sess.run(predict_2, feed_dict={X: train_X, y: train_y}))
 
-    print("o teste devia ser:")
-    print(np.argmax(train_y, axis=1))
+    #    test_accuracy_2 = np.mean(np.argmax(test_y, axis=1) ==
+    #                             sess.run(predict_2, feed_dict={X: test_X, y: test_y}))
+
+
+    #print("train accuracy = %.2f%%, test accuracy = %.2f%%"
+    #      % (100. * train_accuracy, 100. * test_accuracy))
+    #if(len(neural_networks) > 1):
+    #    print("train accuracy = %.2f%%, test accuracy = %.2f%%"
+    #          % (100. * train_accuracy_2, 100. * test_accuracy_2))
+    #print(sess.run(predict, feed_dict={X: train_X, y: train_y}))
+    #if(len(neural_networks) > 1):
+    #    print(sess.run(predict_2, feed_dict={X: train_X, y: train_y}))
+
+    #print("os pesos são:")
+    #print(sess.run(w, feed_dict={X: train_X, y: train_y}))
+
+    #print("o yhat devia ser:")
+    #print(sess.run(yhat, feed_dict={X: train_X, y: train_y}))
+
+    #print("o teste devia ser:")
+    #print(np.argmax(train_y, axis=1))
     sess.close()
 
 if __name__ == "__main__":
@@ -232,8 +249,26 @@ if __name__ == "__main__":
     neural_network_1 = [w_1,w_2,w_3]
     neural_network_2 = [w_1_2,w_2_2,w_3_2]
 
-    nn_example([neural_network_1,neural_network_2])
+    start = time.time()
+    nn_example([neural_network_1,neural_network_2,neural_network_1,neural_network_2,neural_network_1,neural_network_2,neural_network_1,neural_network_2,neural_network_1,neural_network_2,neural_network_1,neural_network_2,neural_network_1,neural_network_2,neural_network_1,neural_network_2,neural_network_1,neural_network_2,neural_network_1,neural_network_2])
+    end = time.time()
+    print(end - start)
 
+    start = time.time()
+    nn_example(
+        [neural_network_1, neural_network_2, neural_network_1, neural_network_2, neural_network_1, neural_network_2,
+         neural_network_1, neural_network_2, neural_network_1, neural_network_2, neural_network_1, neural_network_2,
+         neural_network_1, neural_network_2, neural_network_1, neural_network_2, neural_network_1, neural_network_2,
+         neural_network_1, neural_network_2])
+    end = time.time()
+    print(end - start)
+
+    start = time.time()
     nn_example([neural_network_1])
+    end = time.time()
+    print(end - start)
 
+    start = time.time()
     nn_example([neural_network_2])
+    end = time.time()
+    print(end - start)
