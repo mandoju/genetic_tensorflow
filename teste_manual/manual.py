@@ -140,7 +140,7 @@ def nn_example(neural_networks):
     train_X, test_X, train_y, test_y = get_iris_data()
 
     # Defining number of layers
-    predict = []
+    #predict = []
     number_neural_networks = len(neural_networks)
     number_neural_networks_remaining = number_neural_networks
     print(number_neural_networks)
@@ -195,6 +195,8 @@ def nn_example(neural_networks):
 
     # Forward propagation
     yhat = forwardprop(X, w[0], w[1])
+    predict_list = []
+    remaining_neural_network = len(neural_networks)
     for i in range(layer_size - 2):
         # yhat = tf.Print(yhat,[yhat],message="Yhat é: ")
         #print(yhat.get_shape().as_list()[1])
@@ -210,27 +212,35 @@ def nn_example(neural_networks):
 
             for j in range(int(size_of_slice/y_size)):
                 #print(y_size)
-                split = yhat[:, 0:int(y_size)]
+                remaining_neural_network -= 1
 
-                try:
-                    predict
-                except NameError:
-                    predict = tf.argmax(split, axis=1)
-                else:
-                    predict = tf.stack([predict,split])
+                split = yhat[:, int(j*y_size):int(y_size + (y_size*j))]
+                predict_list.append(split)
 
-                #predict.concat( tf.argmax(split, axis=1) )
 
             yhat = yhat[:,size_of_slice:yhat.get_shape().as_list()[1]]
-
+            print("O shape agora ficou", yhat.get_shape())
         yhat = forwardprop_hidden(yhat, w[i + 2])
 
-    # yhat = tf.Print(yhat, [yhat], message="Yhat é: ")
+    #yhat = tf.Print(yhat, [yhat], message="Yhat é: ")
+    #predict = tf.argmax(yhat, axis=1)
+
     # print(len(neural_networks))
-    for i in range(number_neural_networks):
-        split = yhat[:, int(i * (yhat.get_shape().as_list()[1] / len(neural_networks))):int(
-            (i + 1) * ((yhat.get_shape().as_list()[1]) - 1) / len(neural_networks))]
-        predict = tf.argmax(split, axis=1)
+    #predict = tf.zeros((tf.shape[0], 1), dtype=tf.int32, name='batch_inds')
+    splits = []
+    print("O shape do yhat remanecente é ", yhat.get_shape())
+    for i in range(remaining_neural_network):
+        split = yhat[:, int(i * (yhat.get_shape().as_list()[1] / remaining_neural_network)):int(
+            (i + 1) * ((yhat.get_shape().as_list()[1]) ) / remaining_neural_network)]
+        #print(int(i * (yhat.get_shape().as_list()[1] / remaining_neural_network)), " " ,int((i + 1) * ((yhat.get_shape().as_list()[1]) - 1) / remaining_neural_network) )
+        tf.print(split.get_shape())
+        splits.append(split)
+
+    predict_list = predict_list + splits
+    #print(predict_list)
+    predict = tf.stack(predict_list,1)
+
+
 
     # Run SGD
     sess = tf.Session()
@@ -238,6 +248,7 @@ def nn_example(neural_networks):
     sess.run(init)
     train_accuracies = sess.run(predict, feed_dict={X: train_X, y: train_y})
     test_accuracies = sess.run(predict, feed_dict={X: test_X, y: test_y})
+    final_yhat = sess.run(yhat,feed_dict={X: test_X, y: test_y})
 
     for i in range(number_neural_networks):
         train_accuracy = np.mean(np.argmax(train_y, axis=1) == train_accuracies[i])
@@ -245,6 +256,10 @@ def nn_example(neural_networks):
         test_accuracy = np.mean(np.argmax(test_y, axis=1) == test_accuracies[i])
         print("train accuracy = %.2f%%, test accuracy = %.2f%%"
               % (100. * train_accuracy, 100. * test_accuracy))
+
+        print(len(train_accuracies[i]))
+
+        print(len(final_yhat))
 
     # if(len(neural_networks) > 1):
 
@@ -303,7 +318,22 @@ if __name__ == "__main__":
     # w_2 = diag_block_mat_slicing( (w_2, w_2_2) )
 
     neural_network_1 = [w_1, w_2, w_3]
-    neural_network_2 = [w_1_2, w_2_2, w_3_2, w_4_2]
+    neural_network_2 = [w_1_2, w_2_2, w_3_2]
+
+    start = time.time()
+    nn_example(
+        [neural_network_1, neural_network_2])
+    end = time.time()
+    print(end - start)
+
+    start = time.time()
+    nn_example(
+        [neural_network_1, neural_network_1, neural_network_1, neural_network_1, neural_network_1, neural_network_1,
+         neural_network_1, neural_network_1, neural_network_1, neural_network_1, neural_network_2, neural_network_2,
+         neural_network_2, neural_network_2, neural_network_2, neural_network_2, neural_network_2, neural_network_2,
+         neural_network_2, neural_network_2])
+    end = time.time()
+    print(end - start)
 
     start = time.time()
     nn_example(
