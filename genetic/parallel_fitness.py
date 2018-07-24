@@ -136,7 +136,7 @@ def simple_with_tensor_board():
         train_writer.add_graph(sess.graph)
 
 
-def nn_example(neural_networks):
+def parallel_fitness(neural_networks):
     train_X, test_X, train_y, test_y = get_iris_data()
 
     # Defining number of layers
@@ -249,17 +249,21 @@ def nn_example(neural_networks):
     train_accuracies = sess.run(predict, feed_dict={X: train_X, y: train_y})
     test_accuracies = sess.run(predict, feed_dict={X: test_X, y: test_y})
     final_yhat = sess.run(yhat,feed_dict={X: test_X, y: test_y})
+    result = []
 
     for i in range(number_neural_networks):
         train_accuracy = np.mean(np.argmax(train_y, axis=1) == train_accuracies[i])
 
-        test_accuracy = np.mean(np.argmax(test_y, axis=1) == test_accuracies[i])
-        print("train accuracy = %.2f%%, test accuracy = %.2f%%"
-              % (100. * train_accuracy, 100. * test_accuracy))
+        #test_accuracy = np.mean(np.argmax(test_y, axis=1) == test_accuracies[i])
+        result.append(np.mean(np.argmax(test_y, axis=1) == test_accuracies[i]))
 
-        print(len(train_accuracies[i]))
+    return result
+        #print("train accuracy = %.2f%%, test accuracy = %.2f%%"
+        #      % (100. * train_accuracy, 100. * test_accuracy))
 
-        print(len(final_yhat))
+        #print(len(train_accuracies[i]))
+
+        #print(len(final_yhat))
 
     # if(len(neural_networks) > 1):
 
@@ -289,95 +293,3 @@ def nn_example(neural_networks):
     sess.close()
 
 
-if __name__ == "__main__":
-    # run_simple_graph()
-    # run_simple_graph_multiple()
-    # simple_with_tensor_board()
-
-    w_1 = np.array(
-        [[1.0, 2.0, 3.0, 4.0], [1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 3.0, 4.0], [1.0, 2.0, 3.0, 4.0], [1.0, 2.0, 3.0, 4.0]],
-        dtype='f')
-    w_2 = np.array([[1.0, 1.0, 1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 10.0, 1.0, 1.0, 1.0], [1.0, 1.0, 10.0, 1.0, 1.0, 1.0],
-                    [1.0, 1.0, 10.0, 1.0, 1.0, 1.0]], dtype='f')
-    w_3 = np.array(
-        [[1.0, 1.0, 1.0], [1.0, 1.0, 10.0], [1.0, 1.0, 10.0], [1.0, 1.0, 10.0], [1.0, 1.0, 10.0], [1.0, 1.0, 10.0]],
-        dtype='f')
-
-    w_1_2 = np.array([[10.0, 0.0, 0.0, 15.0], [10.0, 5.0, 0.0, 10.0], [10.0, 10.0, 0.0, 10.0], [0.0, 3.0, 0.0, 10.0],
-                      [0.0, 0.0, 0.0, 10.0]], dtype='f')
-    w_2_2 = np.array(
-        [[5.0, 3.0, 10.0, 10.0, 5.0, 6.0], [0.0, 0.0, 0.0, 10.0, 5.0, 6.0], [0.0, 5.0, 0.0, 10.0, 5.0, 6.0],
-         [0.0, 0.0, 0.0, 10.0, 5.0, 6.0]], dtype='f')
-    w_3_2 = np.array(
-        [[1.0, 1.0, 1.0], [1.0, 1.0, 10.0], [1.0, 1.0, 10.0], [1.0, 1.0, 10.0], [1.0, 1.0, 10.0], [1.0, 1.0, 10.0]],
-        dtype='f')
-    w_4_2 = np.array([[1.0, 1.0, 1.0], [1.0, 1.0, 10.0], [1.0, 1.0, 10.0]], dtype='f')
-
-    # w_1 = diag_block_mat_slicing(( w_1,w_1_2) )
-    # w_1 = np.concatenate([w_1,w_1_2],1)
-    # w_2 = diag_block_mat_slicing( (w_2, w_2_2) )
-
-    neural_network_1 = [w_1, w_2, w_3]
-    neural_network_2 = [w_1_2, w_2_2, w_3_2]
-
-    start = time.time()
-    nn_example(
-        [neural_network_1, neural_network_2])
-    end = time.time()
-    print(end - start)
-
-    start = time.time()
-    nn_example(
-        [neural_network_1, neural_network_1, neural_network_1, neural_network_1, neural_network_1, neural_network_1,
-         neural_network_1, neural_network_1, neural_network_1, neural_network_1, neural_network_2, neural_network_2,
-         neural_network_2, neural_network_2, neural_network_2, neural_network_2, neural_network_2, neural_network_2,
-         neural_network_2, neural_network_2])
-    end = time.time()
-    print(end - start)
-
-    start = time.time()
-    nn_example(
-        [neural_network_1, neural_network_2, neural_network_1, neural_network_2, neural_network_1, neural_network_2,
-         neural_network_1, neural_network_2, neural_network_1, neural_network_2, neural_network_1, neural_network_2,
-         neural_network_1, neural_network_2, neural_network_1, neural_network_2, neural_network_1, neural_network_2,
-         neural_network_1, neural_network_2])
-    end = time.time()
-    print(end - start)
-
-    start = time.time()
-    nn_example(
-        [neural_network_1, neural_network_2, neural_network_1, neural_network_2, neural_network_1, neural_network_2,
-         neural_network_1, neural_network_2, neural_network_1, neural_network_2, neural_network_1, neural_network_2,
-         neural_network_1, neural_network_2, neural_network_1, neural_network_2, neural_network_1, neural_network_2,
-         neural_network_1, neural_network_2])
-    end = time.time()
-    print(end - start)
-
-    start = time.time()
-    nn_example([neural_network_1])
-    nn_example([neural_network_2])
-    nn_example([neural_network_1])
-    nn_example([neural_network_2])
-    nn_example([neural_network_1])
-    nn_example([neural_network_2])
-    nn_example([neural_network_1])
-    nn_example([neural_network_2])
-    nn_example([neural_network_1])
-    nn_example([neural_network_2])
-    nn_example([neural_network_1])
-    nn_example([neural_network_2])
-    nn_example([neural_network_1])
-    nn_example([neural_network_2])
-    nn_example([neural_network_1])
-    nn_example([neural_network_2])
-    nn_example([neural_network_1])
-    nn_example([neural_network_2])
-    nn_example([neural_network_1])
-    nn_example([neural_network_2])
-    end = time.time()
-    print(end - start)
-
-    start = time.time()
-    nn_example([neural_network_2])
-    end = time.time()
-    print(end - start)
