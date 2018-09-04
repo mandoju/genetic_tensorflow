@@ -64,9 +64,9 @@ class GeneticPool(object):
 			Draw a neural network cartoon using matplotilb.
 			
 			:usage:
-					>>> fig = plt.figure(figsize=(12, 12))
-					>>> draw_neural_net(fig.gca(), .1, .9, .1, .9, [4, 7, 2])
-			
+#					>>> fig = plt.figure(figsize=(12, 12))
+#					>>> draw_neural_net(fig.gca(), .1, .9, .1, .9, [4, 7, 2])
+
 			:parameters:
 					- ax : matplotlib.axes.AxesSubplot
 							The axes on which to plot the cartoon (get e.g. by plt.gca())
