@@ -141,22 +141,32 @@ def nn_example_without_struct(neural_networks):
 
     # Symbols
     X = tf.placeholder("float", shape=[None, x_size], name="X")
-    y = tf.placeholder("float", shape=[None, y_size], name="Y")
+    #y = tf.placeholder("float", shape=[None, y_size], name="Y")
     # Weight initializations
     i = 0
+    predicts = []
     for neural_network in neural_networks:
         with tf.name_scope('rede_neural_'+str(i)) as scope:
             w = neural_network
 
             # Forward propagation
             yhat = forwardprop(X, w[0], w[1])
-            #predict_list = []
-            #remaining_neural_network = len(neural_networks)
             for i in range(len(w) - 2):
                 yhat = forwardprop_hidden(yhat, w[i + 2])
 
-            predict = tf.stack(yhat)
+            #predict = tf.stack(yhat)
+            predicts.append(tf.argmax(yhat, axis=1))
         i = i + 1
+
+    for predict in predicts:
+        with tf.name_scope('calculo_da_acuracia') as scope:
+            #train_accuracy = tf.reduce_mean(np.argmax(train_y, axis=1) == predict)
+            label_train = tf.argmax(train_y, axis=1, name="label_train_argmax")
+            train_accuracy = tf.metrics.accuracy(labels = label_train , predictions= predict)
+
+            #test_accuracy = tf.reduce_mean(np.argmax(test_y, axis=1) == predict)
+            label_test = tf.argmax(test_y, axis=1, name="label_test_argmax")
+            test_accuracy = tf.metrics.accuracy(labels = label_test, predictions= predict)
 
 
     # Run SGD
@@ -164,19 +174,37 @@ def nn_example_without_struct(neural_networks):
     writer = tf.summary.FileWriter("/home/jorge/graph/log", sess.graph)
     run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
     run_metadata = tf.RunMetadata()
-    init = tf.global_variables_initializer()
-    sess.run(init)
+    sess.run(tf.global_variables_initializer())
+    sess.run(tf.local_variables_initializer())
     writer.close()
-    train_accuracies = sess.run(predict, feed_dict={X: train_X, y: train_y},
+    train_accuracies = sess.run(train_accuracy, feed_dict={X: train_X},
                                 options=run_options, run_metadata=run_metadata)
-    test_accuracies = sess.run(predict, feed_dict={X: test_X, y: test_y},
+    test_accuracies = sess.run(test_accuracy, feed_dict={X: test_X},
                                options=run_options, run_metadata=run_metadata)
-    final_yhat = sess.run(yhat,feed_dict={X: test_X, y: test_y},options=run_options, run_metadata=run_metadata)
+    predict_sess = sess.run(predicts, feed_dict={X: test_X},
+                               options=run_options, run_metadata=run_metadata)
 
+    label_train_sess = sess.run(label_train, feed_dict={X: test_X},
+                               options=run_options, run_metadata=run_metadata)
+
+    label_test_sess = sess.run(label_test, feed_dict={X: test_X},
+                               options=run_options, run_metadata=run_metadata)
+    #final_yhat = sess.run(yhat,feed_dict={X: test_X},options=run_options, run_metadata=run_metadata)
+
+    print(predict_sess)
+    print(label_train_sess)
+    print(label_test_sess)
+
+
+    #print(train_accuracies)
     for i in range(number_neural_networks):
-        train_accuracy = np.mean(np.argmax(train_y, axis=1) == train_accuracies[i])
 
-        test_accuracy = np.mean(np.argmax(test_y, axis=1) == test_accuracies[i])
+        print(train_accuracies)
+        print(test_accuracies)
+
+        #train_accuracy = np.mean(np.argmax(train_y, axis=1) == train_accuracies[i])
+
+        #test_accuracy = np.mean(np.argmax(test_y, axis=1) == test_accuracies[i])
         #print("train accuracy = %.2f%%, test accuracy = %.2f%%"
         #      % (100. * train_accuracy, 100. * test_accuracy))
 
@@ -187,10 +215,10 @@ def nn_example_without_struct(neural_networks):
     print("fim");
     sess.close()
 
-def multiple_matmul(U,embed):
-    embed = tf.reshape(embed, [-1, m])
-    h = tf.matmul(embed, U)
-    h = tf.reshape(h, [-1, n, c])
+#def multiple_matmul(U,embed):
+#    embed = tf.reshape(embed, [-1, m])
+#    h = tf.matmul(embed, U)
+#    h = tf.reshape(h, [-1, n, c])
 
 if __name__ == "__main__":
 
@@ -199,20 +227,23 @@ if __name__ == "__main__":
     w_1 = np.array(
         [[1.0, 2.0, 3.0, 4.0], [1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 3.0, 4.0], [1.0, 2.0, 3.0, 4.0], [1.0, 2.0, 3.0, 4.0]],
         dtype='f')
-    w_1 = np.random.randn(5, 4 ).astype('f') * 0.01;
-    w_2 = np.random.randn(4, 10000 ).astype('f') * 0.01;
-    w_3 = np.random.randn(10000, 500 ).astype('f') * 0.01;
+    w_1 = np.random.rand(5, 4 ).astype('f') ;
+    w_2 = np.random.rand(4, 100 ).astype('f');
+    w_3 = np.random.rand(100, 500 ).astype('f');
 
-    w_1_2 = np.random.randn(5, 4 ).astype('f') * 0.01;
-    w_2_2 = np.random.randn(4, 10000 ).astype('f') * 0.01;
-    w_3_2 = np.random.randn(10000, 500 ).astype('f') * 0.01;
-    w_4_2 = np.random.randn(500, 3).astype('f') * 0.01;
+    print(w_1)
+    print(w_2)
+    print(w_3)
+    w_1_2 = np.random.rand(5, 4 ).astype('f') * 0.01;
+    w_2_2 = np.random.rand(4, 10000 ).astype('f') * 0.01;
+    w_3_2 = np.random.rand(10000, 500 ).astype('f') * 0.01;
+    w_4_2 = np.random.rand(500, 3).astype('f') * 0.01;
 
     neural_network_1 = [w_1, w_2, w_3,w_4_2]
     neural_network_2 = [w_1_2, w_2_2, w_3_2,w_4_2]
 
     start = time.time()
     nn_example_without_struct(
-        [neural_network_1, neural_network_2,neural_network_1])
+        [neural_network_1, neural_network_2,neural_network_1,neural_network_2])
     end = time.time()
     print(end - start)
