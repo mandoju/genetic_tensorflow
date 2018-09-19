@@ -192,15 +192,15 @@ def nn_example_without_struct(neural_networks):
     #final_yhat = sess.run(yhat,feed_dict={X: test_X},options=run_options, run_metadata=run_metadata)
 
     print(predict_sess)
-    print(label_train_sess)
-    print(label_test_sess)
+    #print(label_train_sess)
+    #print(label_test_sess)
 
 
     #print(train_accuracies)
-    for i in range(number_neural_networks):
+    #for i in range(number_neural_networks):
 
-        print(train_accuracies)
-        print(test_accuracies)
+    #    print(train_accuracies)
+    #    print(test_accuracies)
 
         #train_accuracy = np.mean(np.argmax(train_y, axis=1) == train_accuracies[i])
 
@@ -231,9 +231,7 @@ if __name__ == "__main__":
     w_2 = np.random.rand(4, 100 ).astype('f');
     w_3 = np.random.rand(100, 500 ).astype('f');
 
-    print(w_1)
-    print(w_2)
-    print(w_3)
+
     w_1_2 = np.random.rand(5, 4 ).astype('f') * 0.01;
     w_2_2 = np.random.rand(4, 10000 ).astype('f') * 0.01;
     w_3_2 = np.random.rand(10000, 500 ).astype('f') * 0.01;
