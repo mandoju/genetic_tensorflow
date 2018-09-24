@@ -1,15 +1,15 @@
 import tensorflow as tf
 import numpy as np
 import time
-from itertools import filterfalse
-import pandas as pd
-from tensorflow.examples.tutorials.mnist import input_data
-from sklearn import datasets
-from sklearn.model_selection import train_test_split
-from tensorflow.python import debug as tf_debug
-from random import randint
+#from itertools import filterfalse
+#import pandas as pd
+#from tensorflow.examples.tutorials.mnist import input_data
+#from sklearn import datasets
+#from sklearn.model_selection import train_test_split
+#from tensorflow.python import debug as tf_debug
+#from random import randint
 import random
-import copy
+#import copy
 
 
 def block_diagonal(matrices, dtype=tf.float32):
@@ -100,21 +100,21 @@ def forwardprop_hidden(w_1, w_2):
         yhat = tf.matmul(h, w_2)  # The \varphi function
     return yhat
 
-def get_iris_data():
-    """ Read the iris data set and split them into training and test sets """
-    iris = datasets.load_iris()
-    data = iris["data"]
-    target = iris["target"]
+#def get_iris_data():
+#    """ Read the iris data set and split them into training and test sets """
+#    iris = datasets.load_iris()
+#    data = iris["data"]
+#    target = iris["target"]
 
     # Prepend the column of 1s for bias
-    N, M = data.shape
-    all_X = np.ones((N, M + 1 ))
-    all_X[:, 1:] = data
+#    N, M = data.shape
+#    all_X = np.ones((N, M + 1 ))
+#    all_X[:, 1:] = data
 
     # Convert into one-hot vectors
-    num_labels = len(np.unique(target))
-    all_Y = np.eye(num_labels)[target]  # One liner trick!
-    return train_test_split(all_X, all_Y, test_size=0.33, random_state=1)
+#    num_labels = len(np.unique(target))
+#    all_Y = np.eye(num_labels)[target]  # One liner trick!
+#    return train_test_split(all_X, all_Y, test_size=0.33, random_state=1)
 
 def get_mnist_data():
     mnist = tf.keras.datasets.mnist
@@ -127,13 +127,13 @@ def get_mnist_data():
 
     num_labels = len(np.unique(train_y))
     all_Y = np.eye(num_labels)[train_y]  # One liner trick!
-    a,b,c,d = train_test_split(all_X, all_Y, test_size=0.00, random_state=1)
+    #a,b,c,d = train_test_split(all_X, all_Y, test_size=0.00, random_state=0)
     return (all_X,all_X,all_Y,all_Y)
 
 
 
 def nn_example_without_struct(neural_networks):
-    print("sem estrutura")
+    print("Rodando rede neural")
 
 
     #iris
@@ -141,30 +141,27 @@ def nn_example_without_struct(neural_networks):
 
     #mnist
     train_X, test_X, train_y, test_y = get_mnist_data()
-
     # Defining number of layers
     #predict = []
     number_neural_networks = len(neural_networks)
     number_neural_networks_remaining = number_neural_networks
-    print("número de redes: %d" % (number_neural_networks))
-    layer_size = 0
-    for neural_network in neural_networks:
-        if (len(neural_network) > layer_size):
-            layer_size = len(neural_network)
+    print("numero de redes: %d" % (number_neural_networks))
+    #layer_size = 0
+    #for neural_network in neural_networks:
+    #    if (len(neural_network) > layer_size):
+    #        layer_size = len(neural_network)
 
-    layers_sizes = []
-    neural_networks.sort(key=len)
-    for neural_network in neural_networks:
-        layers_sizes.append(len(neural_network))
+    #layers_sizes = []
+    #neural_networks.sort(key=len)
+    #for neural_network in neural_networks:
+    #    layers_sizes.append(len(neural_network))
 
     # Merging neural networks
 
 
     # Layer's sizes
     x_size = train_X.shape[1]  # Number of input nodes: x features and 1 bias
-    print(x_size)
     y_size = train_y.shape[1]  # Number of outcomes (3 iris flowers)
-    print(y_size)
     # Symbols
     X = tf.placeholder("float", shape=[None, x_size], name="X")
     y = tf.placeholder("float", shape=[None, y_size], name="Y")
@@ -179,8 +176,7 @@ def nn_example_without_struct(neural_networks):
             yhat = forwardprop(X, w[0], w[1])
             for i in range(len(w) - 2):
                 yhat = forwardprop_hidden(yhat, w[i + 2])
-                print(tf.shape(yhat))
-            final_yhat = tf.cast(tf.argmax(yhat, axis=1), tf.float32)
+
 
             predicts.append(tf.argmax(yhat, axis=1))
         i = i + 1
@@ -204,7 +200,7 @@ def nn_example_without_struct(neural_networks):
 
     # Run SGD
     sess = tf.Session()
-    writer = tf.summary.FileWriter("/home/jorge/graph/log", sess.graph)
+    writer = tf.summary.FileWriter("~/graph/log", sess.graph)
     run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
     run_metadata = tf.RunMetadata()
     sess.run(tf.global_variables_initializer())
@@ -215,8 +211,6 @@ def nn_example_without_struct(neural_networks):
     writer.close()
 
     #test_accuracies = sess.run(test_accuracy, feed_dict={X: test_X},
-    #                           options=run_options, run_metadata=run_metadata)
-    #predict_sess = sess.run(predicts, feed_dict={X: test_X},
     #                           options=run_options, run_metadata=run_metadata)
 
     #label_train_sess = sess.run(label_train, feed_dict={X: test_X},
@@ -266,10 +260,14 @@ def create_population(populationSize):
         #w_3 = np.random.rand(10000, 500).astype('f') * 0.01;
         #w_4 = np.random.rand(500, 3).astype('f') * 0.01;
 
-        w_1 = tf.Variable(tf.random_normal((785,1000), stddev=0.1));
+        #w_1 = tf.Variable(tf.random_normal((785,1000), stddev=0.1,seed=1));
+        w_1 = tf.Variable(np.random.normal(loc =0, scale = 0.1, size=(785, 1000)).astype(np.float32));
+
         #w_2 = tf.random_normal((10, 10000), stddev=0.1);
         #w_3 = tf.random_normal((10000, 500), stddev=0.1);
-        w_4 = tf.Variable(tf.random_normal((1000, 9), stddev=0.1));
+
+        #w_4 = tf.Variable(tf.random_normal((1000, 9), stddev=0.1,seed=1));
+        w_4 = tf.Variable(np.random.normal(loc =0, scale = 0.1, size=(1000, 9)).astype(np.float32));
         population.append([w_1,w_4]);
     return population
 
@@ -278,9 +276,12 @@ def calculate_fitness(neural_networks):
     return nn_example_without_struct(neural_networks);
 
 def choose_best(neural_networks,fitnesses):
-    print(fitness)
+    print("fitness totais")
+    print(fitnesses)
     top_2_idx = np.argsort(fitnesses)[-2:]
+    print(top_2_idx)
     top_2_values = [neural_networks[i] for i in top_2_idx]
+    print("fitness escolhidos")
     print([fitnesses[i] for i in top_2_idx])
     return top_2_values;
 
@@ -297,48 +298,38 @@ def crossover(neural_networks,population_size):
         #conditional_assignment_op = temp_neural_network.assign(tf.where(comparison, tf.zeros_like(temp_neural_network), temp_neural_network))
         father = neural_networks[0];
         mother = neural_networks[1];
-
+        sess = tf.Session();
+        init = tf.initialize_all_variables();
+        sess.run(init)
+        father = sess.run(father);
+        mother = sess.run(mother);
         temp_neural_network = [];
         #for i in range(len(temp_neural_network)):
         # Gather parents by shuffled indices, expand back out to pop_size too
         for weight_idx in range(len(mother)):
 
-            rows_size = mother[weight_idx].get_shape()[0];
-            columns_size =  mother[weight_idx].get_shape()[1];
-            weight = tf.Variable(tf.zeros([rows_size,columns_size],tf.float32));
-            weight.assign(mother[weight_idx]);
+            rows_size = len(mother[weight_idx]);
+            columns_size =  len(mother[weight_idx][0]);
+            weight = mother[weight_idx][:];
+            #weight = tf.Variable(tf.zeros([rows_size,columns_size],tf.float32));
+            #weight.assign(mother[weight_idx]);
 
             print('peso ' + str(weight_idx));
             print('rows_size ' + str(rows_size));
 
-
-
             for row_idx in range(rows_size - 1):
                 if(random.uniform(0,1) < 0.5):
-                    weight[row_idx].assign(father[weight_idx][row_idx]);
+                    fator = random.uniform(0,1) + 0.1;
+                    weight[row_idx] = (father[weight_idx][row_idx] * fator) + (mother[weight_idx][row_idx] * (1-fator)) ;
                 else:
-                    weight[row_idx].assign(mother[weight_idx][row_idx]);
+                    weight[row_idx] = (mother[weight_idx][row_idx]);
 
-                #column_to_cut_start = randint(0,columns_size - 1)
-                #column_to_cut_end = randint(column_to_cut_start,columns_size - 1);
-                #cut_size = column_to_cut_end - column_to_cut_start;
-                #cut_indexes = range(column_to_cut_start,column_to_cut_end);
-
-
-                #print(temp_neural_network[weight_idx][row_idx][column_to_cut_start:column_to_cut_end]);
-                #print(father[weight_idx][row_idx][column_to_cut_start:column_to_cut_end]);
-                #temp_neural_network[weight_idx][row_idx][column_to_cut_start:column_to_cut_end] = father[weight_idx][row_idx][column_to_cut_start:column_to_cut_end];
-                #print(temp_neural_network[weight_idx]);
-                #tf.concat([temp_neural_network[weight_idx][row_idx][:column_to_cut_start], father[weight_idx][row_idx][column_to_cut_start:column_to_cut_end], temp_neural_network[weight_idx][row_idx][column_to_cut_end:]], axis=0);
-                #print(new_row);
-                #temp_neural_network[weight_idx][row_idx] = temp_neural_network[weight_idx][row_idx][column_to_cut_start:column_to_cut_end].assign(father[weight_idx][row_idx][column_to_cut_start:column_to_cut_end]);
-                #tf.scatter_update(temp_neural_network[weight_idx][row_idx], cut_indexes , father[weight_idx][row_idx][column_to_cut_start:column_to_cut_end])
-                #tf.scatter_update(temp_neural_network[weight_idx], 0 , new_row)
-            temp_neural_network.append(weight)
+            weight_tensor = tf.Variable(weight);
+            temp_neural_network.append(weight_tensor);
         new_population.append(temp_neural_network[:]);
 
         sess = tf.Session()
-        writer = tf.summary.FileWriter("/home/jorge/graph/log", sess.graph)
+        writer = tf.summary.FileWriter("~/graph/log", sess.graph)
         run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
         run_metadata = tf.RunMetadata()
         sess.run(tf.global_variables_initializer())
@@ -349,7 +340,7 @@ def crossover(neural_networks,population_size):
 
 def mutation(neural_networks,population_size,mutationRate):
 
-    #depois fazer matrix mascara (a.k.a recomendação do gabriel)
+    #depois fazer matrix mascara (a.k.a recomendacao do gabriel)
 
     size_neural_networks = len(neural_networks)
     new_neural_networks = []
@@ -381,18 +372,39 @@ if __name__ == "__main__":
         'maxEpochs': 10
     };
 
-    population = create_population(3);
-    print(population);
+    start_time = time.time()
+
+    population = create_population(20);
+    print("--- Population: %s seconds ---" % (time.time() - start_time))
+    start_time = time.time()
+
     fitness = calculate_fitness(population);
+
+    print("--- Fitness: %s seconds ---" % (time.time() - start_time))
+    start_time = time.time()
+
     best_ones = choose_best(population,fitness);
-    population = crossover(best_ones,3);
-    print(population);
-    fitness = calculate_fitness(population);
-    best_ones = choose_best(population, fitness);
-    population = crossover(best_ones, 3); print(population);
-    fitness = calculate_fitness(population);
-    best_ones = choose_best(population,fitness);
-    population = crossover(best_ones,3); print(population);
-    fitness = calculate_fitness(population);
-    best_ones = choose_best(population,fitness);
-    population = crossover(best_ones,3);
+
+    print("--- Best Ones: %s seconds ---" % (time.time() - start_time))
+    start_time = time.time()
+
+
+    for i in range(10):
+
+        population = crossover(best_ones, 20);
+
+        print("--- Crossover: %s seconds ---" % (time.time() - start_time))
+        start_time = time.time()
+
+        fitness = calculate_fitness(population);
+
+        print("--- Fitness: %s seconds ---" % (time.time() - start_time))
+        start_time = time.time()
+
+        best_ones = choose_best(population, fitness);
+
+        print("--- Best Ones: %s seconds ---" % (time.time() - start_time))
+        start_time = time.time()
+#    fitness = calculate_fitness(population);
+#    best_ones = choose_best(population,fitness);
+#    population = crossover(best_ones,3);
