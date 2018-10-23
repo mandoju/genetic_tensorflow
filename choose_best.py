@@ -24,9 +24,17 @@ def choose_best(neural_networks, fitnesses):
 
         for current_neural_network in sess.run(top_2_values[1]):
             for weight in current_neural_network:
-                print(weight)
+                if(weight.size < 2):
+                    print(weight)
 
-        tf.reset_default_graph;
+
+        print("Ok 1")
+        for current_neural_network in sess.run(top_2_values[0]):
+            for weight in current_neural_network:
+                if (weight.size < 2):
+                    print(weight)
+        print("Ok 2")
+        #tf.reset_default_graph;
 
 
         return neural_networks_selected;
@@ -44,7 +52,10 @@ def create_constants(neural_networks):
 
     for current_neural_network in neural_networks:
         temp_neural_network = []
+        #print("NEURAL NETWORK")
         for weight in current_neural_network:
+            #if (type(weight) != tf.Tensor):
+                #print(type(weight))
             temp_neural_network.append(tf.constant(weight))
         neural_networks.append(temp_neural_network[:])
 
@@ -71,7 +82,9 @@ def choose_best_tensor(neural_networks, fitnesses):
         neural_networs_output = []
         for neural_network in neural_networks_selected:
             temp_neural_network = []
+            print("NEURAL NETOWORK")
             for weight in neural_network:
+                print(weight)
                 temp_neural_network.append(tf.constant(weight))
             neural_networs_output.append(temp_neural_network[:])
 

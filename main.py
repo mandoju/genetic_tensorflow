@@ -28,7 +28,7 @@ if __name__ == "__main__":
         'maxEpochs': 10
     };
 
-    population_size = 10;
+    population_size = 4;
 
     start_time = time.time()
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
             print("--- Best Ones: %s seconds ---" % (time.time() - start_time))
             start_time = time.time()
 
-    for i in range(10):
+    for i in range(1):
         g1 = tf.Graph()
         with g1.as_default() as g:
             with g.name_scope("g" + str(i)) as g1_scope:
