@@ -28,9 +28,10 @@ def crossover(neural_networks, population_size):
             # comparison = tf.equal(temp_neural_network , tf.constant(1))
             # conditional_assignment_op = temp_neural_network.assign(tf.where(comparison, tf.zeros_like(temp_neural_network), temp_neural_network))
 
-            temp_neural_network = []
             with tf.name_scope('Passagem_Genes') as scope:
 
+                temp_neural_network = [];
+                
                 for weight_idx in range(len(mother_tensor)):
                     # child_tensor = tf.Variable(tf.zeros(tf.shape(mother_tensor[weight_idx])));
                     father_tensor_process = mother_tensor[weight_idx];
@@ -52,9 +53,7 @@ def crossover(neural_networks, population_size):
                         tf.random_uniform(dtype=tf.int32, minval=0, maxval=1, shape=[shape_size[0]]), tf.float32)
 
                     # mother_tensor_process = tf.multiply(mother_tensor_process,random_array_inverse[:,tf.newaxis]);
-                    child_weight_tensor = tf.Variable(
-                        tf.multiply(father_tensor_process, random_array_start[:, tf.newaxis]) + tf.multiply(
-                            mother_tensor_process, random_array_inverse[:, tf.newaxis]));
+                    child_weight_tensor = tf.Variable(tf.multiply(father_tensor_process, random_array_start[:, tf.newaxis]) + tf.multiply( mother_tensor_process, random_array_inverse[:, tf.newaxis]));
 
                     temp_neural_network.append(child_weight_tensor[:]);
                     # child_weight = tf.Variable(child_tensor);
