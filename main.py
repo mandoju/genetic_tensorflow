@@ -1,21 +1,4 @@
-import tensorflow as tf
-import numpy as np
-import time
-from neural_network import calculate_fitness
-from crossover import  crossover
-from create_population import create_population
-from choose_best import  choose_best, create_constants
-# from itertools import filterfalse
-# import pandas as pd
-# from tensorflow.examples.tutorials.mnist import input_data
-# from sklearn import datasets
-# from sklearn.model_selection import train_test_split
-# from tensorflow.python import debug as tf_debug
-# from random import randint
-import random
-
-
-# import copy
+from genetic import ENN
 
 
 if __name__ == "__main__":
@@ -26,52 +9,18 @@ if __name__ == "__main__":
         'mutationRate': 0.05,
         'averagesCount': 1,
         'maxEpochs': 10
-    };
+    }
+    
 
-    population_size = 20;
-    epocas = 10
+    population_size = 10
+    epochs = 10
+    layers = [785,1000,9]
 
-    start_time = time.time()
+    geneticSettings = {
+        'populationSize': 10,
+        'epochs': 10,
+        'layers': [785,1000,9],
+        'mutationRate': 0.20
+    }
 
-    g1 = tf.Graph()
-    with g1.as_default() as g:
-        with g.name_scope("g1") as g1_scope:
-            population = create_population(population_size);
-            print("--- Population: %s seconds ---" % (time.time() - start_time))
-            start_time = time.time()
-
-            fitness = calculate_fitness(population);
-
-            print("--- Fitness: %s seconds ---" % (time.time() - start_time))
-            start_time = time.time()
-
-            best_ones = choose_best(population, fitness);
-
-            print("--- Best Ones: %s seconds ---" % (time.time() - start_time))
-            start_time = time.time()
-
-    for i in range(epocas):
-        print("Epoca: " + str(i))
-        g1 = tf.Graph()
-        with g1.as_default() as g:
-            with g.name_scope("g" + str(i)) as g1_scope:
-
-                constants = create_constants(best_ones);
-                population = crossover(constants, population_size);
-
-                print("--- Crossover: %s seconds ---" % (time.time() - start_time))
-                start_time = time.time()
-
-                fitness = calculate_fitness(population);
-
-                print("--- Fitness: %s seconds ---" % (time.time() - start_time))
-                start_time = time.time()
-
-                best_ones = choose_best(population, fitness);
-
-                print("--- Best Ones: %s seconds ---" % (time.time() - start_time))
-                start_time = time.time()
-
-#    fitness = calculate_fitness(population);
-#    best_ones = choose_best(population,fitness);
-#    population = crossover(best_ones,3);
+    ENN(geneticSettings)
