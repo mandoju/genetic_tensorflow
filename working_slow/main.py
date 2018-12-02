@@ -16,7 +16,7 @@ if __name__ == "__main__":
     geneticSettings = {
         'populationSize': 10,
         'epochs': 10,
-        'layers': [785,10,9],
+        'layers': [785,900,9],
         'mutationRate': 0.20
     }
 
