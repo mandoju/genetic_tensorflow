@@ -11,7 +11,7 @@ if __name__ == "__main__":
         'maxEpochs': 10
     }
 
-
+e
 
     geneticSettings = {
         'populationSize': 10,

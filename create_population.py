@@ -7,7 +7,6 @@ import utils
 def create_population(layers, populationSize):
     population = []
     for i in range(populationSize):
-        print(i)
         neuralNetwork_temp = []
 
         array_temp = (np.random.randn(

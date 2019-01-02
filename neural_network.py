@@ -1,11 +1,9 @@
 import tensorflow as tf
 import numpy as np
+import time
 
 
-def calculate_fitness(neural_networks,layers):
-    return nn_cube(neural_networks,layers)
-
-
+    
 def block_diagonal(matrices, dtype=tf.float32):
     """Constructs block-diagonal matrices from a list of batched 2D tensors.
 
@@ -203,86 +201,198 @@ def nn_example_without_struct(neural_networks):
 
         return train_accuracies_sess
 
-def get_predicts(neural_network, X,layers):
-
-    print(neural_network)
-    with tf.name_scope('rede_neural_') as scope:
-        w = neural_network
-
-        # Forward propagation
-        yhat = forwardprop(X, tf.slice(w[0],[0,0],[layers[0],layers[1]]), tf.slice(w[1],[0,0],[layers[1],layers[2]]))
-        for i in range(w.shape[0] - 2):
-            yhat = forwardprop_hidden(yhat, tf.slice(w[i+2],[0,0],[layers[i+1],layers[i+2]]))
 
 
-        return tf.cast(tf.argmax(yhat, axis=1),tf.float32)
 
-def get_accuracies(predict,train_y,test_y):
+
+
+
+class Neural_network:
+
+    def __init__(self,neural_networks,layers,logdir):
+        self.neural_networks = neural_networks
+        self.layers = layers
+        self.logdir = logdir
+        self.train_x, self.test_x, self.train_y,self.test_y = get_mnist_data()
+
+
+
+    def forwardprop(self,X, w_1, w_2):
+        """
+        Forward-propagation.
+        IMPORTANT: yhat is not softmax since TensorFlow's softmax_cross_entropy_with_logits() does that internally.
+        """
+
+        with tf.name_scope('foward_propagation') as scope:
+            h = tf.nn.sigmoid(tf.matmul(X, w_1))  # The \sigma function
+            yhat = tf.matmul(h, w_2)  # The \varphi function
+        return yhat
+
+
+    def forwardprop_hidden(self,w_1, w_2):
+        """
+        Forward-propagation.
+        IMPORTANT: yhat is not softmax since TensorFlow's softmax_cross_entropy_with_logits() does that internally.
+        """
+        with tf.name_scope('foward_propagation_hidden') as scope:
+            h = tf.nn.sigmoid(w_1)  # The \sigma function
+            yhat = tf.matmul(h, w_2)  # The \varphi function
+        return yhat
+
+    def get_accuracies(self,predict,y):
     
-    with tf.name_scope('calculo_da_acuracia') as scope:
-        # train_accuracy = tf.reduce_mean(np.argmax(train_y, axis=1) == predict)
-        label_train = tf.argmax(
-            train_y, axis=1, name="label_train_argmax")
-        train_accuracy = tf.metrics.accuracy(
-            labels=label_train, predictions=predict)
+        with tf.name_scope('calculo_da_acuracia') as scope:
+            # train_accuracy = tf.reduce_mean(np.argmax(train_y, axis=1) == predict)
+            #label_train = tf.argmax(
+            #    train_y, axis=1, name="label_train_argmax")
+            #train_accuracy = tf.metrics.accuracy(
+            #    labels=label_train, predictions=predict)
 
-        # test_accuracy = tf.reduce_mean(np.argmax(test_y, axis=1) == predict)
-        label_test = tf.argmax(
-            test_y, axis=1, name="label_test_argmax")
-        test_accuracy = tf.metrics.accuracy(
-            labels=label_test, predictions=predict)
+            # test_accuracy = tf.reduce_mean(np.argmax(test_y, axis=1) == predict)
+            label_test = tf.argmax(
+                y, axis=1, name="label_test_argmax")
 
-        return train_accuracy[1]
+            test_accuracy = tf.metrics.accuracy(
+                labels=label_test, predictions=predict)
 
-def nn_cube(neural_networks,layers):
-    print("Rodando rede neural")
+            
 
-    # iris
-    # train_X, test_X, train_y, test_y = get_iris_data()
+            return test_accuracy[1]
 
-    # mnist
-    with tf.name_scope('Fitness') as scope:
+    def get_predicts(self,neural_network, X,layers):
 
-        train_X, test_X, train_y, test_y = get_mnist_data()
-        # Defining number of layers
-        print(neural_networks.shape)
+        print(neural_network)
+        with tf.name_scope('rede_neural_') as scope:
+            w = neural_network
 
-        number_neural_networks = neural_networks.shape[0]
-        number_neural_networks_remaining = number_neural_networks
-        print("numero de redes: %d" % (number_neural_networks))
+            # Forward propagation
+            yhat = forwardprop(X, tf.slice(w[0],[0,0],[layers[0],layers[1]]), tf.slice(w[1],[0,0],[layers[1],layers[2]]))
+            for i in range(w.shape[0] - 2):
+                yhat = forwardprop_hidden(yhat, tf.slice(w[i+2],[0,0],[layers[i+1],layers[i+2]]))
 
-        # Layer's sizes
-        # Number of input nodes: x features and 1 bias
-        x_size = train_X.shape[1]
-        y_size = train_y.shape[1]  # Number of outcomes (3 iris flowers)
-        # Symbols
-        X = tf.placeholder("float", shape=[None, x_size], name="X")
-        y = tf.placeholder("float", shape=[None, y_size], name="Y")
-        # Weight initializations
-        i = 0
 
-        predicts = tf.map_fn(lambda x: get_predicts(x,X,layers), neural_networks)
-        #predicts = get_predicts(neural_networks[0],X,layers)
-        print(predicts)
-            # Backward propagation
-            # cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=yhat))
-            # updates = tf.train.GradientDescentOptimizer(0.01).minimize(cost)
-        train_accuracies = tf.map_fn(lambda x: get_accuracies(x,train_y,test_y),predicts)
+            return tf.cast(tf.argmax(yhat, axis=1),tf.float32)
 
-        
-        # Run SGD
-        sess = tf.Session()
+    def get_cost_functions(self,predict,train,test):
+        with tf.name_scope('calculo_da_acuracia') as scope:
+            # train_accuracy = tf.reduce_mean(np.argmax(train_y, axis=1) == predict)
+            
+            #label_train = tf.argmax(
+            #    train, axis=1, name="label_train_argmax")
+            #train_cost = -tf.reduce_sum( label_train * tf.log(predict) )  
+            
+            #tf.metrics.accuracy(
+                #labels=label_train, predictions=predict)
 
-        writer = tf.summary.FileWriter("./log/", sess.graph)
-        run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
-        run_metadata = tf.RunMetadata()
+            # test_accuracy = tf.reduce_mean(np.argmax(test_y, axis=1) == predict)
+            #label_test = tf.argmax(
+            #    test, axis=1, name="label_test_argmax")
+            #test_cost = -tf.reduce_sum( test * tf.log(predict) )  
 
-        sess.run(tf.global_variables_initializer())
-        sess.run(tf.local_variables_initializer())
+            return tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=train, logits=predict))
 
-        train_accuracies_sess = sess.run(train_accuracies, feed_dict={X: train_X},
-                                         options=run_options, run_metadata=run_metadata)
-        writer.close()
-        sess.close()
+            #return test_cost
 
-        return train_accuracies_sess
+    def run(self):
+        print("Rodando rede neural")
+
+        # iris
+        # train_X, test_X, train_y, test_y = get_iris_data()
+
+        # mnist
+        with tf.name_scope('Fitness') as scope:
+
+            #train_X, test_X, train_y, test_y = get_mnist_data()
+            # Defining number of layers
+            #print(self.neural_networks.shape)
+
+            number_neural_networks = self.neural_networks.shape[0]
+            number_neural_networks_remaining = number_neural_networks
+            print("numero de redes: %d" % (number_neural_networks))
+
+            # Layer's sizes
+            # Number of input nodes: x features and 1 bias
+            x_size = self.train_x.shape[1]
+            y_size = self.train_y.shape[1]  
+            print(y_size)
+            
+            # Symbols
+            X = tf.placeholder("float", shape=[None, x_size], name="X")
+            Y = tf.placeholder("float", shape=[None, y_size], name="Y")
+            
+            i = 0
+
+            with tf.name_scope('predicts') as scope:
+
+                predicts = tf.map_fn(lambda x: self.get_predicts(x,X,self.layers), self.neural_networks)
+                
+                print(predicts)
+            
+            with tf.name_scope('accuracies') as scope:
+
+                train_accuracies = tf.map_fn(lambda x: self.get_accuracies(x,Y),predicts)
+
+            #with tf.name_scope('cost_function') as scope:
+                
+            #    cost_function = tf.map_fn(lambda x: self.get_cost_functions(x,train_y,test_y),predicts)
+
+            # Run SGD
+
+            #predict_sess = sess.run(predicts, feed_dict={X: train_X,Y: train_y},
+            #                                options=run_options, run_metadata=run_metadata)
+
+            #print('predict_sess temos:')
+            #print(predict_sess)                     
+            
+
+
+            ## Aqui temos a sessão para a retirada das acurácias e afins
+            # sess = tf.Session()
+
+            # writer = tf.summary.FileWriter(self.logdir, sess.graph)
+            # run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+            # run_metadata = tf.RunMetadata()
+
+
+            # start = time.time()
+            # sess.run(tf.global_variables_initializer())
+            # print("Global variables:", time.time() - start)
+
+            # start = time.time()
+            # sess.run(tf.local_variables_initializer())
+            # print("local variables:", time.time() - start)
+
+            # start = time.time()
+            # predicts_session,train_accuracies_session = sess.run([predicts,train_accuracies], feed_dict={X: self.train_x, Y: self.train_y},
+            #                                 options=run_options, run_metadata=run_metadata)
+            # print("predicts e acuracias:", time.time() - start )
+
+            # print('acuracia temos:')
+            # print(train_accuracies_session)
+
+            #cost_sess = sess.run(cost_function, feed_dict={X: train_X},
+            #                                options=run_options, run_metadata=run_metadata)
+
+            ## Fim da retirada das acurácias e afins
+
+            ## Utilizacao das acuracias e predicts como tensores
+            self.predicts = predicts
+            self.accuracies = train_accuracies
+
+
+            # writer.close()
+            # sess.close()
+
+            # self.predicts = predicts_session
+            # self.accuracies = train_accuracies_session
+
+
+            # return train_accuracies_session
+            return self.accuracies
+
+def calculate_fitness(neural_networks,layers,logdir):
+    #return nn_cube(neural_networks,layers)
+    neural_structure = neural_network(neural_networks,layers,logdir)
+    return neural_structure.run()
+    
+

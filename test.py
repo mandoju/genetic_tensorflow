@@ -4,36 +4,39 @@ import time
 from neural_network import calculate_fitness
 from crossover import  crossover
 from create_population import create_population
-from choose_best import  choose_best, create_constants
+from choose_best import  choose_best, create_constants, choose_best_tensor
+from win10toast import ToastNotifier
+from genetic_class import Population
+import traceback
 
 geneticSettings = {
         'populationSize': 10,
         'epochs': 10,
         'layers': [785,900,9],
-        'mutationRate': 0.20
+        'mutationRate': 0.20,
+        'logdir': './log/'
 }
 
 populationSize = geneticSettings['populationSize']
 epochs = geneticSettings['epochs']
 layers = geneticSettings['layers']
 mutationRate = geneticSettings['mutationRate']
+logdir = geneticSettings['logdir']
 
 start_time = time.time()
 begin_time = start_time
 
-g1 = tf.Graph()
-with g1.as_default() as g:
-    with g.name_scope("g1") as g1_scope:
-        population = create_population(layers,populationSize)
-        print("--- Population: %s seconds ---" % (time.time() - start_time))
-        start_time = time.time()
+toaster = ToastNotifier()
+toaster.show_toast("Programa iniciado","Rodando programa")
 
-        fitness = calculate_fitness(population,layers)
+try:
 
-        print("--- Fitness: %s seconds ---" % (time.time() - start_time))
-        start_time = time.time()
+    genetic = Population(populationSize,layers,mutationRate)
+    genetic.run_epoch()
 
-        #best_ones = choose_best(population, fitness)
 
-        #print("--- Best Ones: %s seconds ---" % (time.time() - start_time))
-        #start_time = time.time()
+    toaster.show_toast("Sucesso!","Programa finalizado com sucesso")
+except Exception as e:
+    print(traceback.format_exc())
+    print(e)
+    toaster.show_toast("Erro!","Ocorreu um erro")
