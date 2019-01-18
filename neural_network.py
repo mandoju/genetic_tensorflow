@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import time
-
+from utils import variable_summaries
 
     
 def block_diagonal(matrices, dtype=tf.float32):
@@ -216,7 +216,6 @@ class Neural_network:
         self.train_x, self.test_x, self.train_y,self.test_y = get_mnist_data()
 
 
-
     def forwardprop(self,X, w_1, w_2):
         """
         Forward-propagation.
@@ -239,25 +238,37 @@ class Neural_network:
             yhat = tf.matmul(h, w_2)  # The \varphi function
         return yhat
 
-    def get_accuracies(self,predict,y):
+    def get_accuracies(self,predict):
     
-        with tf.name_scope('calculo_da_acuracia') as scope:
+        #with tf.name_scope('calculo_da_acuracia') as scope:
             # train_accuracy = tf.reduce_mean(np.argmax(train_y, axis=1) == predict)
             #label_train = tf.argmax(
-            #    train_y, axis=1, name="label_train_argmax")
+            #    self.Y, axis=1, name="label_train_argmax")
             #train_accuracy = tf.metrics.accuracy(
-            #    labels=label_train, predictions=predict)
-
-            # test_accuracy = tf.reduce_mean(np.argmax(test_y, axis=1) == predict)
-            label_test = tf.argmax(
-                y, axis=1, name="label_test_argmax")
-
-            test_accuracy = tf.metrics.accuracy(
-                labels=label_test, predictions=predict)
+            #    labels=tf.transpose(label_train), predictions=predict)
 
             
+            # test_accuracy = tf.reduce_mean(np.argmax(test_y, axis=1) == predict)
+            #label_test = tf.argmax(
+            #    self.Y, axis=1, name="label_test_argmax")
 
-            return test_accuracy[1]
+            #test_accuracy = tf.metrics.accuracy(
+            #    labels=label_test, predictions=predict)
+
+            correct_prediction = tf.equal(tf.argmax(self.Y,1), tf.cast(predict,tf.int64))
+            accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+
+            return accuracy
+
+    def get_square_mean_error(self,predict):
+        
+        with tf.name_scope('calculo_square_mean_error') as scope:
+
+            label_test = tf.cast(tf.argmax(
+                self.Y, axis=1, name="label_test_argmax_sme"),tf.float32)
+            square_mean_error = tf.metrics.mean_squared_error(labels=tf.transpose(label_test),predictions=predict)
+
+        return square_mean_error[0]
 
     def get_predicts(self,neural_network, X,layers):
 
@@ -317,9 +328,12 @@ class Neural_network:
             print(y_size)
             
             # Symbols
-            X = tf.placeholder("float", shape=[None, x_size], name="X")
-            Y = tf.placeholder("float", shape=[None, y_size], name="Y")
+            self.X = tf.placeholder("float", shape=[None, x_size], name="X")
+            self.Y = tf.placeholder("float", shape=[None, y_size], name="Y")
             
+            X = self.X
+            Y = self.Y
+
             i = 0
 
             with tf.name_scope('predicts') as scope:
@@ -330,8 +344,12 @@ class Neural_network:
             
             with tf.name_scope('accuracies') as scope:
 
-                train_accuracies = tf.map_fn(lambda x: self.get_accuracies(x,Y),predicts)
+                train_accuracies = tf.map_fn(lambda x: self.get_accuracies(x),predicts)
+                #train_accuracies = self.get_accuracies(predicts[0])
+            with tf.name_scope('square_mean_errors') as scope:
 
+                square_mean_errors = tf.map_fn(lambda x: self.get_square_mean_error(x),predicts)
+            
             #with tf.name_scope('cost_function') as scope:
                 
             #    cost_function = tf.map_fn(lambda x: self.get_cost_functions(x,train_y,test_y),predicts)
@@ -378,7 +396,12 @@ class Neural_network:
             ## Utilizacao das acuracias e predicts como tensores
             self.predicts = predicts
             self.accuracies = train_accuracies
+            self.square_mean_errors = square_mean_errors
+            self.label_argmax = tf.cast(tf.argmax(
+                self.Y, axis=1, name="label_test_argmax_sme"),tf.float32)
 
+            variable_summaries(self.square_mean_errors)
+            #tf.summary.scalar('predicts', self.predicts)
 
             # writer.close()
             # sess.close()

@@ -9,9 +9,7 @@ if __name__ == "__main__":
         'mutationRate': 0.05,
         'averagesCount': 1,
         'maxEpochs': 10
-    }
-
-e
+    },
 
     geneticSettings = {
         'populationSize': 10,

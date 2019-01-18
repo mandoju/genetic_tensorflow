@@ -33,6 +33,7 @@ try:
 
     genetic = Population(populationSize,layers,mutationRate)
     genetic.run_epoch()
+    print(genetic.neural_networks.accuracies)
 
 
     toaster.show_toast("Sucesso!","Programa finalizado com sucesso")
