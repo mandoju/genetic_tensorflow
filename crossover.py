@@ -7,7 +7,6 @@ def crossover(neural_networks,population,populationShape,population_size,mutatio
 
         size_neural_networks = tournamentSize 
 
-        #population = tf.get_variable('populacao',populationShape)
         father_tensor = neural_networks[0]
         mother_tensor = neural_networks[1]
 
@@ -23,13 +22,13 @@ def crossover(neural_networks,population,populationShape,population_size,mutatio
 
                 temp_neural_network = []
                 
+
                 for weight_idx_range in range(layers - 1):
                     weight_idx = weight_idx_range - 1
                     father_tensor_process = mother_tensor[weight_idx]
                     mother_tensor_process = father_tensor[weight_idx]
 
                     shape_size = tf.shape(mother_tensor[weight_idx])
-
 
                     #Criação do array binário para definir quais são os genes que irão receber a mistura do  mãe
                     random_array_binary = tf.cast(
@@ -47,12 +46,11 @@ def crossover(neural_networks,population,populationShape,population_size,mutatio
                     #child_weight_tensor = tf.Variable(tf.multiply(father_tensor_process, random_array_start[:, tf.newaxis]) + tf.multiply( mother_tensor_process, random_array_inverse[:, tf.newaxis]))
 
                     #mutation(child_weight_tensor,mutationRate)
-                    temp_neural_network.append(tf.multiply(father_tensor_process, random_array_start[:, tf.newaxis]) + tf.multiply( mother_tensor_process, random_array_inverse[:, tf.newaxis]))
-                    print(temp_neural_network)
+                    temp_neural_network.append(tf.multiply(father_tensor_process, random_array_start) + tf.multiply( mother_tensor_process, random_array_inverse))
             #population = population[i + tournamentSize].assign( temp_neural_network)
             new_population.append(temp_neural_network[:])
 
-        finish = tf.assign(tf.get_variable('populacao',populationShape), tf.stack(new_population))
+        finish = new_population #tf.assign(population, tf.stack(new_population))
         return finish
         #sess = tf.Session()
         # writer = tf.summary.FileWriter("log/graph", sess.graph)

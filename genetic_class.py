@@ -3,6 +3,8 @@ from create_population import create_population
 from choose_best import choose_best_tensor
 from crossover import crossover
 from utils import variable_summaries
+from tensorflow.python.client import timeline
+import numpy as np
 import tensorflow as tf
 import time
 
@@ -29,9 +31,13 @@ class Population:
 
         new_population = crossover(best,self.population, self.populationShape , self.populationSize, 0.01,2,len(self.layers))
 
+        with tf.control_dependencies([new_population]):
+            shape_new_population = tf.shape(new_population)
+            finish = shape_new_population
 
-        finish = new_population
-        variable_summaries(self.population)
+        print("teremos finish como:")
+        print(finish)
+        #variable_summaries(self.population)
         merged = tf.summary.merge_all()
 
         self.current_epoch += 1
@@ -50,13 +56,32 @@ class Population:
         sess.run(tf.local_variables_initializer())
         print("local variables:", time.time() - start)
 
-        for i in range(10):
-            finished,accuracies, mergedSess = sess.run([tf.shape(finish),self.neural_networks.accuracies,merged], feed_dict={
+
+        pop_array = []
+        finished_array = []
+        for i in range(3):
+            print("época: " + str(i))
+            start = time.time()
+            pop,accuracies,finished = sess.run([self.population,self.neural_networks.accuracies,finish], feed_dict={
                 self.neural_networks.X: self.neural_networks.train_x, self.neural_networks.Y: self.neural_networks.train_y}, options=run_options, run_metadata=run_metadata)
-            writer.add_summary(mergedSess,i) 
+            #writer.add_summary(mergedSess,i) 
             print(accuracies)
-            #print(finished)
+            print("tempo:" + str(time.time() - start))
+            trace = timeline.Timeline(step_stats=run_metadata.step_stats)
+            with open('./log/timeline.ctf.json', 'w') as trace_file:
+                trace_file.write(trace.generate_chrome_trace_format())
+            #print(pop)
+            #print("---------")
             #print(finished)
 
         sess.close()
         writer.close()
+
+        # if(np.all(pop_array[0] == pop_array[1])):
+        #     print("populações iguais")
+        # else:
+        #     print("mudou")
+        # if(np.all(pop_array[1] == finished_array[0])):
+        #     print("população secundária funcionando")
+        # else:
+        #     print("população secundária não funcionando")
