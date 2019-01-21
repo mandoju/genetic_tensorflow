@@ -6,23 +6,19 @@ import numpy as np
 def choose_best(neural_networks, fitnesses):
     with tf.name_scope('Choose_best') as scope:
 
-        print("fitness totais")
-        print(fitnesses)
+        #Choosing top 2 fitnesses
         top_2_idx = np.argsort(fitnesses)[-2:]
-        print(top_2_idx)
-        top_2_values = [neural_networks[i] for i in top_2_idx]
-        print("fitness escolhidos")
-        print([fitnesses[i] for i in top_2_idx])
-        sess = tf.Session()
-        sess.run(tf.global_variables_initializer());
-        neural_networks_selected = [];
-        neural_networks_selected.append(sess.run(top_2_values[0]));
-        neural_networks_selected.append(sess.run(top_2_values[1]));
 
-        print("fim choose best")
+        #Getting top 2 neural networks
+        top_2_values = [neural_networks[i] for i in top_2_idx]
+        neural_networks_selected = [];
+        neural_networks_selected.append(top_2_values[0]);
+        neural_networks_selected.append(top_2_values[1]);
+        
         #tf.reset_default_graph;
 
-
+        print("selecionado")
+        print(neural_networks_selected)
         return neural_networks_selected;
         #neural_networs_output = []
         #for neural_network in neural_networks_selected:

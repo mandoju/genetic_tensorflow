@@ -127,7 +127,7 @@ def get_mnist_data():
 
 
 def nn_example_without_struct(neural_networks):
-    print("Rodando rede neural")
+    #print("Rodando rede neural")
 
     # iris
     # train_X, test_X, train_y, test_y = get_iris_data()
@@ -139,7 +139,7 @@ def nn_example_without_struct(neural_networks):
         # Defining number of layers
         number_neural_networks = len(neural_networks)
         number_neural_networks_remaining = number_neural_networks
-        print("numero de redes: %d" % (number_neural_networks))
+        #print("numero de redes: %d" % (number_neural_networks))
 
         # Layer's sizes
         # Number of input nodes: x features and 1 bias
@@ -272,7 +272,6 @@ class Neural_network:
 
     def get_predicts(self,neural_network, X,layers):
 
-        print(neural_network)
         with tf.name_scope('rede_neural_') as scope:
             w = neural_network
 
@@ -305,7 +304,7 @@ class Neural_network:
             #return test_cost
 
     def run(self):
-        print("Rodando rede neural")
+        #print("Rodando rede neural")
 
         # iris
         # train_X, test_X, train_y, test_y = get_iris_data()
@@ -319,13 +318,13 @@ class Neural_network:
 
             number_neural_networks = self.neural_networks.shape[0]
             number_neural_networks_remaining = number_neural_networks
-            print("numero de redes: %d" % (number_neural_networks))
+            #print("numero de redes: %d" % (number_neural_networks))
 
             # Layer's sizes
             # Number of input nodes: x features and 1 bias
             x_size = self.train_x.shape[1]
             y_size = self.train_y.shape[1]  
-            print(y_size)
+            #print(y_size)
             
             # Symbols
             self.X = tf.placeholder("float", shape=[None, x_size], name="X")
@@ -340,7 +339,7 @@ class Neural_network:
 
                 predicts = tf.map_fn(lambda x: self.get_predicts(x,X,self.layers), self.neural_networks)
                 
-                print(predicts)
+                #print(predicts)
             
             with tf.name_scope('accuracies') as scope:
 

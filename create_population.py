@@ -7,7 +7,7 @@ import utils
 def create_population(layers, populationSize):
 
     createGraph = tf.Graph()
-    with createGraph.as_default() as g:
+    with createGraph.as_default() as create_bootstrap:
         populationTemp = []
         for i in range(populationSize):
             neuralNetwork_temp = []
@@ -43,11 +43,11 @@ def create_population(layers, populationSize):
         sess = tf.Session()
         sess.run(tf.global_variables_initializer())
         sess.run(tf.local_variables_initializer())
-        population_session = sess.run(populationTemp)
+        population_session, population_session_shape = sess.run([populationTemp,tf.shape(populationTemp)])
         sess.close()
 
     tf.reset_default_graph()
     
     population = tf.Variable(population_session,name='populacao')
 
-    return population
+    return population, population_session_shape

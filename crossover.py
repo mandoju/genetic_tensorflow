@@ -2,17 +2,20 @@ import tensorflow as tf
 import numpy as np
 from mutation import mutation
 
-def crossover(neural_networks,population,population_size,mutationRate,tournamentSize,layers):
+def crossover(neural_networks,population,populationShape,population_size,mutationRate,tournamentSize,layers):
     with tf.name_scope('Crossover'):
 
-        new_population = []
         size_neural_networks = tournamentSize 
 
+        #population = tf.get_variable('populacao',populationShape)
         father_tensor = neural_networks[0]
         mother_tensor = neural_networks[1]
 
-        population[0].assign(father_tensor)
-        population[1].assign(mother_tensor)
+        new_population = []
+        new_population.append(father_tensor)
+        new_population.append(mother_tensor)
+
+
         
         for i in range(population_size - size_neural_networks):
 
@@ -20,8 +23,8 @@ def crossover(neural_networks,population,population_size,mutationRate,tournament
 
                 temp_neural_network = []
                 
-                for weight_idx in range(layers):
-
+                for weight_idx_range in range(layers - 1):
+                    weight_idx = weight_idx_range - 1
                     father_tensor_process = mother_tensor[weight_idx]
                     mother_tensor_process = father_tensor[weight_idx]
 
@@ -45,9 +48,12 @@ def crossover(neural_networks,population,population_size,mutationRate,tournament
 
                     #mutation(child_weight_tensor,mutationRate)
                     temp_neural_network.append(tf.multiply(father_tensor_process, random_array_start[:, tf.newaxis]) + tf.multiply( mother_tensor_process, random_array_inverse[:, tf.newaxis]))
-            tf.assign(population[i + tournamentSize], temp_neural_network)
-            #new_population.append(temp_neural_network[:])
+                    print(temp_neural_network)
+            #population = population[i + tournamentSize].assign( temp_neural_network)
+            new_population.append(temp_neural_network[:])
 
+        finish = tf.assign(tf.get_variable('populacao',populationShape), tf.stack(new_population))
+        return finish
         #sess = tf.Session()
         # writer = tf.summary.FileWriter("log/graph", sess.graph)
 
@@ -69,5 +75,3 @@ def crossover(neural_networks,population,population_size,mutationRate,tournament
         #            pop.append(neural)
         #        for neural in neural_networks:
         #            pop.append(neural[:])
-
-        return population
