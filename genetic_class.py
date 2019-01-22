@@ -31,12 +31,9 @@ class Population:
 
         new_population = crossover(best,self.population, self.populationShape , self.populationSize, 0.01,2,len(self.layers))
 
-        with tf.control_dependencies([new_population]):
-            shape_new_population = tf.shape(new_population)
-            finish = shape_new_population
+        
+        finish = new_population
 
-        print("teremos finish como:")
-        print(finish)
         #variable_summaries(self.population)
         merged = tf.summary.merge_all()
 
@@ -67,9 +64,9 @@ class Population:
             #writer.add_summary(mergedSess,i) 
             print(accuracies)
             print("tempo:" + str(time.time() - start))
-            trace = timeline.Timeline(step_stats=run_metadata.step_stats)
-            with open('./log/timeline.ctf.json', 'w') as trace_file:
-                trace_file.write(trace.generate_chrome_trace_format())
+            #trace = timeline.Timeline(step_stats=run_metadata.step_stats)
+            #with open('./log/timeline.ctf.json', 'w') as trace_file:
+            #    trace_file.write(trace.generate_chrome_trace_format())
             #print(pop)
             #print("---------")
             #print(finished)
