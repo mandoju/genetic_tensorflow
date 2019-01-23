@@ -10,7 +10,7 @@ from genetic_class import Population
 import traceback
 
 geneticSettings = {
-        'populationSize': 10,
+        'populationSize': 30,
         'epochs': 10,
         'layers': [785,900,9],
         'mutationRate': 0.20,

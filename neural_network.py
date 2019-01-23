@@ -239,21 +239,6 @@ class Neural_network:
         return yhat
 
     def get_accuracies(self,predict):
-    
-        #with tf.name_scope('calculo_da_acuracia') as scope:
-            # train_accuracy = tf.reduce_mean(np.argmax(train_y, axis=1) == predict)
-            #label_train = tf.argmax(
-            #    self.Y, axis=1, name="label_train_argmax")
-            #train_accuracy = tf.metrics.accuracy(
-            #    labels=tf.transpose(label_train), predictions=predict)
-
-            
-            # test_accuracy = tf.reduce_mean(np.argmax(test_y, axis=1) == predict)
-            #label_test = tf.argmax(
-            #    self.Y, axis=1, name="label_test_argmax")
-
-            #test_accuracy = tf.metrics.accuracy(
-            #    labels=label_test, predictions=predict)
 
             correct_prediction = tf.equal(tf.argmax(self.Y,1), tf.cast(predict,tf.int64))
             accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
@@ -277,9 +262,8 @@ class Neural_network:
 
             # Forward propagation
             yhat = forwardprop(X, tf.slice(w[0],[0,0],[layers[0],layers[1]]), tf.slice(w[1],[0,0],[layers[1],layers[2]]))
-            for i in range(w.shape[0] - 2):
+            for i in range(w.s  hape[0] - 2):
                 yhat = forwardprop_hidden(yhat, tf.slice(w[i+2],[0,0],[layers[i+1],layers[i+2]]))
-
 
             return tf.cast(tf.argmax(yhat, axis=1),tf.float32)
 
