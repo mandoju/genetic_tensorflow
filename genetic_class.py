@@ -26,20 +26,19 @@ class Population:
         start = time.time()
         self.neural_networks.run()
         #print("neural network : ", time.time() - start)
+        print(self.neural_networks.accuracies)
         best = choose_best_tensor(
             self.neural_networks.neural_networks, self.neural_networks.accuracies)
 
         new_population = crossover(best,self.population, self.populationShape , self.populationSize, 0.01,2,len(self.layers))
 
-        
         finish = new_population
 
         #variable_summaries(self.population)
         merged = tf.summary.merge_all()
 
         self.current_epoch += 1
-
-        
+       
         sess = tf.Session()
         writer = tf.summary.FileWriter(self.neural_networks.logdir, sess.graph)
         run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
@@ -53,17 +52,21 @@ class Population:
         sess.run(tf.local_variables_initializer())
         print("local variables:", time.time() - start)
 
-
         pop_array = []
+        
         finished_array = []
+        
         for i in range(3):
+
             print("época: " + str(i))
             start = time.time()
+            
             pop,accuracies,finished = sess.run([self.population,self.neural_networks.accuracies,finish], feed_dict={
-                self.neural_networks.X: self.neural_networks.train_x, self.neural_networks.Y: self.neural_networks.train_y}, options=run_options, run_metadata=run_metadata)
-            #writer.add_summary(mergedSess,i) 
+                self.neural_networks.X: self.neural_networks.train_x, self.neural_networks.Y: self.neural_networks.train_y}, options=run_options, run_metadata=run_metadata)    
+
             print(accuracies)
             print("tempo:" + str(time.time() - start))
+
             #trace = timeline.Timeline(step_stats=run_metadata.step_stats)
             #with open('./log/timeline.ctf.json', 'w') as trace_file:
             #    trace_file.write(trace.generate_chrome_trace_format())

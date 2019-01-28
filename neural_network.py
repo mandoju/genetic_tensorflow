@@ -202,11 +202,6 @@ def nn_example_without_struct(neural_networks):
         return train_accuracies_sess
 
 
-
-
-
-
-
 class Neural_network:
 
     def __init__(self,neural_networks,layers,logdir):
@@ -214,7 +209,6 @@ class Neural_network:
         self.layers = layers
         self.logdir = logdir
         self.train_x, self.test_x, self.train_y,self.test_y = get_mnist_data()
-
 
     def forwardprop(self,X, w_1, w_2):
         """
@@ -258,12 +252,11 @@ class Neural_network:
     def get_predicts(self,neural_network, X,layers):
 
         with tf.name_scope('rede_neural_') as scope:
-            w = neural_network
 
             # Forward propagation
-            yhat = forwardprop(X, tf.slice(w[0],[0,0],[layers[0],layers[1]]), tf.slice(w[1],[0,0],[layers[1],layers[2]]))
-            for i in range(w.s  hape[0] - 2):
-                yhat = forwardprop_hidden(yhat, tf.slice(w[i+2],[0,0],[layers[i+1],layers[i+2]]))
+            yhat = forwardprop(X, tf.slice(neural_network[0],[0,0],[layers[0],layers[1]]), tf.slice(neural_network[1],[0,0],[layers[1],layers[2]]))
+            for i in range(neural_network.shape[0] - 2):
+                yhat = forwardprop_hidden(yhat, tf.slice(neural_network[i+2],[0,0],[layers[i+1],layers[i+2]]))
 
             return tf.cast(tf.argmax(yhat, axis=1),tf.float32)
 
@@ -323,7 +316,16 @@ class Neural_network:
 
                 predicts = tf.map_fn(lambda x: self.get_predicts(x,X,self.layers), self.neural_networks)
                 
-                #print(predicts)
+
+                # with tf.name_scope('rede_neural_') as scope:
+
+                #     # Forward propagation
+                #     yhat = tf.map_fn(lambda x: forwardprop(X, tf.slice(x[0],[0,0],[self.layers[0],self.layers[1]]), tf.slice(x[1],[0,0],[self.layers[1],self.layers[2]])), self.neural_networks )
+                #     for i in range(self.neural_networks[0].shape[0] - 2):
+                #         yhat = tf.map_fn(lambda x: forwardprop_hidden(x, tf.slice(self.neural_networks[i+2],[0,0],[self.layers[i+1],self.layers[i+2]])), yhat)
+                #     predicts = tf.map_fn(lambda x: tf.cast(tf.argmax(x, axis=1),tf.float32), yhat )
+         
+                # #print(predicts)
             
             with tf.name_scope('accuracies') as scope:
 
