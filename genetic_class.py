@@ -15,9 +15,9 @@ class Population:
         self.populationSize = populationSize
         self.layers = layers
         self.mutationRate = mutationRate
-        self.population, self.populationShape = create_population(layers, populationSize)
+        self.population, self.populationShape, self.convulations, self.bias = create_population(layers, populationSize)
         self.neural_networks = Neural_network(
-           self.population , layers, './log/')
+           self.population , layers, self.convulations,self.bias, './log/')
         self.current_epoch = 0
 
     def run_epoch(self):

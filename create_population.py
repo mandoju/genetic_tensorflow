@@ -12,6 +12,7 @@ def create_population(layers, populationSize):
         for i in range(populationSize):
             neuralNetwork_temp = []
 
+           
             array_temp = (np.random.randn(
                 layers[0], layers[1])*np.sqrt(2/1000)).astype(np.float32)
 
@@ -50,4 +51,12 @@ def create_population(layers, populationSize):
     
     population = tf.Variable(population_session,name='populacao')
 
-    return population, population_session_shape
+
+    filter_shape = [28,28]
+    conv_filt_shape = [populationSize, 1, 28, 28, 1]
+
+    convulations_weights = tf.Variable(tf.truncated_normal(conv_filt_shape, stddev=0.03),
+                                      name='conv_W')
+    bias = tf.Variable(tf.truncated_normal([populationSize,28]), name='conv_b')
+
+    return population, population_session_shape, convulations_weights, bias

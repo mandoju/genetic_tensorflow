@@ -204,11 +204,13 @@ def nn_example_without_struct(neural_networks):
 
 class Neural_network:
 
-    def __init__(self,neural_networks,layers,logdir):
+    def __init__(self,neural_networks,layers,convulations,biases,logdir):
         self.neural_networks = neural_networks
         self.layers = layers
         self.logdir = logdir
         self.train_x, self.test_x, self.train_y,self.test_y = get_mnist_data()
+        self.convulations = convulations
+        self.biases = biases
 
     def forwardprop(self,X, w_1, w_2):
         """
@@ -259,6 +261,24 @@ class Neural_network:
                 yhat = forwardprop_hidden(yhat, tf.slice(neural_network[i+2],[0,0],[layers[i+1],layers[i+2]]))
 
             return tf.cast(tf.argmax(yhat, axis=1),tf.float32)
+
+    def convulation(self,input_data,weights,bias,pool_shape):
+        # setup the convolutional layer operation
+        out_layer = tf.nn.conv2d(input_data, weights, [1, 1, 1, 1], padding='SAME')
+
+        # add the bias
+        out_layer += bias
+
+        # apply a ReLU non-linear activation
+        out_layer = tf.nn.relu(out_layer)
+
+        # now perform max pooling
+        ksize = [1, pool_shape[0], pool_shape[1], 1]
+        strides = [1, 2, 2, 1]
+        out_layer = tf.nn.max_pool(out_layer, ksize=ksize, strides=strides, 
+                                padding='SAME')
+
+        return out_layer
 
     def get_cost_functions(self,predict,train,test):
         with tf.name_scope('calculo_da_acuracia') as scope:
@@ -314,16 +334,20 @@ class Neural_network:
 
             with tf.name_scope('predicts') as scope:
 
-                predicts = tf.map_fn(lambda x: self.get_predicts(x,X,self.layers), self.neural_networks)
+                # predicts = tf.map_fn(lambda x: self.get_predicts(x,X,self.layers), self.neural_networks)
                 
 
-                # with tf.name_scope('rede_neural_') as scope:
+                # with tf.name_scope('convulation_') as scope:
+                #     X_shaped = tf.reshape(X[:,1:], [28, 28, 1 , 1])
+                #     yhat = tf.map_fn(lambda x: self.convulation(X_shaped,x,self.biases,[28,28]) ,self.convulations)
+                
+                with tf.name_scope('rede_neural_') as scope:
 
-                #     # Forward propagation
-                #     yhat = tf.map_fn(lambda x: forwardprop(X, tf.slice(x[0],[0,0],[self.layers[0],self.layers[1]]), tf.slice(x[1],[0,0],[self.layers[1],self.layers[2]])), self.neural_networks )
-                #     for i in range(self.neural_networks[0].shape[0] - 2):
-                #         yhat = tf.map_fn(lambda x: forwardprop_hidden(x, tf.slice(self.neural_networks[i+2],[0,0],[self.layers[i+1],self.layers[i+2]])), yhat)
-                #     predicts = tf.map_fn(lambda x: tf.cast(tf.argmax(x, axis=1),tf.float32), yhat )
+                    # Forward propagation
+                    yhat = tf.map_fn(lambda x: forwardprop(X, tf.slice(x[0],[0,0],[self.layers[0],self.layers[1]]), tf.slice(x[1],[0,0],[self.layers[1],self.layers[2]])), self.neural_networks )
+                    for i in range(self.neural_networks[0].shape[0] - 2):
+                        yhat = tf.map_fn(lambda x: forwardprop_hidden(x, tf.slice(self.neural_networks[i+2],[0,0],[self.layers[i+1],self.layers[i+2]])), yhat)
+                    predicts = tf.map_fn(lambda x: tf.cast(tf.argmax(x, axis=1),tf.float32), yhat )
          
                 # #print(predicts)
             
