@@ -56,7 +56,7 @@ class Population:
         
         finished_array = []
         
-        for i in range(3):
+        for i in range(100):
 
             print("época: " + str(i))
             start = time.time()

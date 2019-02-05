@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 from mutation import mutation
 
-def generate_child(mother_tensor,father_tensor,layers):
+def generate_child(mother_tensor,father_tensor,mutationRate,layers):
     with tf.name_scope('Passagem_Genes'):
 
         temp_neural_network = []
@@ -65,7 +65,7 @@ def crossover(neural_networks,population,populationShape,population_size,mutatio
         #new_population.append(mother_tensor)
 
         old_population = tf.stack([father_tensor,mother_tensor])
-        new_population = tf.map_fn(lambda x: generate_child(mother_tensor,father_tensor,layers),tf.range(population_size - size_neural_networks),dtype=tf.float32)
+        new_population = tf.map_fn(lambda x: generate_child(mother_tensor,father_tensor,mutationRate,layers),tf.range(population_size - size_neural_networks),dtype=tf.float32)
         new_population = tf.concat([old_population,new_population],0)
 
         finish = tf.assign(population, tf.stack(new_population))
