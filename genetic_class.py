@@ -40,9 +40,9 @@ class Population:
         self.current_epoch += 1
        
         sess = tf.Session()
-        writer = tf.summary.FileWriter(self.neural_networks.logdir, sess.graph)
-        run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
-        run_metadata = tf.RunMetadata()
+       # writer = tf.summary.FileWriter(self.neural_networks.logdir, sess.graph)
+        #run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+        #run_metadata = tf.RunMetadata()
 
         start = time.time()
         sess.run(tf.global_variables_initializer())
@@ -62,7 +62,7 @@ class Population:
             start = time.time()
             
             pop,accuracies,finished = sess.run([self.population,self.neural_networks.accuracies,finish], feed_dict={
-                self.neural_networks.X: self.neural_networks.train_x, self.neural_networks.Y: self.neural_networks.train_y}, options=run_options, run_metadata=run_metadata)    
+                self.neural_networks.X: self.neural_networks.train_x, self.neural_networks.Y: self.neural_networks.train_y})    
 
             print(accuracies)
             print("tempo:" + str(time.time() - start))
@@ -75,7 +75,7 @@ class Population:
             #print(finished)
 
         sess.close()
-        writer.close()
+        #writer.close()
 
         # if(np.all(pop_array[0] == pop_array[1])):
         #     print("populações iguais")
