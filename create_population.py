@@ -18,7 +18,7 @@ def create_population(layers, populationSize):
 
             neuralNetwork = tf.constant(
                 array_temp, name='Populacao_peso_1_' + str(i))
-            neuralNetwork = utils.pad_up_to(neuralNetwork,[1000,1000],0)
+            neuralNetwork = utils.pad_up_to(neuralNetwork,[max(layers),max(layers)],0)
             
             neuralNetwork_temp.append(neuralNetwork)
 
@@ -33,7 +33,7 @@ def create_population(layers, populationSize):
                                                     name='Populacao_peso_' + str(currentLayer) + '_' + str(i))
 
                 #neuralNetwork = tf.pad( neuralNetwork, paddings, 'CONSTANT', constant_values=0 ) ]
-                neuralNetwork = utils.pad_up_to(neuralNetwork,[1000,1000],0)
+                neuralNetwork = utils.pad_up_to(neuralNetwork,[max(layers),max(layers)],0)
                 neuralNetwork_temp.append(neuralNetwork)
 
             populationTemp.append(neuralNetwork_temp)

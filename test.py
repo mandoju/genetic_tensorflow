@@ -12,8 +12,8 @@ import traceback
 geneticSettings = {
         'populationSize': 100,
         'epochs': 10,
-        'layers': [785,900,9],
-        'mutationRate': 0.20,
+        'layers': [785,200,9],
+        'mutationRate': 0.40,
         'logdir': './log/'
 }
 
