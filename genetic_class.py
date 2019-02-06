@@ -30,7 +30,7 @@ class Population:
         best = choose_best_tensor(
             self.neural_networks.neural_networks, self.neural_networks.accuracies)
 
-        new_population = crossover(best,self.population, self.populationShape , self.populationSize, 0.01,2,len(self.layers))
+        new_population = crossover(best,self.population, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers))
 
         finish = new_population
 
