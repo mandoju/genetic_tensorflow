@@ -50,9 +50,9 @@ class Population:
         self.current_epoch += 1
        
         sess = tf.Session()
-        writer = tf.summary.FileWriter(self.neural_networks.logdir, sess.graph)
-        run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
-        run_metadata = tf.RunMetadata()
+        # writer = tf.summary.FileWriter(self.neural_networks.logdir, sess.graph)
+        # run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+        # run_metadata = tf.RunMetadata()
 
         start = time.time()
         sess.run(tf.global_variables_initializer())
@@ -82,16 +82,16 @@ class Population:
                 batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]  
 
                 accuracies,finished_conv,finished_bias = sess.run([self.neural_networks.accuracies,finish_conv,finish_bias], feed_dict={
-                    self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y},options=run_options, run_metadata=run_metadata)
+                    self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y})
                 print(accuracies)
                 print("tempo batch: " + str(time.time() - start_batch))
 
                 if(batch == (len(train_x)//batch_size) - 1 ):
                     print(accuracies)
                     print("tempo:" + str(time.time() - start_generation))
-                trace = timeline.Timeline(step_stats=run_metadata.step_stats)
-                with open('./log/timeline.ctf.json', 'w') as trace_file:
-                    trace_file.write(trace.generate_chrome_trace_format())
+                # trace = timeline.Timeline(step_stats=run_metadata.step_stats)
+                # with open('./log/timeline.ctf.json', 'w') as trace_file:
+                #     trace_file.write(trace.generate_chrome_trace_format())
             #print(pop)
             #print("---------")
             #print(finished)

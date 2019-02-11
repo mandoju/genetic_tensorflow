@@ -4,12 +4,12 @@ import time
 from crossover import  crossover
 from create_population import create_population
 from choose_best import  choose_best, create_constants, choose_best_tensor
-from win10toast import ToastNotifier
+# from win10toast import ToastNotifier
 from genetic_class import Population
 import traceback
 
 geneticSettings = {
-        'populationSize': 30,
+        'populationSize': 100,
         'epochs': 10,
         'weights_convulation': {
             'wc1': (3,3,3,1,312) ,#tf.get_variable('W0', shape=(3,3,1,32), initializer=tf.contrib.layers.xavier_initializer()), 
@@ -40,8 +40,8 @@ biases = geneticSettings['biases']
 start_time = time.time()
 begin_time = start_time
 
-toaster = ToastNotifier()
-toaster.show_toast("Programa iniciado","Rodando programa")
+# toaster = ToastNotifier()
+# toaster.show_toast("Programa iniciado","Rodando programa")
 
 try:
 
@@ -50,8 +50,8 @@ try:
     print(genetic.neural_networks.accuracies)
 
 
-    toaster.show_toast("Sucesso!","Programa finalizado com sucesso")
+    # toaster.show_toast("Sucesso!","Programa finalizado com sucesso")
 except Exception as e:
     print(traceback.format_exc())
     print(e)
-    toaster.show_toast("Erro!","Ocorreu um erro")
+    # toaster.show_toast("Erro!","Ocorreu um erro")

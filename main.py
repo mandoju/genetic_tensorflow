@@ -3,7 +3,7 @@ from genetic import ENN
 
 if __name__ == "__main__":
     genetic_pool_settings = {
-        'populationSize': 30,
+        'populationSize': 100,
         'tournamentSize': 4,
         'memberDimensions': [4, 3, 2, 3, 4],
         'mutationRate': 0.05,

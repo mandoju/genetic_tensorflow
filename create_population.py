@@ -60,17 +60,17 @@ def create_population(layers, populationSize):
     #bias = tf.Variable(tf.truncated_normal([populationSize,28]), name='conv_b')
 
     convulations_weights = {
-        'wc1': tf.get_variable('W0', shape=(populationSize,3,3,1,32), initializer=tf.contrib.layers.xavier_initializer()), 
-        'wc2': tf.get_variable('W1', shape=(populationSize,3,3,32,64), initializer=tf.contrib.layers.xavier_initializer()), 
-        'wc3': tf.get_variable('W2', shape=(populationSize,3,3,64,128), initializer=tf.contrib.layers.xavier_initializer()), 
-        'wd1': tf.get_variable('W3', shape=(populationSize,4*4*128,128), initializer=tf.contrib.layers.xavier_initializer()), 
-        'out': tf.get_variable('W6', shape=(populationSize,128,10), initializer=tf.contrib.layers.xavier_initializer()), 
+        'wc1': tf.get_variable('W0', shape=(populationSize,3,3,1,4), initializer=tf.contrib.layers.xavier_initializer()), 
+        'wc2': tf.get_variable('W1', shape=(populationSize,3,3,4,8), initializer=tf.contrib.layers.xavier_initializer()), 
+        'wc3': tf.get_variable('W2', shape=(populationSize,3,3,8,16), initializer=tf.contrib.layers.xavier_initializer()), 
+        'wd1': tf.get_variable('W3', shape=(populationSize,4*4*16,16), initializer=tf.contrib.layers.xavier_initializer()), 
+        'out': tf.get_variable('W6', shape=(populationSize,16,10), initializer=tf.contrib.layers.xavier_initializer()), 
     }
     biases = {
-        'bc1': tf.get_variable('B0', shape=(populationSize,32), initializer=tf.contrib.layers.xavier_initializer()),
-        'bc2': tf.get_variable('B1', shape=(populationSize,64), initializer=tf.contrib.layers.xavier_initializer()),
-        'bc3': tf.get_variable('B2', shape=(populationSize,128), initializer=tf.contrib.layers.xavier_initializer()),
-        'bd1': tf.get_variable('B3', shape=(populationSize,128), initializer=tf.contrib.layers.xavier_initializer()),
+        'bc1': tf.get_variable('B0', shape=(populationSize,4), initializer=tf.contrib.layers.xavier_initializer()),
+        'bc2': tf.get_variable('B1', shape=(populationSize,8), initializer=tf.contrib.layers.xavier_initializer()),
+        'bc3': tf.get_variable('B2', shape=(populationSize,16), initializer=tf.contrib.layers.xavier_initializer()),
+        'bd1': tf.get_variable('B3', shape=(populationSize,16), initializer=tf.contrib.layers.xavier_initializer()),
         'out': tf.get_variable('B4', shape=(populationSize,10), initializer=tf.contrib.layers.xavier_initializer()),
     }
     return population, population_session_shape, convulations_weights, biases
