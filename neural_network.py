@@ -117,14 +117,15 @@ def get_mnist_data():
     train_X = np.array(train_X).reshape(len(train_X), 784)
     # Prepend the column of 1s for bias
     N, M = train_X.shape
-    all_X = np.ones((N, M + 1))
-    all_X[:, 1:] = train_X
+    all_X = np.ones((N, M))
+    all_X[:, :] = train_X
 
     num_labels = len(np.unique(train_y))
-    all_Y = np.eye(num_labels)[train_y]  # One liner trick!
+    train_y_eye = np.eye(num_labels)[train_y]  # One liner trick!
+    test_y_eye = np.eye(num_labels)[test_y]  # One liner trick!
     # a,b,c,d = train_test_split(all_X, all_Y, test_size=0.00, random_state=0)
-    return (all_X, all_X, all_Y, all_Y)
-
+    #return (all_X, all_X, all_Y, all_Y)
+    return train_X,train_y_eye,test_X,test_y_eye
 
 def nn_example_without_struct(neural_networks):
     #print("Rodando rede neural")
@@ -204,14 +205,88 @@ def nn_example_without_struct(neural_networks):
 
 class Neural_network:
 
-    def __init__(self,neural_networks,layers,convulations,biases,logdir):
-        self.neural_networks = neural_networks
+    def __init__(self,populationSize,layers,convulations,biases,logdir):
+        #self.neural_networks = neural_networks
         self.layers = layers
         self.logdir = logdir
-        self.train_x, self.test_x, self.train_y,self.test_y = get_mnist_data()
+        #self.train_x, self.test_x, self.train_y,self.test_y = get_mnist_data()
+        self.train_x, self.train_y, self.test_x, self.test_y = get_mnist_data()
+        print(self.train_y)
+        self.train_x = self.train_x.reshape(-1, 28, 28, 1)
+        self.test_x =  self.test_x.reshape(-1, 28, 28, 1)
         self.convulations = convulations
         self.biases = biases
+        self.populationSize = populationSize
 
+    
+    def conv2d(self,x, W, b, strides=1):
+        # Conv2D wrapper, with bias and relu activation
+        x = tf.nn.conv2d(x, W, strides=[1, strides, strides, 1], padding='SAME')
+        x = tf.nn.bias_add(x, b)
+        return tf.nn.relu(x) 
+
+    def maxpool2d(self,x, k=2):
+        return tf.nn.max_pool(x, ksize=[1, k, k, 1], strides=[1, k, k, 1],padding='SAME')
+
+    def conv_net(self):  
+
+        weights = self.convulations
+        biases = self.biases
+        # here we call the conv2d function we had defined above and pass the input image x, weights wc1 and bias bc1.
+        conv1 = tf.map_fn( lambda x: self.conv2d(self.X, weights['wc1'][x], biases['bc1'][x]) , tf.range(self.populationSize) , dtype=tf.float32 )
+        # Max Pooling (down-sampling), this chooses the max value from a 2*2 matrix window and outputs a 14*14 matrix.
+        conv1 = tf.map_fn( lambda x: self.maxpool2d(conv1[x], k=2) ,  tf.range(self.populationSize) , dtype=tf.float32 )
+
+        # Convolution Layer
+        # here we call the conv2d function we had defined above and pass the input image x, weights wc2 and bias bc2.
+        conv2 = tf.map_fn( lambda x: self.conv2d(conv1[x], weights['wc2'][x], biases['bc2'][x]) , tf.range(self.populationSize) , dtype=tf.float32 )
+        # Max Pooling (down-sampling), this chooses the max value from a 2*2 matrix window and outputs a 7*7 matrix.
+        conv2 = tf.map_fn( lambda x: self.maxpool2d(x, k=2) , conv2 , dtype=tf.float32 )
+
+        conv3 = tf.map_fn( lambda x: self.conv2d(conv2[x], weights['wc3'][x], biases['bc3'][x]), tf.range(self.populationSize) , dtype=tf.float32 )
+        # Max Pooling (down-sampling), this chooses the max value from a 2*2 matrix window and outputs a 4*4.
+        conv3 =  tf.map_fn( lambda x: self.maxpool2d(x, k=2) , conv3 , dtype=tf.float32 )
+
+
+        # Fully connected layer
+        # Reshape conv2 output to fit fully connected layer input
+        fc1 = tf.map_fn( lambda x: tf.reshape(conv3[x], [-1, weights['wd1'][x].get_shape().as_list()[0]]), tf.range(self.populationSize) , dtype=tf.float32 )
+        fc1 = tf.map_fn(lambda x:tf.add(tf.matmul(fc1[x], weights['wd1'][x]), biases['bd1'][x]),  tf.range(self.populationSize) , dtype=tf.float32 )
+        fc1 = tf.map_fn(lambda x: tf.nn.relu(fc1[x]) , tf.range(self.populationSize)  , dtype=tf.float32 )
+        # Output, class prediction
+        # finally we multiply the fully connected layer with the weights and add a bias term. 
+        out = tf.map_fn(lambda x: tf.add(tf.matmul(fc1[x], weights['out'][x]), biases['out'][x]),tf.range(self.populationSize) , dtype=tf.float32 )
+        return out
+
+    def conv_net_best(self):  
+
+        weights = self.best_conv
+        biases = self.best_bias
+        # here we call the conv2d function we had defined above and pass the input image x, weights wc1 and bias bc1.
+        conv1 = self.conv2d(self.X, weights['wc1'], biases['bc1'])
+        # Max Pooling (down-sampling), this chooses the max value from a 2*2 matrix window and outputs a 14*14 matrix.
+        conv1 = self.maxpool2d(conv1, k=2)
+
+        # Convolution Layer
+        # here we call the conv2d function we had defined above and pass the input image x, weights wc2 and bias bc2.
+        conv2 = self.conv2d(conv1, weights['wc2'], biases['bc2'])
+        # Max Pooling (down-sampling), this chooses the max value from a 2*2 matrix window and outputs a 7*7 matrix.
+        conv2 = self.maxpool2d(conv2, k=2)
+
+        conv3 = self.conv2d(conv2, weights['wc3'], biases['bc3'])
+        # Max Pooling (down-sampling), this chooses the max value from a 2*2 matrix window and outputs a 4*4.
+        conv3 = self.maxpool2d(conv3, k=2)
+
+
+        # Fully connected layer
+        # Reshape conv2 output to fit fully connected layer input
+        fc1 = tf.reshape(conv3, [-1, weights['wd1'].get_shape().as_list()[0]])
+        fc1 = tf.add(tf.matmul(fc1, weights['wd1']), biases['bd1'])
+        fc1 = tf.nn.relu(fc1)
+        # Output, class prediction
+        # finally we multiply the fully connected layer with the weights and add a bias term. 
+        out = tf.add(tf.matmul(fc1, weights['out']), biases['out'])
+        return out
     def forwardprop(self,X, w_1, w_2):
         """
         Forward-propagation.
@@ -236,7 +311,11 @@ class Neural_network:
 
     def get_accuracies(self,predict):
 
-            correct_prediction = tf.equal(tf.argmax(self.Y,1), tf.cast(predict,tf.int64))
+            arg = tf.cast(tf.argmax(
+                self.Y, axis=1, name="label_test_argmax_sme"),tf.float32)
+            arg2 = tf.cast(tf.argmax(
+                predict, axis=1, name="label_test_argmax_sme"),tf.float32)
+            correct_prediction = tf.equal(arg, tf.cast(arg2,tf.float32))
             accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
             return accuracy
@@ -247,9 +326,11 @@ class Neural_network:
 
             label_test = tf.cast(tf.argmax(
                 self.Y, axis=1, name="label_test_argmax_sme"),tf.float32)
-            square_mean_error = tf.metrics.mean_squared_error(labels=tf.transpose(label_test),predictions=predict)
+            square_mean_error = tf.metrics.mean_squared_error(labels=label_test,predictions=predict)
+            # cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=predict, labels=self.Y))
 
         return square_mean_error[0]
+        #return cost
 
     def get_predicts(self,neural_network, X,layers):
 
@@ -313,19 +394,20 @@ class Neural_network:
             # Defining number of layers
             #print(self.neural_networks.shape)
 
-            number_neural_networks = self.neural_networks.shape[0]
-            number_neural_networks_remaining = number_neural_networks
+            #number_neural_networks = self.neural_networks.shape[0]
+            #number_neural_networks_remaining = number_neural_networks
             #print("numero de redes: %d" % (number_neural_networks))
 
             # Layer's sizes
             # Number of input nodes: x features and 1 bias
-            x_size = self.train_x.shape[1]
+            #x_size = 786 #self.train_x.shape[1]
+            print(self.train_y.shape)
             y_size = self.train_y.shape[1]  
             #print(y_size)
             
             # Symbols
-            self.X = tf.placeholder("float", shape=[None, x_size], name="X")
-            self.Y = tf.placeholder("float", shape=[None, y_size], name="Y")
+            self.X = tf.placeholder("float", shape=[None, 28, 28, 1], name="X")
+            self.Y = tf.placeholder("float", shape=[None,y_size], name="Y")
             
             X = self.X
             Y = self.Y
@@ -334,6 +416,8 @@ class Neural_network:
 
             with tf.name_scope('predicts') as scope:
 
+
+                predicts = self.conv_net()
                 # predicts = tf.map_fn(lambda x: self.get_predicts(x,X,self.layers), self.neural_networks)
                 
 
@@ -341,23 +425,26 @@ class Neural_network:
                 #     X_shaped = tf.reshape(X[:,1:], [28, 28, 1 , 1])
                 #     yhat = tf.map_fn(lambda x: self.convulation(X_shaped,x,self.biases,[28,28]) ,self.convulations)
                 
-                with tf.name_scope('rede_neural_') as scope:
+                ## -- ESTA PARTE FUNCIONA --
+                # with tf.name_scope('rede_neural_') as scope:
 
-                    # Forward propagation
-                    yhat = tf.map_fn(lambda x: forwardprop(X, tf.slice(x[0],[0,0],[self.layers[0],self.layers[1]]), tf.slice(x[1],[0,0],[self.layers[1],self.layers[2]])), self.neural_networks )
-                    for i in range(self.neural_networks[0].shape[0] - 2):
-                        yhat = tf.map_fn(lambda x: forwardprop_hidden(x, tf.slice(self.neural_networks[i+2],[0,0],[self.layers[i+1],self.layers[i+2]])), yhat)
-                    predicts = tf.map_fn(lambda x: tf.cast(tf.argmax(x, axis=1),tf.float32), yhat )
-         
+                #     # Forward propagation
+                #     yhat = tf.map_fn(lambda x: forwardprop(X, tf.slice(x[0],[0,0],[self.layers[0],self.layers[1]]), tf.slice(x[1],[0,0],[self.layers[1],self.layers[2]])), self.neural_networks )
+                #     for i in range(self.neural_networks[0].shape[0] - 2):
+                #         yhat = tf.map_fn(lambda x: forwardprop_hidden(x, tf.slice(self.neural_networks[i+2],[0,0],[self.layers[i+1],self.layers[i+2]])), yhat)
+                #     predicts = tf.map_fn(lambda x: tf.cast(tf.argmax(x, axis=1),tf.float32), yhat )
+                ## -- ESTA PARTE FUNCIONA --
+
+                
                 # #print(predicts)
             
             with tf.name_scope('accuracies') as scope:
 
                 train_accuracies = tf.map_fn(lambda x: self.get_accuracies(x),predicts)
                 #train_accuracies = self.get_accuracies(predicts[0])
-            with tf.name_scope('square_mean_errors') as scope:
+            #with tf.name_scope('square_mean_errors') as scope:
 
-                square_mean_errors = tf.map_fn(lambda x: self.get_square_mean_error(x),predicts)
+           #     square_mean_errors = tf.map_fn(lambda x: self.get_square_mean_error(x),predicts)
             
             #with tf.name_scope('cost_function') as scope:
                 
@@ -405,11 +492,12 @@ class Neural_network:
             ## Utilizacao das acuracias e predicts como tensores
             self.predicts = predicts
             self.accuracies = train_accuracies
-            self.square_mean_errors = square_mean_errors
+            #self.square_mean_errors = square_mean_errors
             self.label_argmax = tf.cast(tf.argmax(
                 self.Y, axis=1, name="label_test_argmax_sme"),tf.float32)
 
-            variable_summaries(self.square_mean_errors)
+            tf.summary.scalar('acuracia',tf.reduce_max(self.accuracies))
+            #variable_summaries(self.accuracies)
             #tf.summary.scalar('predicts', self.predicts)
 
             # writer.close()
@@ -422,6 +510,51 @@ class Neural_network:
             # return train_accuracies_session
             return self.accuracies
 
+
+    def run_best(self):
+
+        with tf.name_scope('Fitness') as scope:
+            #train_X, test_X, train_y, test_y = get_mnist_data()
+            # Defining number of layers
+            #print(self.neural_networks.shape)
+
+            #number_neural_networks = self.neural_networks.shape[0]
+            #number_neural_networks_remaining = number_neural_networks
+            #print("numero de redes: %d" % (number_neural_networks))
+
+            # Layer's sizes
+            # Number of input nodes: x features and 1 bias
+            #x_size = 786 #self.train_x.shape[1]
+            print(self.train_y.shape)
+            y_size = self.train_y.shape[1]  
+            #print(y_size)
+            
+            # Symbols
+            #self.X = tf.placeholder("float", shape=[None, 28, 28, 1], name="X")
+            #self.Y = tf.placeholder("float", shape=[None,y_size], name="Y")
+            
+            X = self.X
+            Y = self.Y
+
+            i = 0
+
+            with tf.name_scope('predicts') as scope:
+
+
+                predicts = self.conv_net_best()
+
+            with tf.name_scope('accuracies') as scope:
+
+                train_accuracies = tf.map_fn(lambda x: self.get_accuracies(x),predicts)
+            
+            # self.predicts = predicts
+            # self.accuracies = train_accuracies
+
+            # self.label_argmax = tf.cast(tf.argmax(
+            #     self.Y, axis=1, name="label_test_argmax_sme"),tf.float32)
+
+        
+        return train_accuracies
 def calculate_fitness(neural_networks,layers,logdir):
     #return nn_cube(neural_networks,layers)
     neural_structure = neural_network(neural_networks,layers,logdir)

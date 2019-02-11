@@ -3,7 +3,7 @@ import numpy as np
 from mutation import mutation
 
 ##Todos aleatorios
-def generate_child_by_all(mother_tensor,father_tensor,mutationRate,layers):
+def generate_child_by_all(mother_tensor,father_tensor,mutationRate):
     with tf.name_scope('Passagem_Genes'):
 
         temp_neural_network = []
@@ -12,8 +12,8 @@ def generate_child_by_all(mother_tensor,father_tensor,mutationRate,layers):
         shape_size = tf.shape(mother_tensor)
 
         #Criação do array binário para definir quais são os genes que irão receber a mistura do  mãe
-        random_array_binary = tf.random_uniform(dtype=tf.float32, minval=0, maxval=1, shape=[shape_size[0],shape_size[1],shape_size[2]])
-        random_array_select = tf.random_uniform(dtype=tf.float32, minval=0,maxval=1,shape=[shape_size[0],shape_size[1],shape_size[2]])
+        random_array_binary = tf.random_uniform(dtype=tf.float32, minval=0, maxval=1, shape=shape_size)
+        random_array_select = tf.random_uniform(dtype=tf.float32, minval=0,maxval=1,shape=shape_size)
         random_array_select = tf.math.round(random_array_select)
 
         #Criando o array inverso para definir o número ao contrário para criar a quantidade recebida pelo pai
@@ -54,7 +54,7 @@ def generate_child_by_all(mother_tensor,father_tensor,mutationRate,layers):
         #     crossoved = tf.multiply(father_tensor_process, random_array_binary[weight_idx]) + tf.multiply( mother_tensor_process, random_array_inverse[weight_idx])
         #     temp_neural_network.append(mutation(crossoved,mutationRate))
 
-        return crossoved
+        return mutation(crossoved,mutationRate)
 
 ##Apenas as layers
 def generate_child_by_layer(mother_tensor,father_tensor,mutationRate,layers):
@@ -122,7 +122,7 @@ def crossover(neural_networks,population,populationShape,population_size,mutatio
         #new_population.append(mother_tensor)
 
         old_population = tf.stack([father_tensor,mother_tensor])
-        new_population = tf.map_fn(lambda x: generate_child_by_all(mother_tensor,father_tensor,mutationRate,layers),tf.range(population_size - size_neural_networks),dtype=tf.float32)
+        new_population = tf.map_fn(lambda x: generate_child_by_all(mother_tensor,father_tensor,mutationRate),tf.range(population_size - size_neural_networks),dtype=tf.float32)
         new_population = tf.concat([old_population,new_population],0)
 
         finish = tf.assign(population, tf.stack(new_population))
@@ -148,3 +148,46 @@ def crossover(neural_networks,population,populationShape,population_size,mutatio
         #            pop.append(neural)
         #        for neural in neural_networks:
         #            pop.append(neural[:])
+
+def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,population_size,mutationRate,tournamentSize,layers):
+       # best_conv,best_bias,self.convulations,self.bias, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers)
+    with tf.name_scope('Crossover'):
+
+        size_neural_networks = tournamentSize 
+
+
+        finish = []
+        finish_conv = []
+        finish_bias = []
+        for key in best_conv: 
+                father_tensor = best_conv[key][0]
+                mother_tensor = best_conv[key][1]
+                
+                old_population = tf.stack([father_tensor,mother_tensor])
+                new_population = tf.map_fn(lambda x: generate_child_by_all(mother_tensor,father_tensor,mutationRate),tf.range(population_size - size_neural_networks),dtype=tf.float32)
+                new_population = tf.concat([old_population,new_population],0)
+                #print(dir(tf))
+                #finish = tf.assign(best_conv[key], tf.stack(new_population))
+                #import ipdb; ipdb.set_trace();
+                finish_conv.append(tf.assign(convulations[key], tf.stack(new_population)))
+        for key in best_bias: 
+                father_tensor = best_bias[key][0]
+                mother_tensor = best_bias[key][1]
+                
+                old_population = tf.stack([father_tensor,mother_tensor])
+                new_population = tf.map_fn(lambda x: generate_child_by_all(mother_tensor,father_tensor,mutationRate),tf.range(population_size - size_neural_networks),dtype=tf.float32)
+                new_population = tf.concat([old_population,new_population],0)
+                finish_bias.append(tf.assign(bias[key], tf.stack(new_population)))
+        #father_tensor = neural_networks[0]
+        #mother_tensor = neural_networks[1]
+
+        #new_population = []
+        #new_population.append(father_tensor)
+        #new_population.append(mother_tensor)
+
+        #old_population = tf.stack([father_tensor,mother_tensor])
+        #new_population = tf.map_fn(lambda x: generate_child_by_all(mother_tensor,father_tensor,mutationRate,layers),tf.range(population_size - size_neural_networks),dtype=tf.float32)
+        #new_population = tf.concat([old_population,new_population],0)
+
+        #finish = tf.assign(population, tf.stack(new_population))
+        return finish_conv, finish_bias
