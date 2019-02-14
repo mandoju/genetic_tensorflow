@@ -9,7 +9,7 @@ from genetic_class import Population
 import traceback
 
 geneticSettings = {
-        'populationSize': 100,
+        'populationSize': 30,
         'epochs': 10,
         'weights_convulation': {
             'wc1': (3,3,3,1,312) ,#tf.get_variable('W0', shape=(3,3,1,32), initializer=tf.contrib.layers.xavier_initializer()), 
@@ -26,7 +26,7 @@ geneticSettings = {
             'out': 10 ,#tf.get_variable('B4', shape=(10), initializer=tf.contrib.layers.xavier_initializer()),
         },
         'layers': [785,10],
-        'mutationRate': 0.20,
+        'mutationRate': 0.10,
         'logdir': './log/'
 }
 

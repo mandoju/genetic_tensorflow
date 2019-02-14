@@ -5,6 +5,8 @@ from neural_network import calculate_fitness
 from crossover import  crossover
 from create_population import create_population
 from choose_best import  choose_best, create_constants
+import time
+
 
 def ENN(geneticSettings):
     

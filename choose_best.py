@@ -9,7 +9,10 @@ def choose_best(neural_networks, fitnesses):
     with tf.name_scope('Choose_best') as scope:
 
         #Choosing top 2 fitnesses
-        top_2_idx = np.argsort(fitnesses)[-2:]
+        #top_2_idx = np.argsort(fitnesses)[-2:]
+        #Choosing bottom 2 fitnesses
+        top_2_idx = np.argsort(fitnesses)[2:]
+
 
         #Getting top 2 neural networks
         top_2_values = [neural_networks[i] for i in top_2_idx]
@@ -51,7 +54,7 @@ def create_constants(neural_networks):
 def choose_best_tensor(neural_networks, fitnesses):
     with tf.name_scope('Choose_best') as scope:
 
-        top_values, top_indices = tf.math.top_k(tf.reshape(fitnesses, (-1,)), 2)
+        top_values, top_indices = tf.math.top_k(tf.reshape(fitnesses*tf.constant(-1), (-1,)), 2)
         #new_neural_networks = tf.gather()
         #top_2_idx = np.argsort(fitnesses)[-2:]
         #print("indices")

@@ -237,22 +237,29 @@ class Neural_network:
         # Max Pooling (down-sampling), this chooses the max value from a 2*2 matrix window and outputs a 14*14 matrix.
         conv1 = tf.map_fn( lambda x: self.maxpool2d(conv1[x], k=2) ,  tf.range(self.populationSize) , dtype=tf.float32 )
 
-        # Convolution Layer
-        # here we call the conv2d function we had defined above and pass the input image x, weights wc2 and bias bc2.
-        conv2 = tf.map_fn( lambda x: self.conv2d(conv1[x], weights['wc2'][x], biases['bc2'][x]) , tf.range(self.populationSize) , dtype=tf.float32 )
-        # Max Pooling (down-sampling), this chooses the max value from a 2*2 matrix window and outputs a 7*7 matrix.
-        conv2 = tf.map_fn( lambda x: self.maxpool2d(x, k=2) , conv2 , dtype=tf.float32 )
+        # # Convolution Layer
+        # # here we call the conv2d function we had defined above and pass the input image x, weights wc2 and bias bc2.
+        # conv2 = tf.map_fn( lambda x: self.conv2d(conv1[x], weights['wc2'][x], biases['bc2'][x]) , tf.range(self.populationSize) , dtype=tf.float32 )
+        # # Max Pooling (down-sampling), this chooses the max value from a 2*2 matrix window and outputs a 7*7 matrix.
+        # conv2 = tf.map_fn( lambda x: self.maxpool2d(x, k=2) , conv2 , dtype=tf.float32 )
 
-        conv3 = tf.map_fn( lambda x: self.conv2d(conv2[x], weights['wc3'][x], biases['bc3'][x]), tf.range(self.populationSize) , dtype=tf.float32 )
-        # Max Pooling (down-sampling), this chooses the max value from a 2*2 matrix window and outputs a 4*4.
-        conv3 =  tf.map_fn( lambda x: self.maxpool2d(x, k=2) , conv3 , dtype=tf.float32 )
+        # conv3 = tf.map_fn( lambda x: self.conv2d(conv2[x], weights['wc3'][x], biases['bc3'][x]), tf.range(self.populationSize) , dtype=tf.float32 )
+        # # Max Pooling (down-sampling), this chooses the max value from a 2*2 matrix window and outputs a 4*4.
+        # conv3 =  tf.map_fn( lambda x: self.maxpool2d(x, k=2) , conv3 , dtype=tf.float32 )
 
-
+        convs = []
+        convs.append(conv1)
+        for i in range(13):
+            conv = tf.map_fn( lambda x: self.conv2d(convs[i][x], weights['wc' + str(i+2)][x], biases['bc' + str(i+2)][x]) , tf.range(self.populationSize) , dtype=tf.float32 )
+            conv = tf.map_fn( lambda x: self.maxpool2d(x, k=2) , conv , dtype=tf.float32 )
+            convs.append(conv[:])
         # Fully connected layer
         # Reshape conv2 output to fit fully connected layer input
-        fc1 = tf.map_fn( lambda x: tf.reshape(conv3[x], [-1, weights['wd1'][x].get_shape().as_list()[0]]), tf.range(self.populationSize) , dtype=tf.float32 )
+        last_conv = convs.pop()
+        fc1 = tf.map_fn( lambda x: tf.reshape(last_conv[x], [-1, weights['wd1'][x].get_shape().as_list()[0]]), tf.range(self.populationSize) , dtype=tf.float32 )
         fc1 = tf.map_fn(lambda x:tf.add(tf.matmul(fc1[x], weights['wd1'][x]), biases['bd1'][x]),  tf.range(self.populationSize) , dtype=tf.float32 )
         fc1 = tf.map_fn(lambda x: tf.nn.relu(fc1[x]) , tf.range(self.populationSize)  , dtype=tf.float32 )
+        
         # Output, class prediction
         # finally we multiply the fully connected layer with the weights and add a bias term. 
         out = tf.map_fn(lambda x: tf.add(tf.matmul(fc1[x], weights['out'][x]), biases['out'][x]),tf.range(self.populationSize) , dtype=tf.float32 )
@@ -441,7 +448,15 @@ class Neural_network:
             with tf.name_scope('accuracies') as scope:
 
                 train_accuracies = tf.map_fn(lambda x: self.get_accuracies(x),predicts)
+
                 #train_accuracies = self.get_accuracies(predicts[0])
+            with tf.name_scope('cost') as cost: 
+                
+                cost = tf.map_fn(lambda pred: tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=self.Y)),predicts)
+            
+            with tf.name_scope('square_mean_error') as scope:
+
+                square_mean_error = tf.map_fn(lambda pred: tf.reduce_mean(tf.squared_difference(pred, Y)),predicts)
             #with tf.name_scope('square_mean_errors') as scope:
 
            #     square_mean_errors = tf.map_fn(lambda x: self.get_square_mean_error(x),predicts)
@@ -492,7 +507,8 @@ class Neural_network:
             ## Utilizacao das acuracias e predicts como tensores
             self.predicts = predicts
             self.accuracies = train_accuracies
-            #self.square_mean_errors = square_mean_errors
+            self.cost = cost
+            self.square_mean_error = square_mean_error
             self.label_argmax = tf.cast(tf.argmax(
                 self.Y, axis=1, name="label_test_argmax_sme"),tf.float32)
 
