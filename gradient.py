@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 import time
-
+import matplotlib.pyplot as plt
 
 def get_mnist_data():
     mnist = tf.keras.datasets.mnist
@@ -25,9 +25,9 @@ def get_mnist_data():
 train_x,train_y,test_x,test_y = get_mnist_data()   
 train_x = train_x.reshape(-1, 28, 28, 1)
 test_x =  test_x.reshape(-1, 28, 28, 1)
-training_iters = 200 
-learning_rate = 0.001 
-batch_size = 128
+training_iters = 2000
+learning_rate = 0.00001 
+batch_size = 4000
 n_classes = 10
 x_size = train_x.shape[1]
 y_size = train_y.shape[1]  # Number of outcomes (3 iris flowers)
@@ -57,7 +57,7 @@ def conv_net(x, weights, biases):
 
     convs = []
     convs.append(conv1)
-    for i in range(6):
+    for i in range(len(weights.keys()) - 3):
         #conv = conv2d(convs[i], weights['wc' + str(i+2)], biases['bc' + str(i+2)]) 
         #conv = maxpool2d(conv, k=2) 
         convs.append( maxpool2d(conv2d(convs[i], weights['wc' + str(i+2)], biases['bc' + str(i+2)]), k=2))
@@ -91,53 +91,63 @@ def conv_net(x, weights, biases):
     return out
 
 weights = {
-    # 'wc1': tf.get_variable('W0', shape=(3,3,1,32), initializer=tf.contrib.layers.xavier_initializer()), 
-    # 'wc2': tf.get_variable('W1', shape=(3,3,32,64), initializer=tf.contrib.layers.xavier_initializer()), 
-    # 'wc3': tf.get_variable('W2', shape=(3,3,64,128), initializer=tf.contrib.layers.xavier_initializer()),
-    'wc1': tf.get_variable('W0', shape=(3,3,1,2), initializer=tf.contrib.layers.xavier_initializer()), 
-    'wc2': tf.get_variable('W1', shape=(3,3,2,4), initializer=tf.contrib.layers.xavier_initializer()),
-    'wc3': tf.get_variable('W2', shape=(3,3,4,16), initializer=tf.contrib.layers.xavier_initializer()),
-    'wc4': tf.get_variable('W3', shape=(3,3,16,32), initializer=tf.contrib.layers.xavier_initializer()),
-    'wc5': tf.get_variable('W4', shape=(3,3,32,64), initializer=tf.contrib.layers.xavier_initializer()),
-    'wc6': tf.get_variable('W5', shape=(3,3,64,128), initializer=tf.contrib.layers.xavier_initializer()),
-    'wc7': tf.get_variable('W6', shape=(3,3,128,256), initializer=tf.contrib.layers.xavier_initializer()),
-    'wc8': tf.get_variable('W7', shape=(3,3,256,256), initializer=tf.contrib.layers.xavier_initializer()),
-    'wc9': tf.get_variable('W8', shape=(3,3,256,256), initializer=tf.contrib.layers.xavier_initializer()),
-    'wc10': tf.get_variable('W9', shape=(3,3,256,256), initializer=tf.contrib.layers.xavier_initializer()),
-    'wc11': tf.get_variable('W10', shape=(3,3,256,256), initializer=tf.contrib.layers.xavier_initializer()),
-    'wc12': tf.get_variable('W11', shape=(3,3,256,256), initializer=tf.contrib.layers.xavier_initializer()), 
-    'wc13': tf.get_variable('W12', shape=(3,3,256,256), initializer=tf.contrib.layers.xavier_initializer()), 
-    'wc14': tf.get_variable('W13', shape=(3,3,256,256), initializer=tf.contrib.layers.xavier_initializer()), 
-    'wd1': tf.get_variable('Wd1', shape=(256,16), initializer=tf.contrib.layers.xavier_initializer()), 
-    'out': tf.get_variable('Wout', shape=(16,10), initializer=tf.contrib.layers.xavier_initializer()), 
+
+    'wc1': tf.get_variable('W0', shape=(3,3,1,2), initializer=tf.keras.initializers.he_normal()), 
+    'wc2': tf.get_variable('W1', shape=(3,3,2,4), initializer=tf.keras.initializers.he_normal()),
+    'wc3': tf.get_variable('W2', shape=(3,3,4,16), initializer=tf.keras.initializers.he_normal()),
+    'wc4': tf.get_variable('W3', shape=(3,3,16,32), initializer=tf.keras.initializers.he_normal()),
+    'wc5': tf.get_variable('W4', shape=(3,3,32,64), initializer=tf.keras.initializers.he_normal()),
+    'wc6': tf.get_variable('W5', shape=(3,3,64,128), initializer=tf.keras.initializers.he_normal()),
+    'wc7': tf.get_variable('W6', shape=(3,3,128,256), initializer=tf.keras.initializers.he_normal()),
+    'wc8': tf.get_variable('W7', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()),
+    'wc9': tf.get_variable('W8', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()),
+    'wc10': tf.get_variable('W9', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()),
+    'wc11': tf.get_variable('W10', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()),
+    'wc12': tf.get_variable('W11', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()), 
+    'wc13': tf.get_variable('W12', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()), 
+    'wc14': tf.get_variable('W13', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()), 
+    'wc15': tf.get_variable('W14', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()), 
+    'wc16': tf.get_variable('W15', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()), 
+    'wc17': tf.get_variable('W16', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()), 
+    'wc18': tf.get_variable('W17', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()), 
+    'wc19': tf.get_variable('W18', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()), 
+    'wc20': tf.get_variable('W19', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()), 
+
+    'wd1': tf.get_variable('Wd1', shape=(256,16), initializer=tf.keras.initializers.he_normal()), 
+    'out': tf.get_variable('Wout', shape=(16,10), initializer=tf.keras.initializers.he_normal()), 
 }
 biases = {
-    # 'bc1': tf.get_variable('B0', shape=(32), initializer=tf.contrib.layers.xavier_initializer()),
-    # 'bc2': tf.get_variable('B1', shape=(64), initializer=tf.contrib.layers.xavier_initializer()),
-    # 'bc3': tf.get_variable('B2', shape=(128), initializer=tf.contrib.layers.xavier_initializer()),
-    'bc1': tf.get_variable('B0', shape=(2), initializer=tf.contrib.layers.xavier_initializer()),
-    'bc2': tf.get_variable('B1', shape=(4), initializer=tf.contrib.layers.xavier_initializer()),
-    'bc3': tf.get_variable('B2', shape=(16), initializer=tf.contrib.layers.xavier_initializer()),
-    'bc4': tf.get_variable('B3', shape=(32), initializer=tf.contrib.layers.xavier_initializer()),
-    'bc5': tf.get_variable('B4', shape=(64), initializer=tf.contrib.layers.xavier_initializer()),
-    'bc6': tf.get_variable('B5', shape=(128), initializer=tf.contrib.layers.xavier_initializer()),
-    'bc7': tf.get_variable('B6', shape=(256), initializer=tf.contrib.layers.xavier_initializer()),
-    'bc8': tf.get_variable('B7', shape=(256), initializer=tf.contrib.layers.xavier_initializer()),
-    'bc9': tf.get_variable('B8', shape=(256), initializer=tf.contrib.layers.xavier_initializer()),
-    'bc10': tf.get_variable('B9', shape=(256), initializer=tf.contrib.layers.xavier_initializer()),
-    'bc11': tf.get_variable('B10', shape=(256), initializer=tf.contrib.layers.xavier_initializer()),
-    'bc12': tf.get_variable('B11', shape=(256), initializer=tf.contrib.layers.xavier_initializer()),
-    'bc13': tf.get_variable('B12', shape=(256), initializer=tf.contrib.layers.xavier_initializer()),
-    'bc14': tf.get_variable('B13', shape=(256), initializer=tf.contrib.layers.xavier_initializer()),
+
+
+    'bc1': tf.get_variable('B0', shape=(2), initializer=tf.keras.initializers.he_normal()),
+    'bc2': tf.get_variable('B1', shape=(4), initializer=tf.keras.initializers.he_normal()),
+    'bc3': tf.get_variable('B2', shape=(16), initializer=tf.keras.initializers.he_normal()),
+    'bc4': tf.get_variable('B3', shape=(32), initializer=tf.keras.initializers.he_normal()),
+    'bc5': tf.get_variable('B4', shape=(64), initializer=tf.keras.initializers.he_normal()),
+    'bc6': tf.get_variable('B5', shape=(128), initializer=tf.keras.initializers.he_normal()),
+    'bc7': tf.get_variable('B6', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc8': tf.get_variable('B7', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc9': tf.get_variable('B8', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc10': tf.get_variable('B9', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc11': tf.get_variable('B10', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc12': tf.get_variable('B11', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc13': tf.get_variable('B12', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc14': tf.get_variable('B13', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc15': tf.get_variable('B14', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc16': tf.get_variable('B15', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc17': tf.get_variable('B16', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc18': tf.get_variable('B17', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc19': tf.get_variable('B18', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc20': tf.get_variable('B19', shape=(256), initializer=tf.keras.initializers.he_normal()),
     
-    'bd1': tf.get_variable('Bd1', shape=(16), initializer=tf.contrib.layers.xavier_initializer()),
-    'out': tf.get_variable('Bout', shape=(10), initializer=tf.contrib.layers.xavier_initializer()),
+    'bd1': tf.get_variable('Bd1', shape=(16), initializer=tf.keras.initializers.he_normal()),
+    'out': tf.get_variable('Bout', shape=(10), initializer=tf.keras.initializers.he_normal()),
 }
 pred = conv_net(X, weights, biases)
 print(pred)
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
 
-optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
+optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
 #Here you check whether the index of the maximum value of the predicted image is equal to the actual labelled image. and both will be a column vector.
 correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
@@ -154,9 +164,11 @@ with tf.Session() as sess:
     test_loss = []
     train_accuracy = []
     test_accuracy = []
-    summary_writer = tf.summary.FileWriter('./Output', sess.graph)
+    tempos = []
+    fig, ax = plt.subplots()
+    #summary_writer = tf.summary.FileWriter('./Output', sess.graph)
+    iter_time = time.time()
     for i in range(training_iters):
-        iter_time = time.time()
         for batch in range(len(train_x)//batch_size):
             
             batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
@@ -173,14 +185,21 @@ with tf.Session() as sess:
                     "{:.6f}".format(loss) + ", Training Accuracy= " + \
                     "{:.5f}".format(acc))
         time_passed = time.time() - iter_time
-        print("Iter_time: " + str(time_passed) )
+        print("tempo atual: " + str(time_passed) )
         print("Batch Finished!")
+        
 
         # Calculate accuracy for all 10000 mnist test images
         test_acc,valid_loss = sess.run([accuracy,cost], feed_dict={X: test_x,y : test_y})
         train_loss.append(loss)
         test_loss.append(valid_loss)
         train_accuracy.append(acc)
+        tempos.append(time_passed)
         test_accuracy.append(test_acc)
         print("Testing Accuracy:","{:.5f}".format(test_acc))
-    summary_writer.close()
+        if(time_passed >= 750):
+            break
+   # summary_writer.close()
+    plt.plot(tempos, test_accuracy, '-', lw=2)
+    plt.grid(True)
+    plt.show()

@@ -249,7 +249,7 @@ class Neural_network:
 
         convs = []
         convs.append(conv1)
-        for i in range(13):
+        for i in range(len(weights.keys()) - 3):
             conv = tf.map_fn( lambda x: self.conv2d(convs[i][x], weights['wc' + str(i+2)][x], biases['bc' + str(i+2)][x]) , tf.range(self.populationSize) , dtype=tf.float32 )
             conv = tf.map_fn( lambda x: self.maxpool2d(x, k=2) , conv , dtype=tf.float32 )
             convs.append(conv[:])
