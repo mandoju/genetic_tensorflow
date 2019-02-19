@@ -154,35 +154,41 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
     with tf.name_scope('Crossover'):
 
         #size_neural_networks = tournamentSize 
-        size_neural_networks = 4
+        size_neural_networks = 3
          
 
         finish = []
         finish_conv = []
         finish_bias = []
-        permutations = [[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]]
+        permutations = [[0,1],[0,2],[1,2]]#,[0,3],[1,2],[1,3],[2,3]]
         for key in best_conv: 
+                population = tf.stack([best_conv[key][0],best_conv[key][1],best_conv[key][2]])#,best_conv[key][3]])
+                i= 4
                 for permutation in permutations:
                         father_tensor = best_conv[key][permutation[0]]
                         mother_tensor = best_conv[key][permutation[1]]
                         
-                        old_population = tf.stack([father_tensor,mother_tensor])
-                        new_population = tf.map_fn(lambda x: generate_child_by_all(mother_tensor,father_tensor,mutationRate),tf.range( (population_size - size_neural_networks) // len(permutations) ) ,dtype=tf.float32)
-                        new_population = tf.concat([old_population,new_population],0)
+                        #old_population = tf.stack([father_tensor,mother_tensor])
+                        new_population = tf.map_fn(lambda x: generate_child_by_all(mother_tensor,father_tensor,mutationRate),tf.range( (population_size - size_neural_networks) //  len(permutations) ) ,dtype=tf.float32)
+                        print((population_size - size_neural_networks) //  len(permutations))
+                        population = tf.concat([population,new_population],0)
+                        i +=1
+                print(i)
                 #print(dir(tf))
                 #finish = tf.assign(best_conv[key], tf.stack(new_population))
                 #import ipdb; ipdb.set_trace();
-                finish_conv.append(tf.assign(convulations[key], tf.stack(new_population)))
+                finish_conv.append(tf.assign(convulations[key], tf.stack(population)))
         for key in best_bias: 
+                population = tf.stack([best_bias[key][0],best_bias[key][1],best_bias[key][2]])#,best_bias[key][3]])
                 for permutation in permutations:
 
                         father_tensor = best_bias[key][permutation[0]]
                         mother_tensor = best_bias[key][permutation[1]]
                         
-                        old_population = tf.stack([father_tensor,mother_tensor])
+                        #old_population = tf.stack([father_tensor,mother_tensor])
                         new_population = tf.map_fn(lambda x: generate_child_by_all(mother_tensor,father_tensor,mutationRate),tf.range( (population_size - size_neural_networks) // len(permutations) ),dtype=tf.float32)
-                        new_population = tf.concat([old_population,new_population],0)
-                        finish_bias.append(tf.assign(bias[key], tf.stack(new_population)))
+                        population = tf.concat([population,new_population],0)
+                finish_bias.append(tf.assign(bias[key], tf.stack(population)))
         #father_tensor = neural_networks[0]
         #mother_tensor = neural_networks[1]
 
