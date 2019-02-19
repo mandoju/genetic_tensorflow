@@ -85,7 +85,7 @@ class Population:
             print("época: " + str(i))
             start_generation = time.time()
 
-            batch_size = 128
+            batch_size = 4000
             for batch in range(len(train_x)//batch_size):
                 print("batch: " + str(batch))
                 start_batch = time.time()
