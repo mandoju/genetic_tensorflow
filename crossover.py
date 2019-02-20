@@ -160,7 +160,7 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
         finish = []
         finish_conv = []
         finish_bias = []
-        permutations = [[0,1],[0,2],[1,2]],[0,3],[1,2],[1,3],[2,3]]
+        permutations = [[0,1],[0,2],[1,2],[0,3],[1,2],[1,3],[2,3]]
         for key in best_conv: 
                 population = tf.stack([best_conv[key][0],best_conv[key][1],best_conv[key][2]]),best_conv[key][3]])
                 for permutation in permutations:
