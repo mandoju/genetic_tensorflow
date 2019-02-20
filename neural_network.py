@@ -452,8 +452,10 @@ class Neural_network:
                 #train_accuracies = self.get_accuracies(predicts[0])
             with tf.name_scope('cost') as cost: 
                 
-                cost = tf.map_fn(lambda pred: tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=self.Y)),predicts)
-            
+                
+                #cost = tf.map_fn(lambda pred: tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=self.Y)),predicts)
+                cost = tf.map_fn(lambda pred: -tf.reduce_sum(Y * tf.log(pred)), predicts)
+
             with tf.name_scope('square_mean_error') as scope:
 
                 square_mean_error = tf.map_fn(lambda pred: tf.reduce_mean(tf.squared_difference(pred, Y)),predicts)
