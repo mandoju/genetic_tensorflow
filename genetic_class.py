@@ -33,8 +33,8 @@ class Population:
             #best = choose_best_tensor(
             #    self.neural_networks.neural_networks, self.neural_networks.accuracies)
 
-            inverted_cost = tf.multiply(self.neural_networks.cost,tf.constant(-0.1),name="inverted_costs")
-            inverted_sqe = tf.multiply(self.neural_networks.square_mean_error , tf.constant(-0.1),name="inverted_sqe")
+            inverted_cost = -self.neural_networks.cost tf.multiply #(self.neural_networks.cost,tf.constant(-0.1),name="inverted_costs")
+            inverted_sqe = -self.neural_networks.square_mean_error #tf.multiply(self.neural_networks.square_mean_error , tf.constant(-0.1),name="inverted_sqe")
             #fitness = self.neural_networks.accuracies * 100  + inverted_sqe + inverted_cost
             #fitness = self.neural_networks.accuracies
             fitness = inverted_cost

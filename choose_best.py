@@ -87,6 +87,8 @@ def choose_best_tensor_conv(convulations, biases, fitnesses):
 
         top_values, top_indices = tf.math.top_k(
             tf.reshape(fitnesses, (-1,)), 4)
+        
+        
         #new_neural_networks = tf.gather()
         #top_2_idx = np.argsort(fitnesses)[-2:]
         # print("indices")
