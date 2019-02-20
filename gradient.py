@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 import time
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 def get_mnist_data():
     mnist = tf.keras.datasets.mnist
@@ -165,7 +165,7 @@ with tf.Session() as sess:
     train_accuracy = []
     test_accuracy = []
     tempos = []
-    fig, ax = plt.subplots()
+    #fig, ax = plt.subplots()
     #summary_writer = tf.summary.FileWriter('./Output', sess.graph)
     iter_time = time.time()
     for i in range(training_iters):
@@ -199,7 +199,7 @@ with tf.Session() as sess:
         print("Testing Accuracy:","{:.5f}".format(test_acc))
         if(time_passed >= 750):
             break
-   # summary_writer.close()
-    plt.plot(tempos, test_accuracy, '-', lw=2)
-    plt.grid(True)
-    plt.show()
+    # summary_writer.close()
+    # plt.plot(tempos, test_accuracy, '-', lw=2)
+    # plt.grid(True)
+    # plt.show()
