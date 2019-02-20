@@ -7,7 +7,7 @@ from tensorflow.python.client import timeline
 import numpy as np
 import tensorflow as tf
 import time
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 
 class Population:
@@ -120,9 +120,9 @@ class Population:
             #print(finished)
 
         sess.close()
-        plt.plot(tempos, acuracias, '-', lw=2)
-        plt.grid(True)
-        plt.show()
+        # plt.plot(tempos, acuracias, '-', lw=2)
+        # plt.grid(True)
+        # plt.show()
     
         # tf.reset_default_graph()
         # createGraph = tf.Graph()
