@@ -453,7 +453,7 @@ class Neural_network:
             with tf.name_scope('cost') as cost: 
                 
                 
-                cost = tf.map_fn(lambda pred: tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=self.Y)),predicts)
+                cost = tf.map_fn(lambda pred: tf.reduce_mean(tf.nn.weighted_cross_entropy_with_logits(logits=pred, labels=self.Y)),predicts)
                 #cost = tf.map_fn(lambda pred: -tf.reduce_sum(self.Y * tf.log(pred)), predicts)
 
             with tf.name_scope('square_mean_error') as scope:
