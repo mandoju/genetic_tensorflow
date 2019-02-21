@@ -105,13 +105,13 @@ class Population:
                 # if(batch == (len(train_x)//batch_size) - 1 ):
                 #     print(accuracies)
                 #     print("tempo:" + str(time.time() - start_generation))
-            print("Accuracy: ")
-            print(accuracies)
-            acuracias.append(accuracies)
-            print("Cost: ")
-            print(cost)
-            print("tempo atual: " + str(time.time() - start_time))
-            tempos.append(time.time() - start_time)
+                print("Accuracy: ")
+                print(accuracies)
+                acuracias.append(accuracies)
+                print("Cost: ")
+                print(cost)
+                print("tempo atual: " + str(time.time() - start_time))
+                tempos.append(time.time() - start_time)
             
                 # trace = timeline.Timeline(step_stats=run_metadata.step_stats)
                 # with open('./log/timeline.ctf.json', 'w') as trace_file:
