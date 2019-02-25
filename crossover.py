@@ -70,7 +70,7 @@ def generate_child_by_mixed(mother_tensor,father_tensor,mutationRate):
         random_array_select =  tf.random_uniform(dtype=tf.float32, minval=0,maxval=1,shape=[shape_size[0]])
         random_array_select = tf.math.round(random_array_select)
 
-        random_array_binary = tf.multiply(random_array_select,random_array_binary[:,tf.newaxis])
+        random_array_binary = tf.multiply(random_array_select[:,tf.newaxis],random_array_binary)
         #Criando o array inverso para definir o número ao contrário para criar a quantidade recebida pelo pai
         #random_array_inverse = tf.map_fn(lambda x: (1 - x), random_array_binary, dtype=tf.float32)
         random_array_inverse = tf.scalar_mul(-1, random_array_binary) + tf.ones_like(random_array_binary)
@@ -245,7 +245,7 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
                 #old_population = tf.stack([father_tensor,mother_tensor])
                 new_population = tf.map_fn(lambda x: generate_child_by_mixed(mother_tensor,father_tensor,mutationRate),tf.range( population_size - 2 ),dtype=tf.float32)
                 population = tf.concat([population,new_population],0)
-                
+
                 finish_bias.append(tf.assign(bias[key], tf.stack(population)))
         #father_tensor = neural_networks[0]
         #mother_tensor = neural_networks[1]
