@@ -229,7 +229,7 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
                 mother_tensor = best_conv[key][1]
                 
                 # old_population = tf.stack([father_tensor,mother_tensor])
-                new_population = tf.map_fn(lambda x: generate_child_by_mixed(mother_tensor,father_tensor,mutationRate),tf.range( population_size - 2 ) ,dtype=tf.float32)
+                new_population = tf.map_fn(lambda x: generate_child_by_all(mother_tensor,father_tensor,mutationRate),tf.range( population_size - 2 ) ,dtype=tf.float32)
                 # print((population_size - size_neural_networks) //  len(permutations))
                 population = tf.concat([population,new_population],0)
                 #print(dir(tf))
@@ -243,7 +243,7 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
                 mother_tensor = best_bias[key][1]
                 
                 #old_population = tf.stack([father_tensor,mother_tensor])
-                new_population = tf.map_fn(lambda x: generate_child_by_mixed(mother_tensor,father_tensor,mutationRate),tf.range( population_size - 2 ),dtype=tf.float32)
+                new_population = tf.map_fn(lambda x: generate_child_by_all(mother_tensor,father_tensor,mutationRate),tf.range( population_size - 2 ),dtype=tf.float32)
                 population = tf.concat([population,new_population],0)
 
                 finish_bias.append(tf.assign(bias[key], tf.stack(population)))
