@@ -82,11 +82,11 @@ def choose_best_tensor(neural_networks, fitnesses):
         return neural_networks_output
 
 
-def choose_best_tensor_conv(convulations, biases, fitnesses):
+def choose_best_tensor_conv(convulations, biases, fitnesses, chooseNumber):
     with tf.name_scope('Choose_best') as scope:
 
         top_values, top_indices = tf.math.top_k(
-            fitnesses, 4)
+            fitnesses, chooseNumber)
             #tf.reshape(fitnesses, (-1,)), 4)
         
         #new_neural_networks = tf.gather()
@@ -118,13 +118,16 @@ def choose_best_tensor_conv(convulations, biases, fitnesses):
         biases_output_best = {key: None for key in biases_output_keys}
 
         for key in convulations:
-            convulation_weights_output[key] = tf.stack(
-                [convulations[key][top_indices[0]], convulations[key][top_indices[1]], convulations[key][top_indices[2]], convulations[key][top_indices[3]]])
+            #array_to_stack = tf.map_fn(lambda x: convulations[key][top_indices[x]], tf.range(chooseNumber))
+            convulation_weights_output[key] = convulation_weights_best_output[key][top_indices[0]:top_indices[chooseNumber - 1]]
+            # tf.stack(
+            #     [convulations[key][top_indices[0]], convulations[key][top_indices[1]], convulations[key][top_indices[2]], convulations[key][top_indices[3]]])
             convulation_weights_best_output[key] = convulations[key][top_indices[0]]
         for key in biases:
             # print(idx);
-            biases_output[key] = tf.stack(
-                [biases[key][top_indices[0]], biases[key][top_indices[1]], biases[key][top_indices[2]], biases[key][top_indices[3]]])
+            biases_output[key] = biases[key][top_indices[0]:top_indices[chooseNumber - 1]]
+            # tf.stack(
+            #     [biases[key][top_indices[0]], biases[key][top_indices[1]], biases[key][top_indices[2]], biases[key][top_indices[3]]])
             biases_output_best[key] = biases[key][top_indices[0]]
 
         #neural_networks_output = tf.stack([neural_networks[top_indices[0]],neural_networks[top_indices[1]]])

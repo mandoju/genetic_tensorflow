@@ -38,11 +38,11 @@ class Population:
             #fitness = self.neural_networks.accuracies * 100  + inverted_sqe + inverted_cost
             #fitness = self.neural_networks.accuracies
             fitness = inverted_cost / 2  + inverted_sqe / 2
-            best_conv, best_bias, the_best_conv, the_best_bias = choose_best_tensor_conv(self.neural_networks.convulations, self.neural_networks.biases, fitness)
+            best_conv, best_bias, the_best_conv, the_best_bias = choose_best_tensor_conv(self.neural_networks.convulations, self.neural_networks.biases, fitness, self.populationSize)
             # self.neural_networks.best_conv = the_best_conv
             # self.neural_networks.best_bias = the_best_bias
             # best_accuracies = self.neural_networks.run_best()
-
+            
             #new_population = crossover(best,self.population, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers))
             finish_conv, finish_bias = crossover_conv(best_conv,best_bias,self.convulations,self.bias, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers))
             #self.neural_networks.convulations = finish_conv
@@ -95,16 +95,18 @@ class Population:
 
                 accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
                     self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y} )
-                    #,options=run_options, run_metadata=run_metadata )
+                
+                # options=run_options, run_metadata=run_metadata )
                 # print("Accuracy: ")
                 # print(accuracies)
-                # print("Cost: ")
+                # print("Cost: ").
                 # print(cost)
                 # print("tempo batch: " + str(time.time() - start_batch))
 
                 # if(batch == (len(train_x)//batch_size) - 1 ):
                 #     print(accuracies)
                 #     print("tempo:" + str(time.time() - start_generation))
+
                 print("Accuracy: ")
                 print(accuracies)
                 acuracias.append(accuracies)
