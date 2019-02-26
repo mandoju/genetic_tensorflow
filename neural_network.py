@@ -262,7 +262,7 @@ class Neural_network:
         
         # Output, class prediction
         # finally we multiply the fully connected layer with the weights and add a bias term. 
-        out = tf.map_fn(lambda x: tf.add(tf.matmul(fc1[x], weights['out'][x]), biases['out'][x]),tf.range(self.populationSize) , dtype=tf.float64 )
+        out = tf.map_fn(lambda x: tf.add(tf.matmul(fc1[x], weights['out'][x]), biases['out'][x]),tf.range(self.populationSize) , dtype=tf.float32 )
         return out
 
     def conv_net_best(self):  
