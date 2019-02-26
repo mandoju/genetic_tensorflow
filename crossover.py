@@ -230,9 +230,6 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
                 population = best_conv[key] #, best_conv[key][2], best_conv[key][3] ])
                 new_population = tf.map_fn(lambda permutation: generate_child_by_all(best_conv[key][permutation[0]],best_conv[key][permutation[0]]) ,permutations, dtype=tf.float32)
                 second_new_population = tf.map_fn(lambda permutation: generate_child_by_all(best_conv[key][permutation[0]],best_conv[key][permutation[0]]) ,second_permutations, dtype=tf.float32)
-                print(population)
-                print(new_population)
-                print(second_new_population)
                 population = tf.concat([population,new_population,second_new_population],0)
                 # for permutation in permutations:
                 #         father_tensor = best_conv[key][permutation[0]]
@@ -252,8 +249,8 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
 
         for key in best_bias: 
                 population = best_bias[key] #, best_bias[key][2] ,best_bias[key][3] ])
-                new_population = tf.map_fn(lambda permutation: generate_child_by_all(best_bias[key][permutation[0]],best_bias[key][permutation[0]]) ,permutations)
-                second_new_population = tf.map_fn(lambda permutation: generate_child_by_all(best_bias[key][permutation[0]],best_bias[key][permutation[0]]) ,second_permutations)
+                new_population = tf.map_fn(lambda permutation: generate_child_by_all(best_bias[key][permutation[0]],best_bias[key][permutation[0]]) ,permutations, dtype=tf.float32)
+                second_new_population = tf.map_fn(lambda permutation: generate_child_by_all(best_bias[key][permutation[0]],best_bias[key][permutation[0]]) ,second_permutations, dtype=tf.float32)
                 population = tf.concat([population,new_population,second_new_population],0)                
                 
                 # father_tensor = best_bias[key][0]
