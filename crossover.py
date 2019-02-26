@@ -263,7 +263,7 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
                 bias_mutateds = tf.map_fn(lambda x: mutation(bias[key][x],mutationRate),tf.range(population_size - (population_size * 2 // 10)),dtype=tf.float32)
                 population = tf.concat([population,bias_mutateds],0)
                
-                finish_bias.append(tf.assign(bias[key], tf.stack(bias)))
+                finish_bias.append(tf.assign(bias[key], tf.stack(population) ))
         #father_tensor = neural_networks[0]
         #mother_tensor = neural_networks[1]
 
