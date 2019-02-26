@@ -118,11 +118,6 @@ def choose_best_tensor_conv(convulations, biases, fitnesses, chooseNumber):
         biases_output_best = {key: None for key in biases_output_keys}
 
         for key in convulations:
-            print(chooseNumber)
-            print(top_indices[0])
-            print(top_indices[chooseNumber - 1])
-
-        
             #array_to_stack = tf.map_fn(lambda x: convulations[key][top_indices[x]], tf.range(chooseNumber))
             convulation_weights_output[key] = tf.gather(convulations[key],top_indices) #tf.slice(convulation_weights_best_output[key],conv_shape_zero, conv_shape_altered )
             # tf.stack(
