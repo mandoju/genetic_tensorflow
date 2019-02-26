@@ -89,6 +89,8 @@ def choose_best_tensor_conv(convulations, biases, fitnesses, chooseNumber):
             fitnesses, chooseNumber)
             #tf.reshape(fitnesses, (-1,)), 4)
         
+        top_mutate_values, top_mutate_indices = tf.math.top_k(
+            fitnesses, chooseNumber*8)
         #new_neural_networks = tf.gather()
         #top_2_idx = np.argsort(fitnesses)[-2:]
         # print("indices")
@@ -117,19 +119,27 @@ def choose_best_tensor_conv(convulations, biases, fitnesses, chooseNumber):
             key: None for key in convulations_weights_keys}
         biases_output_best = {key: None for key in biases_output_keys}
 
+        convulation_weights_mutate_output = {
+            key: None for key in convulations_weights_keys}
+        biases_output_mutate = {key: None for key in biases_output_keys}
+        
         for key in convulations:
             #array_to_stack = tf.map_fn(lambda x: convulations[key][top_indices[x]], tf.range(chooseNumber))
             convulation_weights_output[key] = tf.gather(convulations[key],top_indices) #tf.slice(convulation_weights_best_output[key],conv_shape_zero, conv_shape_altered )
+            convulation_weights_mutate_output[key] = tf.gather(convulations[key],top_mutate_indices) #tf.slice(convulation_weights_best_output[key],conv_shape_zero, conv_shape_altered )
+
             # tf.stack(
             #     [convulations[key][top_indices[0]], convulations[key][top_indices[1]], convulations[key][top_indices[2]], convulations[key][top_indices[3]]])
             convulation_weights_best_output[key] = convulations[key][top_indices[0]]
         for key in biases:
             # print(idx);
             biases_output[key] = tf.gather(biases[key], top_indices) #[top_indices[0]:top_indices[chooseNumber - 1]]
+            biases_output_mutate[key] = tf.gather(biases[key], top_mutate_indices) #[top_indices[0]:top_indices[chooseNumber - 1]]
+
             # tf.stack(
             #     [biases[key][top_indices[0]], biases[key][top_indices[1]], biases[key][top_indices[2]], biases[key][top_indices[3]]])
             biases_output_best[key] = biases[key][top_indices[0]]
 
         #neural_networks_output = tf.stack([neural_networks[top_indices[0]],neural_networks[top_indices[1]]])
         # return neural_networks_output;
-        return convulation_weights_output, biases_output, convulation_weights_best_output, biases_output_best
+        return convulation_weights_output, biases_output, convulation_weights_best_output, biases_output_best, convulation_weights_mutate_output, biases_output_mutate

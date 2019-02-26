@@ -38,13 +38,13 @@ class Population:
             #fitness = self.neural_networks.accuracies * 100  + inverted_sqe + inverted_cost
             #fitness = self.neural_networks.accuracies
             fitness = inverted_cost / 2  + inverted_sqe / 2
-            best_conv, best_bias, the_best_conv, the_best_bias = choose_best_tensor_conv(self.neural_networks.convulations, self.neural_networks.biases, fitness, self.populationSize // 10)
+            best_conv, best_bias, the_best_conv, the_best_bias, mutate_conv, mutate_bias = choose_best_tensor_conv(self.neural_networks.convulations, self.neural_networks.biases, fitness, self.populationSize // 10)
             # self.neural_networks.best_conv = the_best_conv
             # self.neural_networks.best_bias = the_best_bias
             # best_accuracies = self.neural_networks.run_best()
 
             #new_population = crossover(best,self.population, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers))
-            finish_conv, finish_bias = crossover_conv(best_conv,best_bias,self.convulations,self.bias, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers))
+            finish_conv, finish_bias = crossover_conv(best_conv,best_bias,mutate_conv,mutate_bias,self.convulations,self.bias, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers))
             #self.neural_networks.convulations = finish_conv
             #self.neural_networks.biases = finish_bias
 
