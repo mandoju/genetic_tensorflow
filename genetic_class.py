@@ -102,7 +102,7 @@ class Population:
                 msg = "Batch: " + str(batch)
                 f.write(msg)
                 f.write("\n")
-                f.write(np.array_str(finished_bias0]))
+                f.write(np.array_str(predicts))
                 f.write("\n")
                 f.write(np.array_str(batch_y))
                 f.write("\n")
