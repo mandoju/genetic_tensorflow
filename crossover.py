@@ -218,6 +218,9 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
         finish_conv = []
         finish_bias = []
         tamanhoElite = population_size // 10
+        tamanhoCrossover = tamanhoElite
+        tamanhoMutacoes = population_size - (tamanhoElite + tamanhoCrossover) // 3
+        tamanhoUltimaMutacao = populationSize - (tamanhoElite + tamanhoCrossover + tamanhoMutacoes * 2)
         permutations = tf.range(tamanhoElite)
         permutations = tf.reshape(permutations, [tamanhoElite//2,2])
         second_permutations = tf.range(tamanhoElite)
@@ -242,7 +245,10 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
                 #print(dir(tf))
                 #finish = tf.assign(best_conv[key], tf.stack(new_population))
                 #import ipdb; ipdb.set_trace();
-                conv_mutateds = tf.map_fn(lambda x: mutation(convulations[key][x],mutationRate),tf.range(population_size - (population_size * 2 // 10)), dtype=tf.float32)
+                first_conv_mutateds = tf.map_fn(lambda x: mutation(convulations[key][x],mutationRate,0.1),tf.range( tamanhoMutacoes), dtype=tf.float32)
+                second_conv_mutateds = tf.map_fn(lambda x: mutation(convulations[key][x],mutationRate,0.05),tf.range( tamanhoMutacoes), dtype=tf.float32)
+                third_conv_mutateds = tf.map_fn(lambda x: mutation(convulations[key][x],mutationRate,0.01),tf.range( tamanhoUltimaMutacao), dtype=tf.float32)
+                conv_mutateds = tf.concat([first_conv_mutateds,second_conv_mutateds,third_conv_mutateds],0)
                 population = tf.concat([population,conv_mutateds],0)
                 
                 finish_conv.append(tf.assign(convulations[key], tf.stack(population)))
@@ -261,6 +267,13 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
                 # population = tf.concat([population,new_population],0)
 
                 bias_mutateds = tf.map_fn(lambda x: mutation(bias[key][x],mutationRate),tf.range(population_size - (population_size * 2 // 10)),dtype=tf.float32)
+
+                first_bias_mutateds = tf.map_fn(lambda x: mutation(bias[key][x],mutationRate,0.1),tf.range( tamanhoMutacoes), dtype=tf.float32)
+                second_bias_mutateds = tf.map_fn(lambda x: mutation(bias[key][x],mutationRate,0.05),tf.range( tamanhoMutacoes), dtype=tf.float32)
+                third_bias_mutateds = tf.map_fn(lambda x: mutation(bias[key][x],mutationRate,0.01),tf.range( tamanhoUltimaMutacao), dtype=tf.float32)
+                bias_mutateds = tf.concat([first_bias_mutateds,second_bias_mutateds,third_bias_mutateds],0)
+
+                
                 population = tf.concat([population,bias_mutateds],0)
                
                 finish_bias.append(tf.assign(bias[key], tf.stack(population) ))

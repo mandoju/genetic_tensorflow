@@ -6,7 +6,7 @@ def function_map(xInput,mutationRate):
     return tf.map_fn(lambda x: tf.cond( x < mutationRate , lambda: 1.0 , lambda: 0.0 ), xInput, dtype=tf.float32)
 
 
-def mutation(tensor, mutationRate):
+def mutation(tensor, mutationRate,mutationTax):
     # depois fazer matrix mascara (a.k.a recomendacao do gabriel)
     with tf.name_scope('Mutation'):
 
@@ -22,7 +22,7 @@ def mutation(tensor, mutationRate):
 
         random_array_binary =  tf.where (comparison, tf.zeros_like(random_array_binary), tf.ones_like(random_array_binary)) 
         
-        random_array_values =  tf.random_uniform(dtype=tf.float32, minval=-1, maxval=1, shape=shapeSize)
+        random_array_values =  tf.random_uniform(dtype=tf.float32, minval=(1-mutationTax), maxval=(1+mutationTax), shape=shapeSize)
 
         random_mutation = tf.multiply(random_array_binary,random_array_values)
         
