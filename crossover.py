@@ -219,7 +219,7 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
         finish_bias = []
         tamanhoElite = population_size // 10
         tamanhoCrossover = tamanhoElite
-        tamanhoMutacoes = population_size - (tamanhoElite + tamanhoCrossover) // 3
+        tamanhoMutacoes = (population_size - (tamanhoElite + tamanhoCrossover) )// 3
         tamanhoUltimaMutacao = population_size - (tamanhoElite + tamanhoCrossover + tamanhoMutacoes * 2)
         print(tamanhoUltimaMutacao)
         permutations = tf.range(tamanhoElite)
