@@ -218,13 +218,15 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
         finish_conv = []
         finish_bias = []
         tamanhoElite = population_size // 10
+        print(tamanhoElite)
+        print(tamanhoElite//2)
+        tamanhoCrossover = tamanhoElite
+        tamanhoMutacoes = population_size - (tamanhoElite + tamanhoCrossover) // 3
+        tamanhoUltimaMutacao = population_size - (tamanhoElite + tamanhoCrossover + tamanhoMutacoes * 2)
         permutations = tf.range(tamanhoElite)
         permutations = tf.reshape(permutations, [tamanhoElite//2,2])
         second_permutations = tf.range(tamanhoElite)
         second_permutations = tf.reshape(permutations, [tamanhoElite//2,2])
-        tamanhoCrossover = tamanhoElite
-        tamanhoMutacoes = population_size - (tamanhoElite + tamanhoCrossover) // 3
-        tamanhoUltimaMutacao = population_size - (tamanhoElite + tamanhoCrossover + tamanhoMutacoes * 2)
         keys = best_conv.keys()
 
 
