@@ -228,8 +228,8 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
 
         for key in best_conv: 
                 population = tf.stack([ best_conv[key][0], best_conv[key][1]]) #, best_conv[key][2], best_conv[key][3] ])
-                new_population = tf.map_fn(lambda permutation: generate_child_by_all(best_conv[key][permutation[0]],best_conv[key][permutation[0]]) ,permutations)
-                second_new_population = tf.map_fn(lambda permutation: generate_child_by_all(best_conv[key][permutation[0]],best_conv[key][permutation[0]]) ,second_permutations)
+                new_population = tf.map_fn(lambda permutation: generate_child_by_all(best_conv[key][permutation[0]],best_conv[key][permutation[0]]) ,permutations, dtype=tf.float32)
+                second_new_population = tf.map_fn(lambda permutation: generate_child_by_all(best_conv[key][permutation[0]],best_conv[key][permutation[0]]) ,second_permutations, dtype=tf.float32)
                 print(population)
                 print(new_population)
                 print(second_new_population)
