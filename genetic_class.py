@@ -88,7 +88,7 @@ class Population:
             start_generation = time.time()
 
             batch_size = 4000
-            f = open('predicts.txt', 'wb')
+            f = open('predicts.txt', 'w')
 
             for batch in range(len(train_x)//batch_size):
                 print("batch: " + str(batch))
@@ -98,12 +98,13 @@ class Population:
 
                 predicts,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.predicts,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
                     self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y} )
-                
-                f.write("Batch: " + str(batch))
+
+                msg = "Batch: " + str(batch)
+                f.write(msg)
                 f.write("\n")
-                f.write(predicts)
+                f.write(np.array_str(finished_conv[0]))
                 f.write("\n")
-                f.write(batch_y)
+                f.write(np.array_str(batch_y))
                 f.write("\n")
 
                 # options=run_options, run_metadata=run_metadata )
