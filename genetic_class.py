@@ -37,7 +37,7 @@ class Population:
             inverted_sqe = -self.neural_networks.square_mean_error #tf.multiply(self.neural_networks.square_mean_error , tf.constant(-0.1),name="inverted_sqe")
             #fitness = self.neural_networks.accuracies * 100  + inverted_sqe + inverted_cost
             #fitness = self.neural_networks.accuracies
-            fitness = inverted_cost  #+ inverted_sqe / 2
+            fitness = self.neural_networks.accuracies  #+ inverted_sqe / 2
             best_conv, best_bias, the_best_conv, the_best_bias, mutate_conv, mutate_bias = choose_best_tensor_conv(self.neural_networks.convulations, self.neural_networks.biases, fitness, self.populationSize // 10)
             # self.neural_networks.best_conv = the_best_conv
             # self.neural_networks.best_bias = the_best_bias
@@ -86,7 +86,7 @@ class Population:
             print("época: " + str(i))
             start_generation = time.time()
 
-            batch_size = 1000
+            batch_size = 4000
             for batch in range(len(train_x)//batch_size):
                 print("batch: " + str(batch))
                 start_batch = time.time()
