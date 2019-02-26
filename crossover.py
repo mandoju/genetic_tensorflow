@@ -54,7 +54,7 @@ def generate_child_by_all(mother_tensor,father_tensor):
         #     crossoved = tf.multiply(father_tensor_process, random_array_binary[weight_idx]) + tf.multiply( mother_tensor_process, random_array_inverse[weight_idx])
         #     temp_neural_network.append(mutation(crossoved,mutationRate))
 
-        return mutation(crossoved,mutationRate)
+        return crossoved
 
 def generate_child_by_mixed(mother_tensor,father_tensor,mutationRate):
     with tf.name_scope('Passagem_Genes'):
