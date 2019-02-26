@@ -29,7 +29,7 @@ def mutation(tensor, mutationRate,mutationTax):
         mutated = tensor + random_mutation
         #comparison = tf.math.equal( random_mutation, tf.constant( 0.0 ) )
         #mutated = tf.where(comparison, tensor, random_mutation)
-        return mutated;
+        return mutated
 
 def mutation_by_node(tensor, mutationRate):
     # depois fazer matrix mascara (a.k.a recomendacao do gabriel)
