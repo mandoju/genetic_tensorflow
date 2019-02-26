@@ -267,7 +267,7 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
                 # new_population = tf.map_fn(lambda x: generate_child_by_all(mother_tensor,father_tensor,mutationRate),tf.range( population_size - 2 ),dtype=tf.float32)
                 # population = tf.concat([population,new_population],0)
 
-                bias_mutateds = tf.map_fn(lambda x: mutation(bias[key][x],mutationRate),tf.range(population_size - (population_size * 2 // 10)),dtype=tf.float32)
+                # bias_mutateds = tf.map_fn(lambda x: mutation(bias[key][x],mutationRate),tf.range(population_size - (population_size * 2 // 10)),dtype=tf.float32)
 
                 first_bias_mutateds = tf.map_fn(lambda x: mutation(bias[key][x],mutationRate,0.1),tf.range( tamanhoMutacoes), dtype=tf.float32)
                 second_bias_mutateds = tf.map_fn(lambda x: mutation(bias[key][x],mutationRate,0.05),tf.range( tamanhoMutacoes), dtype=tf.float32)
