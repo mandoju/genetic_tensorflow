@@ -318,13 +318,18 @@ class Neural_network:
 
     def get_accuracies(self,predict):
 
-            arg = tf.cast(tf.argmax(
-                self.Y, axis=1, name="label_test_argmax_sme"),tf.float32)
-            arg2 = tf.cast(tf.argmax(
-                predict, axis=1, name="label_test_argmax_sme"),tf.float32)
-            correct_prediction = tf.equal(arg, tf.cast(arg2,tf.float32))
-            accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+            # arg = tf.cast(tf.argmax(
+            #     self.Y, axis=1, name="label_test_argmax_sme"),tf.float32)
+            # arg2 = tf.cast(tf.argmax(
+            #     predict, axis=1, name="label_test_argmax_sme"),tf.float32)
+            # correct_prediction = tf.equal(arg, tf.cast(arg2,tf.float32))
+            # accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
+                #Here you check whether the index of the maximum value of the predicted image is equal to the actual labelled image. and both will be a column vector.
+            correct_prediction = tf.equal(tf.argmax(predict, 1), tf.argmax(self.Y, 1))
+
+            #calculate accuracy across all the given images and average them out. 
+            accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
             return accuracy
 
     def get_square_mean_error(self,predict):
