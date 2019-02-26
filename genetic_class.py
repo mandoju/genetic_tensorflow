@@ -7,6 +7,7 @@ from tensorflow.python.client import timeline
 import numpy as np
 import tensorflow as tf
 import time
+
 #import matplotlib.pyplot as plt
 
 
@@ -87,15 +88,24 @@ class Population:
             start_generation = time.time()
 
             batch_size = 4000
+            f = open('predicts.txt', 'wb')
+
             for batch in range(len(train_x)//batch_size):
                 print("batch: " + str(batch))
                 start_batch = time.time()
                 batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
                 batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]  
 
-                accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
+                predicts,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.predicts,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
                     self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y} )
                 
+                f.write("Batch: " + str(batch))
+                f.write("\n")
+                f.write(predicts)
+                f.write("\n")
+                f.write(batch_y)
+                f.write("\n")
+
                 # options=run_options, run_metadata=run_metadata )
                 # print("Accuracy: ")
                 # print(accuracies)
@@ -121,7 +131,7 @@ class Population:
             #print(pop)
             #print("---------")
             #print(finished)
-
+        f.close()
         sess.close()
         # plt.plot(tempos, acuracias, '-', lw=2)
         # plt.grid(True)
