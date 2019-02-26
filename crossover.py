@@ -245,7 +245,7 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
                 #print(dir(tf))
                 #finish = tf.assign(best_conv[key], tf.stack(new_population))
                 #import ipdb; ipdb.set_trace();
-                conv_mutateds = tf.map_fn(lambda x: mutation(convulations[key][x],mutationRate),tf.range((population_size * 2 // 10) - population_size))
+                conv_mutateds = tf.map_fn(lambda x: mutation(convulations[key][x],mutationRate),tf.range(population_size - (population_size * 2 // 10)))
                 population = tf.concat([population,conv_mutateds],0)
                 
                 finish_conv.append(tf.assign(convulations[key], tf.stack(population)))
@@ -263,7 +263,7 @@ def crossover_conv(best_conv,best_bias,convulations,bias,populationShape,populat
                 # new_population = tf.map_fn(lambda x: generate_child_by_all(mother_tensor,father_tensor,mutationRate),tf.range( population_size - 2 ),dtype=tf.float32)
                 # population = tf.concat([population,new_population],0)
 
-                bias_mutateds = tf.map_fn(lambda x: mutation(bias[key][x],mutationRate),tf.range((population_size * 2 // 10) - population_size))
+                bias_mutateds = tf.map_fn(lambda x: mutation(bias[key][x],mutationRate),tf.range(population_size - (population_size * 2 // 10)))
                 population = tf.concat([population,bias_mutateds],0)
                
                 finish_bias.append(tf.assign(bias[key], tf.stack(bias)))
