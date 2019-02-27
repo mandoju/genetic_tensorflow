@@ -26,7 +26,7 @@ def mutation(tensor, mutationRate,mutationTax):
 
         random_mutation = tf.multiply(random_array_binary,random_array_values)
         
-        mutated = tensor + random_mutation
+        mutated = tf.multiply(tensor,random_mutation)
         #comparison = tf.math.equal( random_mutation, tf.constant( 0.0 ) )
         #mutated = tf.where(comparison, tensor, random_mutation)
         return mutated
