@@ -26,7 +26,7 @@ geneticSettings = {
             'out': 10 ,#tf.get_variable('B4', shape=(10), initializer=tf.contrib.layers.xavier_initializer()),
         },
         'layers': [785,10],
-        'mutationRate': 0.05,
+        'mutationRate': 0.10,
         'logdir': './log/'
 }
 
