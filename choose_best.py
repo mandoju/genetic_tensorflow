@@ -159,7 +159,7 @@ def choose_best_tensor_tournament(convulations, biases, fitnesses, chooseNumber)
         
         numbers_to_tournament = tf.range(tf.shape(fitnesses)[0])
         numbers_to_tournament = tf.random.shuffle(numbers_to_tournament)
-        numbers_to_tournament = tf.reshape(numbers_to_tournament,[tf.shape(numbers_to_tournament)//tournamentSize, tournamentSize])
+        numbers_to_tournament = tf.reshape(numbers_to_tournament,[tf.shape(numbers_to_tournament)[0]//tournamentSize, tournamentSize])
         #top_indices = tf.map_fn( lambda x: get_tournament_result(numbers_to_tournament) , tf.range(numbers_to_tournament // tournamentSize ))
 
 
