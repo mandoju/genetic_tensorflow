@@ -164,7 +164,7 @@ def choose_best_tensor_tournament(convulations, biases, fitnesses, chooseNumber)
 
 
         top_indices =  tf.map_fn(lambda x: tournament(fitnesses,x) , numbers_to_tournament) 
-        top_indices = tf.reshape(top_indices, )
+        top_indices = tf.reshape(top_indices, [tf.shape(top_indices)[0]])
         top_mutate_indices = tf.tile(top_indices, 8)
         # top_values, top_indices = tf.math.top_k(
         #     fitnesses, chooseNumber)
