@@ -149,7 +149,7 @@ def tournament(fitnesses, indexes):
     #convulation_weights_output[key] = tf.gather(convulations[key],top_indices)
     tournament_fitnesses = tf.gather(fitnesses, indexes)
     get_best_value, get_best_index = tf.math.top_k(tournament_fitnesses)
-    return fitnesses[get_best_index[0]]
+    return tournament_fitnesses[get_best_index[0]]
 
 def choose_best_tensor_tournament(convulations, biases, fitnesses, chooseNumber):
     with tf.name_scope('Choose_best') as scope:
