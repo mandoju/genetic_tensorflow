@@ -4,37 +4,34 @@ import numpy as np
 import copy
 
 
-class Foo(object):
-    pass
 
+# def choose_best(neural_networks, fitnesses):
+#     with tf.name_scope('Choose_best') as scope:
 
-def choose_best(neural_networks, fitnesses):
-    with tf.name_scope('Choose_best') as scope:
+#         # Choosing top 2 fitnesses
+#         #top_2_idx = np.argsort(fitnesses)[-2:]
+#         # Choosing bottom 2 fitnesses
+#         top_2_idx = np.argsort(fitnesses)[2:]
 
-        # Choosing top 2 fitnesses
-        #top_2_idx = np.argsort(fitnesses)[-2:]
-        # Choosing bottom 2 fitnesses
-        top_2_idx = np.argsort(fitnesses)[2:]
+#         # Getting top 2 neural networks
+#         top_2_values = [neural_networks[i] for i in top_2_idx]
+#         neural_networks_selected = []
+#         neural_networks_selected.append(top_2_values[0])
+#         neural_networks_selected.append(top_2_values[1])
 
-        # Getting top 2 neural networks
-        top_2_values = [neural_networks[i] for i in top_2_idx]
-        neural_networks_selected = []
-        neural_networks_selected.append(top_2_values[0])
-        neural_networks_selected.append(top_2_values[1])
+#         # tf.reset_default_graph;
 
-        # tf.reset_default_graph;
+#         print("selecionado")
+#         print(neural_networks_selected)
+#         return neural_networks_selected
+#         #neural_networs_output = []
+#         # for neural_network in neural_networks_selected:
+#         #    temp_neural_network = []
+#         #    for weight in neural_network:
+#         #        temp_neural_network.append(tf.constant(weight))
+#         #    neural_networs_output.append(temp_neural_network[:])
 
-        print("selecionado")
-        print(neural_networks_selected)
-        return neural_networks_selected
-        #neural_networs_output = []
-        # for neural_network in neural_networks_selected:
-        #    temp_neural_network = []
-        #    for weight in neural_network:
-        #        temp_neural_network.append(tf.constant(weight))
-        #    neural_networs_output.append(temp_neural_network[:])
-
-        # return neural_networs_output;
+#         # return neural_networs_output;
 
 
 def create_constants(neural_networks):
@@ -224,3 +221,10 @@ def choose_best_tensor_tournament(convulations, biases, fitnesses, chooseNumber)
         #neural_networks_output = tf.stack([neural_networks[top_indices[0]],neural_networks[top_indices[1]]])
         # return neural_networks_output;
         return convulation_weights_output, biases_output, convulation_weights_best_output, biases_output_best, convulation_weights_mutate_output, biases_output_mutate
+
+
+def choose_best(chooseType,convulations, biases, fitnesses, chooseNumber):
+    if(chooseType == 'tournament'):
+        return choose_best_tensor_tournament(convulations, biases, fitnesses, chooseNumber)
+    else:
+        return choose_best_tensor_conv(convulations, biases, fitnesses, chooseNumber)

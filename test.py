@@ -25,6 +25,8 @@ geneticSettings = {
             'bd1': 128 ,#tf.get_variable('B3', shape=(128), initializer=tf.contrib.layers.xavier_initializer()),
             'out': 10 ,#tf.get_variable('B4', shape=(10), initializer=tf.contrib.layers.xavier_initializer()),
         },
+        'fitness': 'cross_entropy',
+        'selection': 'truncate',
         'layers': [785,10],
         'mutationRate': 0.10,
         'logdir': './log/'
@@ -45,7 +47,7 @@ begin_time = start_time
 
 try:
 
-    genetic = Population(populationSize,layers,mutationRate,weights_convulation,biases)
+    genetic = Population(geneticSettings)
     genetic.run_epoch()
     print(genetic.neural_networks.accuracies)
 

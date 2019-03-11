@@ -1,6 +1,6 @@
 from neural_network import Neural_network
 from create_population import create_population
-from choose_best import choose_best_tensor, choose_best_tensor_conv, choose_best_tensor_tournament
+from choose_best import choose_best
 from crossover import crossover, crossover_conv
 from utils import variable_summaries
 from tensorflow.python.client import timeline
@@ -13,13 +13,14 @@ import time
 
 class Population:
 
-    def __init__(self, populationSize, layers, mutationRate, weights_convulation, biases):
-        self.populationSize = populationSize
-        self.layers = layers
-        self.mutationRate = mutationRate
-        self.population, self.populationShape, self.convulations, self.bias = create_population(layers, populationSize)
+    def __init__(self, geneticSettings):
+        self.populationSize = geneticSettings['populationSize']
+        self.layers = geneticSettings['layers']
+        self.mutationRate = geneticSettings['mutationRate']
+        self.population, self.populationShape, self.convulations, self.bias = create_population(geneticSettings['layers'], geneticSettings['populationSize'])
         self.neural_networks = Neural_network(
-           populationSize , layers, self.convulations,self.bias, './log/')
+           geneticSettings['populationSize'] , geneticSettings['layers'], self.convulations,self.bias, './log/')
+        self.geneticSettings = geneticSettings
         self.current_epoch = 0
         
 
@@ -34,12 +35,19 @@ class Population:
             #best = choose_best_tensor(
             #    self.neural_networks.neural_networks, self.neural_networks.accuracies)
 
-            inverted_cost = -self.neural_networks.cost #tf.multiply(self.neural_networks.cost,tf.constant(-0.1),name="inverted_costs")
-            inverted_sqe = -self.neural_networks.square_mean_error #tf.multiply(self.neural_networks.square_mean_error , tf.constant(-0.1),name="inverted_sqe")
+
+            #inverted_cost = -self.neural_networks.cost #tf.multiply(self.neural_networks.cost,tf.constant(-0.1),name="inverted_costs")
+            #inverted_sqe = -self.neural_networks.square_mean_error #tf.multiply(self.neural_networks.square_mean_error , tf.constant(-0.1),name="inverted_sqe")
             #fitness = self.neural_networks.accuracies * 100  + inverted_sqe + inverted_cost
             #fitness = self.neural_networks.accuracies
-            fitness =  inverted_sqe #self.neural_networks.accuracies  #+ inverted_sqe / 2
-            best_conv, best_bias, the_best_conv, the_best_bias, mutate_conv, mutate_bias = choose_best_tensor_tournament(self.neural_networks.convulations, self.neural_networks.biases, fitness, self.populationSize // 10)
+            if(self.geneticSettings['fitness'] == 'cross_entropy'):
+                fitness = -self.neural_networks.cost
+            elif(self.geneticSettings['fitness'] == 'square_mean_error'):
+                fitness = -self.neural_networks.square_mean_error 
+            else:
+                fitness = self.neural_networks.accuracies
+            #fitness =  inverted_sqe #self.neural_networks.accuracies  #+ inverted_sqe / 2
+            best_conv, best_bias, the_best_conv, the_best_bias, mutate_conv, mutate_bias = choose_best(self.geneticSettings['selection'],self.neural_networks.convulations, self.neural_networks.biases, fitness, self.populationSize // 10)
             # self.neural_networks.best_conv = the_best_conv
             # self.neural_networks.best_bias = the_best_bias
             # best_accuracies = self.neural_networks.run_best()
