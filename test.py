@@ -41,7 +41,7 @@ geneticSettings = {
             'out': (10),
         },
         'fitness': 'root_square_mean_error',
-        'selection': 'truncate',
+        'selection': 'tournament',
         'layers': [785,10],
         'mutationRate': 0.10,
         'logdir': './log/'
