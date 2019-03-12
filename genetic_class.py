@@ -112,10 +112,11 @@ class Population:
                 msg = "Batch: " + str(batch)
                 f.write(msg)
                 f.write("\n")
-                f.write(np.array_str(predicts))
+                f.write(np.array_str(predicts[0]))
                 f.write("\n")
                 f.write(np.array_str(batch_y))
                 f.write("\n")
+                np.savetxt('predicts_save.txt',predicts[0])
 
                 # options=run_options, run_metadata=run_metadata )
                 # print("Accuracy: ")
