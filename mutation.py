@@ -21,12 +21,12 @@ def mutation(tensor, mutationRate,mutationTax):
         comparison = tf.math.greater( random_array_binary, tf.constant( mutationRate * 100 ) )
 
         random_array_binary =  tf.where (comparison, tf.zeros_like(random_array_binary), tf.ones_like(random_array_binary)) 
-        
+
         random_array_values =  tf.random_uniform(dtype=tf.float32, minval=(1-mutationTax), maxval=(1+mutationTax), shape=shapeSize)
 
         random_mutation = tf.multiply(random_array_binary,random_array_values)
         
-        mutated = tf.multiply(tensor,random_mutation)
+        mutated = tf.multiply(tensor,random_mutation) + ( random_mutation - 1 )
         #comparison = tf.math.equal( random_mutation, tf.constant( 0.0 ) )
         #mutated = tf.where(comparison, tensor, random_mutation)
         return mutated
