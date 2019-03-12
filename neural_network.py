@@ -464,6 +464,9 @@ class Neural_network:
             with tf.name_scope('square_mean_error') as scope:
 
                 square_mean_error = tf.map_fn(lambda pred: tf.reduce_mean(tf.squared_difference(pred, Y)),predicts)
+            with tf.name_scope('root_square_mean_error') as scope:
+
+                root_square_mean_error = tf.map_fn(lambda pred: tf.sqrt(tf.reduce_mean(tf.square(tf.subtract(Y, pred)))), predicts)
             #with tf.name_scope('square_mean_errors') as scope:
 
            #     square_mean_errors = tf.map_fn(lambda x: self.get_square_mean_error(x),predicts)
@@ -516,6 +519,7 @@ class Neural_network:
             self.accuracies = train_accuracies
             self.cost = cost
             self.square_mean_error = square_mean_error
+            self.root_square_mean_error = root_square_mean_error
             self.label_argmax = tf.cast(tf.argmax(
                 self.Y, axis=1, name="label_test_argmax_sme"),tf.float32)
 

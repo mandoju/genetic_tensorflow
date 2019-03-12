@@ -44,6 +44,8 @@ class Population:
                 fitness = -self.neural_networks.cost
             elif(self.geneticSettings['fitness'] == 'square_mean_error'):
                 fitness = -self.neural_networks.square_mean_error 
+            elif(self.geneticSettings['fitness'] == 'root_square_mean_error'):
+                fitness = -self.neural_networks.root_square_mean_error 
             else:
                 fitness = self.neural_networks.accuracies
             #fitness =  inverted_sqe #self.neural_networks.accuracies  #+ inverted_sqe / 2
