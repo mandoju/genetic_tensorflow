@@ -98,7 +98,6 @@ class Population:
             start_generation = time.time()
 
             batch_size = 4000
-            f = open('predicts.txt', 'w')
 
             for batch in range(len(train_x)//batch_size):
                 print("batch: " + str(batch))
@@ -106,18 +105,13 @@ class Population:
                 batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
                 batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]  
 
-                predicts,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.predicts,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
+                predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.argmax_predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
                     self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y} )
 
                 msg = "Batch: " + str(batch)
-                f.write(msg)
-                f.write("\n")
-                f.write(np.array_str(predicts[0]))
-                f.write("\n")
-                f.write(np.array_str(batch_y))
-                f.write("\n")
-                np.savetxt('predicts_save.txt',predicts[0])
-
+                print(predicts.shape)
+                np.savetxt('predicts_save.txt',predicts)
+                np.savetxt('Y.txt',label_argmax)
                 # options=run_options, run_metadata=run_metadata )
                 # print("Accuracy: ")
                 # print(accuracies)
