@@ -234,8 +234,11 @@ class Neural_network:
         biases = self.biases
         # here we call the conv2d function we had defined above and pass the input image x, weights wc1 and bias bc1.
         conv1 = tf.map_fn( lambda x: self.conv2d(self.X, weights['wc1'][x], biases['bc1'][x]) , tf.range(self.populationSize) , dtype=tf.float32 )
+        print(tf.shape(conv1))
+        print(tf.shape(tf.range(self.populationSize)))
+        print(self.populationSize)
         # Max Pooling (down-sampling), this chooses the max value from a 2*2 matrix window and outputs a 14*14 matrix.
-        conv1 = tf.map_fn( lambda x: self.maxpool2d(conv1[x], k=2) ,  tf.range(self.populationSize) , dtype=tf.float32 )
+        conv1 = tf.map_fn( lambda x: self.maxpool2d(x, k=2) ,  conv1 , dtype=tf.float32 )
 
         # # Convolution Layer
         # # here we call the conv2d function we had defined above and pass the input image x, weights wc2 and bias bc2.
@@ -520,8 +523,8 @@ class Neural_network:
             self.cost = cost
             self.square_mean_error = square_mean_error
             self.root_square_mean_error = root_square_mean_error
-            self.label_argmax = tf.cast(tf.argmax(
-                self.Y, axis=1, name="label_test_argmax_sme"),tf.float32)
+            self.predict_argmax = tf.argmax(predicts, 1)
+            self.label_argmax = tf.argmax(self.Y,1)
 
             tf.summary.scalar('acuracia',tf.reduce_max(self.accuracies))
             #variable_summaries(self.accuracies)
