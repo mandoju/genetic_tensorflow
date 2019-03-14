@@ -10,3 +10,4 @@ Output/
 
 venv/
 predicts.txt
+*.txt
