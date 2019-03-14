@@ -7,9 +7,10 @@ from tensorflow.python.client import timeline
 import numpy as np
 import tensorflow as tf
 import time
-
 import matplotlib
 matplotlib.use('Agg')
+
+import matplotlib.pyplot as plt
 
 
 class Population:
@@ -140,7 +141,6 @@ class Population:
             #print(finished)
         #f.close()
         sess.close()
-        plt = matplotlib.pyplot
         plt.use('Agg')
         plt.plot(tempos, acuracias, '-', lw=2)
         plt.grid(True)
