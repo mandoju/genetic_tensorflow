@@ -139,6 +139,7 @@ class Population:
             #print(finished)
         #f.close()
         sess.close()
+        plt.use('Agg')
         plt.plot(tempos, acuracias, '-', lw=2)
         plt.grid(True)
         plt.savefig('acuracias.png')
