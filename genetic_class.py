@@ -127,7 +127,7 @@ class Population:
 
                 print("Accuracy: ")
                 print(accuracies)
-                acuracias.append(accuracies)
+                acuracias.append(accuracies[0])
                 print("Cost: ")
                 print(cost)
                 print("tempo atual: " + str(time.time() - start_time))
@@ -141,7 +141,7 @@ class Population:
             #print(finished)
         #f.close()
         sess.close()
-        plt.use('Agg')
+        #plt.use('Agg')
         plt.plot(tempos, acuracias, '-', lw=2)
         plt.grid(True)
         plt.savefig('acuracias.png')
