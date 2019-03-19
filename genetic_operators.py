@@ -6,12 +6,12 @@ from collections import defaultdict
 
 def apply_genetic_operatos(genetic_operators, genetic_operators_size, elite_size, input_convulations, input_bias, best_convulations, best_biases, populationShape , populationSize, mutationRate,tournamentSize,layers):
     
-    conv_operators_results = []
-    bias_operators_results = []
+    conv_operators_results = [best_convulations]
+    bias_operators_results = [best_biases]
     conv_result_dict = defaultdict(list)
     bias_result_dict = defaultdict(list)
     assigns_conv = []
-    assigns_dict = []
+    assigns_bias = []
     for genetic_operator, idx in genetic_operators:
         if(genetic_operator[0] == 'crossover'):
             temp_conv,temp_bias = crossover_operator(best_convulations,best_biases,elite_size)
@@ -35,9 +35,9 @@ def apply_genetic_operatos(genetic_operators, genetic_operators_size, elite_size
         assigns_conv.append(input_convulations[key].assign(tf.concat(value,0) ) )
     
     for key, value in bias_result_dict:
-        assigns_dict.append(input_bias[key].assign(tf.concat(value,0) ) )
+        assigns_bias.append(input_bias[key].assign(tf.concat(value,0) ) )
     
-    return assigns_conv, assigns_dict
+    return assigns_conv, assigns_bias
 
 ##Todos aleatorios
 def generate_child_by_all(mother_tensor,father_tensor):
