@@ -4,6 +4,7 @@ from choose_best import choose_best
 from crossover import crossover, crossover_conv
 from utils import variable_summaries
 from tensorflow.python.client import timeline
+from genetic_operators import apply_genetic_operatos
 import numpy as np
 import tensorflow as tf
 import time
@@ -52,12 +53,15 @@ class Population:
                 fitness = self.neural_networks.accuracies
             #fitness =  inverted_sqe #self.neural_networks.accuracies  #+ inverted_sqe / 2
             best_conv, best_bias, the_best_conv, the_best_bias, mutate_conv, mutate_bias = choose_best(self.geneticSettings['selection'],self.neural_networks.convulations, self.neural_networks.biases, fitness, self.populationSize // 10)
+            
             # self.neural_networks.best_conv = the_best_conv
             # self.neural_networks.best_bias = the_best_bias
             # best_accuracies = self.neural_networks.run_best()
 
             #new_population = crossover(best,self.population, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers))
-            finish_conv, finish_bias = crossover_conv(best_conv,best_bias,mutate_conv,mutate_bias,self.convulations,self.bias, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers))
+            #finish_conv, finish_bias = crossover_conv(best_conv,best_bias,mutate_conv,mutate_bias,self.convulations,self.bias, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers))
+            finish_conv, finish_bias = apply_genetic_operatos(self.geneticSettings['genetic_operators'],self.geneticSettings['genetic_operators_size'],self.geneticSettings['elite'],self.convulations,self.bias, best_conv, best_bias, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers))
+            
             #self.neural_networks.convulations = finish_conv
             #self.neural_networks.biases = finish_bias
 

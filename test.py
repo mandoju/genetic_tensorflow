@@ -42,6 +42,9 @@ geneticSettings = {
         },
         'fitness': 'accuracy',
         'selection': 'tournament',
+        'elite': 0.20,
+        'genetic_operators': [['crossover',0.20],['mutation',0.1],['mutation',0.01],['mutation',0.001]],
+        'genetic_operators_size': [0.10,0.10,0.20,0.20,0.20],
         'layers': [785,10],
         'mutationRate': 0.60,
         'logdir': './log/'
