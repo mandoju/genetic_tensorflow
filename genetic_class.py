@@ -25,6 +25,7 @@ class Population:
            geneticSettings['populationSize'] , geneticSettings['layers'], self.convulations,self.bias, './log/')
         self.geneticSettings = geneticSettings
         self.current_epoch = 0
+        self.eliteSize = int(geneticSettings['elite'] * self.populationSize)
         
 
     def run_epoch(self):
@@ -34,15 +35,7 @@ class Population:
         for i in range(1):
             self.neural_networks.run()
             
-            #print("neural network : ", time.time() - start)
-            #best = choose_best_tensor(
-            #    self.neural_networks.neural_networks, self.neural_networks.accuracies)
 
-
-            #inverted_cost = -self.neural_networks.cost #tf.multiply(self.neural_networks.cost,tf.constant(-0.1),name="inverted_costs")
-            #inverted_sqe = -self.neural_networks.square_mean_error #tf.multiply(self.neural_networks.square_mean_error , tf.constant(-0.1),name="inverted_sqe")
-            #fitness = self.neural_networks.accuracies * 100  + inverted_sqe + inverted_cost
-            #fitness = self.neural_networks.accuracies
             if(self.geneticSettings['fitness'] == 'cross_entropy'):
                 fitness = -self.neural_networks.cost
             elif(self.geneticSettings['fitness'] == 'square_mean_error'):
@@ -51,23 +44,11 @@ class Population:
                 fitness = -self.neural_networks.root_square_mean_error 
             else:
                 fitness = self.neural_networks.accuracies
-            #fitness =  inverted_sqe #self.neural_networks.accuracies  #+ inverted_sqe / 2
-            best_conv, best_bias, the_best_conv, the_best_bias, mutate_conv, mutate_bias = choose_best(self.geneticSettings['selection'],self.neural_networks.convulations, self.neural_networks.biases, fitness, self.populationSize // 10)
             
-            # self.neural_networks.best_conv = the_best_conv
-            # self.neural_networks.best_bias = the_best_bias
-            # best_accuracies = self.neural_networks.run_best()
-
-            #new_population = crossover(best,self.population, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers))
-            #finish_conv, finish_bias = crossover_conv(best_conv,best_bias,mutate_conv,mutate_bias,self.convulations,self.bias, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers))
-            finish_conv, finish_bias = apply_genetic_operatos(self.geneticSettings['genetic_operators'],self.geneticSettings['genetic_operators_size'],self.geneticSettings['elite'],self.convulations,self.bias, best_conv, best_bias, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers))
+            best_conv, best_bias, the_best_conv, the_best_bias, mutate_conv, mutate_bias = choose_best(self.geneticSettings['selection'],self.neural_networks.convulations, self.neural_networks.biases, fitness, self.eliteSize)
             
-            #self.neural_networks.convulations = finish_conv
-            #self.neural_networks.biases = finish_bias
-
-        #finish = finish_conv.append(finish_bias)
-
-        #variable_summaries(self.population)
+            finish_conv, finish_bias = apply_genetic_operatos(self.geneticSettings['genetic_operators'],self.geneticSettings['genetic_operators_size'],self.eliteSize,self.convulations,self.bias, best_conv, best_bias, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers))
+            
         merged = tf.summary.merge_all()
 
         self.current_epoch += 1

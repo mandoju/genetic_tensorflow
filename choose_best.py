@@ -82,10 +82,13 @@ def choose_best_tensor(neural_networks, fitnesses):
 def choose_best_tensor_conv(convulations, biases, fitnesses, chooseNumber):
     with tf.name_scope('Choose_best') as scope:
 
+        print(chooseNumber)
         top_values, top_indices = tf.math.top_k(
             fitnesses, chooseNumber)
             #tf.reshape(fitnesses, (-1,)), 4)
         
+        print('-----')
+        print(top_indices)
         top_mutate_values, top_mutate_indices = tf.math.top_k(
             fitnesses, chooseNumber*8)
         #new_neural_networks = tf.gather()
@@ -139,6 +142,7 @@ def choose_best_tensor_conv(convulations, biases, fitnesses, chooseNumber):
 
         #neural_networks_output = tf.stack([neural_networks[top_indices[0]],neural_networks[top_indices[1]]])
         # return neural_networks_output;
+        print(top_indices)
         return convulation_weights_output, biases_output, convulation_weights_best_output, biases_output_best, convulation_weights_mutate_output, biases_output_mutate
 
 
@@ -152,8 +156,8 @@ def choose_best_tensor_tournament(convulations, biases, fitnesses, chooseNumber)
     with tf.name_scope('Choose_best') as scope:
 
 
-        tournamentSize = 10
-        
+        tournamentSize = tf.shape(fitnesses)[0] // chooseNumber
+
         numbers_to_tournament = tf.range(tf.shape(fitnesses)[0])
         numbers_to_tournament = tf.random.shuffle(numbers_to_tournament)
         numbers_to_tournament = tf.reshape(numbers_to_tournament,[tf.shape(numbers_to_tournament)[0]//tournamentSize, tournamentSize])

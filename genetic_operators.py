@@ -4,37 +4,47 @@ from mutation import mutation
 from itertools import chain
 from collections import defaultdict
 
+def select_operator_and_apply(genetic_operator,genetic_operator_param,genetic_operator_population_size,elite_size,mutatioRate,best_conv,best_bias):
+    if(genetic_operator == 'crossover'): 
+        return crossover_operator(best_conv,best_bias,elite_size)
+    elif(genetic_operator == 'mutation'):
+        return mutation_operator(best_conv,best_bias,elite_size,mutatioRate,genetic_operator_param,genetic_operator_population_size)
+
 def apply_genetic_operatos(genetic_operators, genetic_operators_size, elite_size, input_convulations, input_bias, best_convulations, best_biases, populationShape , populationSize, mutationRate,tournamentSize,layers):
     
-    conv_operators_results = [best_convulations]
-    bias_operators_results = [best_biases]
-    conv_result_dict = defaultdict(list)
-    bias_result_dict = defaultdict(list)
+    conv_operators_results = []
+    bias_operators_results = []
+    conv_result_dict = {}
+    bias_result_dict = {}
     assigns_conv = []
     assigns_bias = []
-    for genetic_operator, idx in genetic_operators:
-        if(genetic_operator[0] == 'crossover'):
-            temp_conv,temp_bias = crossover_operator(best_convulations,best_biases,elite_size)
-            conv_operators_results.append(temp_conv[:])
-            bias_operators_results.append(temp_bias[:])
-        elif(genetic_operator[0] == 'mutation'):
 
-            temp_conv, temp_bias = mutation_operator(best_convulations,best_biases,elite_size,mutationRate,genetic_operator[1],genetic_operators_size[idx])
-            conv_operators_results.append(temp_conv[:])
-            bias_operators_results.append(temp_bias[:])
+    conv_operators_results, bias_operators_results = zip(*[select_operator_and_apply(genetic_operator[0],genetic_operator[1],int(genetic_operators_size[idx] * populationSize),elite_size,mutationRate,best_convulations,best_biases) for idx, genetic_operator in enumerate(genetic_operators)])
 
+    conv_operators_results = list(conv_operators_results)
+    bias_operators_results = list(bias_operators_results)
+
+    conv_operators_results.append(best_convulations)
+    print(best_convulations)
+    bias_operators_results.append(best_biases)
     for item in conv_operators_results:
         for k, v in item.items():
-            conv_result_dict[k] += v
+            if(k in conv_result_dict):
+                    conv_result_dict[k].append(v)
+            else:
+                    conv_result_dict[k] = [v]
 
     for item in bias_operators_results:
         for k, v in item.items():
-            bias_result_dict[k] += v
+            if(k in bias_result_dict):
+                    bias_result_dict[k].append(v)
+            else:
+                    bias_result_dict[k] = [v]
 
-    for key, value in conv_result_dict:
+    for key, value in conv_result_dict.items():
         assigns_conv.append(input_convulations[key].assign(tf.concat(value,0) ) )
     
-    for key, value in bias_result_dict:
+    for key, value in bias_result_dict.items():
         assigns_bias.append(input_bias[key].assign(tf.concat(value,0) ) )
     
     return assigns_conv, assigns_bias
@@ -208,10 +218,11 @@ def crossover_operator(best_conv, best_bias, tamanhoElite):
          
         
         finish = []
-        finish_conv = defaultdict(list)
-        finish_bias = defaultdict(list)
+        finish_conv = {}
+        finish_bias = {}
         tamanhoCrossover = tamanhoElite
         permutations = tf.range(tamanhoElite)
+        print(tamanhoElite)
         permutations = tf.reshape(permutations, [tamanhoElite//2,2])
         keys = best_conv.keys()
 
@@ -233,13 +244,12 @@ def mutation_operator(best_conv,best_bias,tamanhoElite,mutationRate,mutationPerc
         with tf.name_scope('Crossover'):
                 
             finish = []
-            finish_conv = defaultdict(list)
-            finish_bias = defaultdict(list)
+            finish_conv = {}
+            finish_bias = {}
             tamanhoCrossover = tamanhoElite
             permutations = tf.range(tamanhoElite)
             permutations = tf.reshape(permutations, [tamanhoElite//2,2])
             keys = best_conv.keys()
-
 
             for key in best_conv: 
                     new_population = tf.map_fn(lambda x: mutation(best_conv[key][x],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
@@ -248,6 +258,5 @@ def mutation_operator(best_conv,best_bias,tamanhoElite,mutationRate,mutationPerc
             for key in best_bias: 
                     new_population = tf.map_fn(lambda x: mutation(best_bias[key][x],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
                     finish_bias[key] = new_population
-
 
         return finish_conv, finish_bias
