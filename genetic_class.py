@@ -48,7 +48,7 @@ class Population:
             # else:
             #     fitness = self.neural_networks.accuracies
             
-            fitness = tf.cond(fitness_operator == 0, lambda: self.neural_networks.accuracies, lambda: self.neural_networks.cost)
+            fitness = tf.cond(tf.equals(fitness_operator,0), lambda: self.neural_networks.accuracies, lambda: self.neural_networks.cost)
 
             best_conv, best_bias, the_best_conv, the_best_bias, mutate_conv, mutate_bias = choose_best(self.geneticSettings['selection'],self.neural_networks.convulations, self.neural_networks.biases, fitness, self.eliteSize)
             
