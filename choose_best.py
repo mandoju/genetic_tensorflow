@@ -90,7 +90,7 @@ def choose_best_tensor_conv(convulations, biases, fitnesses, chooseNumber):
         print('-----')
         print(top_indices)
         top_mutate_values, top_mutate_indices = tf.math.top_k(
-            fitnesses, chooseNumber*8)
+            fitnesses, chooseNumber)
         #new_neural_networks = tf.gather()
         #top_2_idx = np.argsort(fitnesses)[-2:]
         # print("indices")

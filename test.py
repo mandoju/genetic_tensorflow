@@ -41,7 +41,7 @@ geneticSettings = {
             'out': (10),
         },
         'fitness': 'accuracy',
-        'selection': 'tournament',
+        'selection': 'truncate',
         'elite': 0.20,
         'genetic_operators': [['crossover',0.10],['crossover',0.10],['mutation',0.1],['mutation',0.01],['mutation',0.001]],
         'genetic_operators_size': [0.10,0.10,0.20,0.20,0.20],
