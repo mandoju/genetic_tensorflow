@@ -112,7 +112,7 @@ class Population:
 
                 print("Accuracy: ")
                 print(accuracies)
-                acuracias.append(accuracies[0])
+                acuracias.append(max(accuracies))
                 print("Cost: ")
                 print(cost)
                 print("tempo atual: " + str(time.time() - start_time))
