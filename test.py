@@ -40,7 +40,7 @@ geneticSettings = {
             'bd1': (16),
             'out': (10),
         },
-        'fitness': 'accuracy',
+        'fitness': 'cross_entropy_mix_accuracies',
         'selection': 'truncate',
         'elite': 0.20,
         'genetic_operators': [['crossover',0.10],['crossover',0.10],['mutation',0.1],['mutation',0.01],['mutation',0.001]],

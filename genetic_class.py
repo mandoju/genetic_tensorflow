@@ -41,7 +41,9 @@ class Population:
             elif(self.geneticSettings['fitness'] == 'square_mean_error'):
                 fitness = -self.neural_networks.square_mean_error 
             elif(self.geneticSettings['fitness'] == 'root_square_mean_error'):
-                fitness = -self.neural_networks.root_square_mean_error 
+                fitness = -self.neural_networks.root_square_mean_error
+            elif(self.geneticSettings['fitness'] == 'cross_entropy_mix_accuracies'):
+                fitness = self.neural_networks.accuracies * 100 + self.neural_networks.cost
             else:
                 fitness = self.neural_networks.accuracies
             
