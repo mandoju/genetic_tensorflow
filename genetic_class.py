@@ -82,7 +82,7 @@ class Population:
         acuracias = []
         tempos = []
         print("batchs: " + str(len(train_x)//125))
-        for i in range(self.geneticSettings['epochs']):
+        for i in range(3):
             
             print("época: " + str(i))
             start_generation = time.time()
@@ -90,7 +90,7 @@ class Population:
             batch_size = 4000
 
             for batch in range(len(train_x)//batch_size):
-                for j in range(3):
+                for j in range(self.geneticSettings['epochs']):
                     print("batch: " + str(batch))
                     start_batch = time.time()
                     batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
