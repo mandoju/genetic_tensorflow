@@ -31,24 +31,24 @@ class Population:
     def run_epoch(self):
 
         #print("neural networks fitness run:")
-        fitness_operator = tf.placeholder(tf.int16)
+        #fitness_operator = tf.placeholder(tf.int16)
         start = time.time()
         for i in range(1):
             self.neural_networks.run()
             
 
-            # if(self.geneticSettings['fitness'] == 'cross_entropy'):
-            #     fitness = -self.neural_networks.cost
-            # elif(self.geneticSettings['fitness'] == 'square_mean_error'):
-            #     fitness = -self.neural_networks.square_mean_error 
-            # elif(self.geneticSettings['fitness'] == 'root_square_mean_error'):
-            #     fitness = -self.neural_networks.root_square_mean_error
-            # elif(self.geneticSettings['fitness'] == 'cross_entropy_mix_accuracies'):
-            #     fitness = self.neural_networks.accuracies * 100 + self.neural_networks.cost
-            # else:
-            #     fitness = self.neural_networks.accuracies
+            if(self.geneticSettings['fitness'] == 'cross_entropy'):
+                fitness = -self.neural_networks.cost
+            elif(self.geneticSettings['fitness'] == 'square_mean_error'):
+                fitness = -self.neural_networks.square_mean_error 
+            elif(self.geneticSettings['fitness'] == 'root_square_mean_error'):
+                fitness = -self.neural_networks.root_square_mean_error
+            elif(self.geneticSettings['fitness'] == 'cross_entropy_mix_accuracies'):
+                fitness = self.neural_networks.accuracies * 100 + self.neural_networks.cost
+            else:
+                fitness = self.neural_networks.accuracies
             
-            fitness = tf.cond(tf.equals(fitness_operator,0), lambda: self.neural_networks.accuracies, lambda: self.neural_networks.cost)
+            #fitness = tf.cond(tf.equal(fitness_operator,0), lambda: self.neural_networks.accuracies, lambda: self.neural_networks.cost)
 
             best_conv, best_bias, the_best_conv, the_best_bias, mutate_conv, mutate_bias = choose_best(self.geneticSettings['selection'],self.neural_networks.convulations, self.neural_networks.biases, fitness, self.eliteSize)
             
@@ -97,13 +97,15 @@ class Population:
                 batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
                 batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]  
 
-                if(i < 3):
-                    predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.argmax_predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
-                        self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, fitness_operator: 0} )
-                else: 
-                    predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.argmax_predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
-                        self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, fitness_operator: 1} )
+                # if(i < 3):
+                #     predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.argmax_predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
+                #         self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, fitness_operator: 0} )
+                # else: 
+                #     predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.argmax_predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
+                #         self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, fitness_operator: 1} )
 
+                predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.argmax_predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
+                    self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y} )
                 msg = "Batch: " + str(batch)
                 print(predicts.shape)
                 np.savetxt('predicts_save.txt',predicts)
