@@ -36,7 +36,7 @@ class Population:
         
         self.neural_networks.run()
         
-        self.mutationRate = tf.placeholder(tf.float32)
+        self.mutationRate = tf.placeholder(tf.float32,shape=[])
         if(self.geneticSettings['fitness'] == 'cross_entropy'):
             fitness = -self.neural_networks.cost
         elif(self.geneticSettings['fitness'] == 'square_mean_error'):
