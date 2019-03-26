@@ -112,8 +112,12 @@ class Population:
                     print(cost)
                     print("tempo atual: " + str(time.time() - start_time))
                     tempos.append(time.time() - start_time)
-                    if(max(accuracies) < last_accuracy):
+                    if(max(accuracies) <= last_accuracy):
                         mutate += 0.1
+                    else:
+                        mutate -= 0.1
+                        if(mutate < 0.1):
+                           mutate = 0.1
                     last_accuracy = max(accuracies)
             mutate = mutate * 2
         sess.close()
