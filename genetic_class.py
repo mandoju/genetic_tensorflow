@@ -33,10 +33,10 @@ class Population:
         #print("neural networks fitness run:")
         #fitness_operator = tf.placeholder(tf.int16)
         start = time.time()
-
+        
         self.neural_networks.run()
         
-
+        self.mutationRate = tf.placeholder(tf.float32)
         if(self.geneticSettings['fitness'] == 'cross_entropy'):
             fitness = -self.neural_networks.cost
         elif(self.geneticSettings['fitness'] == 'square_mean_error'):
@@ -82,7 +82,9 @@ class Population:
         acuracias = []
         tempos = []
         print("batchs: " + str(len(train_x)//125))
-        for i in range(3):
+        mutate = self.geneticSettings['mutationRate']
+        last_accuracy = 0
+        for i in range(self.geneticSettings['epochs']):
             
             print("época: " + str(i))
             start_generation = time.time()
@@ -90,19 +92,18 @@ class Population:
             batch_size = 4000
 
             for batch in range(len(train_x)//batch_size):
-                for j in range(self.geneticSettings['epochs']):
                     print("batch: " + str(batch))
                     start_batch = time.time()
                     batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
                     batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]  
 
                     predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.argmax_predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
-                        self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y} )
+                        self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate} )
                     msg = "Batch: " + str(batch)
-                    print(predicts.shape)
                     np.savetxt('predicts_save.txt',predicts)
                     np.savetxt('Y.txt',label_argmax)
 
+                    print("Mutação atual: " + str(mutate))
                     print("Accuracy: ")
                     print(accuracies)
                     acuracias.append(max(accuracies))
@@ -110,7 +111,10 @@ class Population:
                     print(cost)
                     print("tempo atual: " + str(time.time() - start_time))
                     tempos.append(time.time() - start_time)
-            
+                    if(max(accuracies) < last_accuracy):
+                        mutate += 0.1
+                    last_accuracy = max(accuracies)
+            mutate = mutate * 2
         sess.close()
         plt.plot(tempos, acuracias, '-', lw=2)
         plt.grid(True)
