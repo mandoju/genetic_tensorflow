@@ -83,6 +83,7 @@ class Population:
         tempos = []
         print("batchs: " + str(len(train_x)//125))
         mutate = self.geneticSettings['mutationRate']
+        print(mutate)
         last_accuracy = 0
         for i in range(self.geneticSettings['epochs']):
             
@@ -103,7 +104,7 @@ class Population:
                     np.savetxt('predicts_save.txt',predicts)
                     np.savetxt('Y.txt',label_argmax)
 
-                    print("Mutação atual: " + str(mutate))
+                    print("Mutação atual: " + str(mutate) )
                     print("Accuracy: ")
                     print(accuracies)
                     acuracias.append(max(accuracies))
