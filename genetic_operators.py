@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from mutation import mutation
+from mutation import mutation, mutation_unbiased
 from itertools import chain
 from collections import defaultdict
 
@@ -9,7 +9,8 @@ def select_operator_and_apply(genetic_operator,genetic_operator_param,genetic_op
         return crossover_operator(best_conv,best_bias,elite_size)
     elif(genetic_operator == 'mutation'):
         return mutation_operator(best_conv,best_bias,elite_size,mutatioRate,genetic_operator_param,genetic_operator_population_size)
-
+    elif(genetic_operator == 'mutation_unbiased'):
+        return mutation_unbiased_operator(best_conv,best_bias,elite_size,mutatioRate,genetic_operator_param,genetic_operator_population_size)
 def apply_genetic_operatos(genetic_operators, genetic_operators_size, elite_size, input_convulations, input_bias, best_convulations, best_biases, populationShape , populationSize, mutationRate,tournamentSize,layers):
     
     conv_operators_results = []
@@ -257,6 +258,28 @@ def mutation_operator(best_conv,best_bias,tamanhoElite,mutationRate,mutationPerc
 
             for key in best_bias: 
                     new_population = tf.map_fn(lambda x: mutation(best_bias[key][x],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
+                    finish_bias[key] = new_population
+
+        return finish_conv, finish_bias
+
+def mutation_unbiased_operator(best_conv,best_bias,tamanhoElite,mutationRate,mutationPercent,tamanhoMutacoes):
+
+        with tf.name_scope('Crossover'):
+                
+            finish = []
+            finish_conv = {}
+            finish_bias = {}
+            tamanhoCrossover = tamanhoElite
+            permutations = tf.range(tamanhoElite)
+            permutations = tf.reshape(permutations, [tamanhoElite//2,2])
+            keys = best_conv.keys()
+
+            for key in best_conv: 
+                    new_population = tf.map_fn(lambda x: mutation_unbiased(best_conv[key][x],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
+                    finish_conv[key] = new_population
+
+            for key in best_bias: 
+                    new_population = tf.map_fn(lambda x: mutation_unbiased(best_bias[key][x],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
                     finish_bias[key] = new_population
 
         return finish_conv, finish_bias

@@ -31,6 +31,31 @@ def mutation(tensor, mutationRate,mutationTax):
         #mutated = tf.where(comparison, tensor, random_mutation)
         return mutated
 
+def mutation_unbiased(tensor, mutationRate,mutationTax):
+    # depois fazer matrix mascara (a.k.a recomendacao do gabriel)
+    with tf.name_scope('Mutation'):
+
+
+        shapeSize = tf.shape(tensor)
+        random_array_binary =  tf.random_uniform(dtype=tf.float32, minval=0, maxval=100, shape=shapeSize)
+ 
+        #random_array_binary =  tf.map_fn(lambda x: function_map(x,mutationRate), random_array_binary, dtype=tf.float32)
+
+        #random_array_binary = tf.to_int32(random_array_binary > mutationRate)
+
+        comparison = tf.math.greater( random_array_binary, mutationRate * 100 )
+
+        random_array_binary =  tf.where (comparison, tensor, tf.random_uniform(dtype=tf.float32, minval=0, maxval=1, shape=shapeSize)) 
+
+        # random_array_values =  tf.random_uniform(dtype=tf.float32, minval=(1-mutationTax), maxval=(1+mutationTax), shape=shapeSize)
+
+        # random_mutation = tf.multiply(random_array_binary,random_array_values)
+        
+        #mutated = tf.multiply(tensor,random_mutation)
+        #comparison = tf.math.equal( random_mutation, tf.constant( 0.0 ) )
+        #mutated = tf.where(comparison, tensor, random_mutation)
+        return random_array_binary
+
 def mutation_by_node(tensor, mutationRate):
     # depois fazer matrix mascara (a.k.a recomendacao do gabriel)
     with tf.name_scope('Mutation'):

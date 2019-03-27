@@ -44,7 +44,7 @@ geneticSettings = {
         'fitness': 'cross_entropy',
         'selection': 'tournament',
         'elite': 0.20,
-        'genetic_operators': [['crossover',0.10],['crossover',0.10],['mutation',0.1],['mutation',0.01],['mutation',0.001]],
+        'genetic_operators': [['crossover',0.10],['mutation_unbiased',0.10],['mutation',0.1],['mutation',0.01],['mutation',0.001]],
         'genetic_operators_size': [0.10,0.10,0.20,0.20,0.20],
         'layers': [785,10],
         'mutationRate': 0.10,
