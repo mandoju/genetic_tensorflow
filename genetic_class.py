@@ -80,6 +80,7 @@ class Population:
         # print(len(train_x))
         start_time = time.time()
         acuracias = []
+        fitnesses = []
         tempos = []
         print("batchs: " + str(len(train_x)//125))
         mutate = self.geneticSettings['mutationRate']
@@ -107,13 +108,16 @@ class Population:
                     print("Mutação atual: " + str(mutate) )
                     print("Accuracy: ")
                     print(accuracies)
-                    acuracias.append(max(accuracies))
                     print("Cost: ")
                     print(cost)
                     print("tempo atual: " + str(time.time() - start_time))
-                    tempos.append(time.time() - start_time)
+                    if(max(cost) < 3):
+                       acuracias.append([max(cost)])
+                       tempos.append(time.time() - start_time)
                     if(max(accuracies) <= last_accuracy):
                         mutate += 0.1
+                        if(mutate > 0.7):
+                          mutate = 0.7
                     else:
                         mutate -= 0.1
                         if(mutate < 0.1):

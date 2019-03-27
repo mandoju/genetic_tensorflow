@@ -10,11 +10,11 @@ import traceback
 
 geneticSettings = {
         'populationSize': 160,
-        'epochs': 10,
+        'epochs': 30,
         'weights_convulation': {
-            'wc1': (3,3,1,2) ,#('W0', shape=(3,3,1,32), initializer=tf.contrib.layers.xavier_initializer()), 
+            'wc1': (3,3,1,2) , #('W0', shape=(3,3,1,32), initializer=tf.contrib.layers.xavier_initializer()), 
             'wc2': (3,3,2,4) , #('W1', shape=(3,3,32,64), initializer=tf.contrib.layers.xavier_initializer()), 
-            'wc3': (3,3,4,16) ,#('W2', shape=(3,3,64,128), initializer=tf.contrib.layers.xavier_initializer()), 
+            'wc3': (3,3,4,16) , #('W2', shape=(3,3,64,128), initializer=tf.contrib.layers.xavier_initializer()), 
             'wc4': (3,3,16,32),
             'wc5': (3,3,32,64),
             'wc6': (3,3,64,128),
@@ -24,7 +24,7 @@ geneticSettings = {
             'wc10': (3,3,256,256),
 
             'wd1': (256,16),
-            'out': (16,10) ,#('W6', shape=(128,9), initializer=tf.contrib.layers.xavier_initializer()), 
+            'out': (16,10) , #('W6', shape=(128,9), initializer=tf.contrib.layers.xavier_initializer()), 
         },
         'biases': {
             'bc1': (2),
@@ -40,7 +40,7 @@ geneticSettings = {
             'bd1': (16),
             'out': (10),
         },
-        'fitness': 'accuracies',
+        'fitness': 'cross_entropy',
         'selection': 'truncate',
         'elite': 0.20,
         'genetic_operators': [['crossover',0.10],['crossover',0.10],['mutation',0.1],['mutation',0.01],['mutation',0.001]],
