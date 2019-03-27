@@ -94,35 +94,36 @@ class Population:
             batch_size = 4000
 
             for batch in range(len(train_x)//batch_size):
-                    print("batch: " + str(batch))
-                    start_batch = time.time()
-                    batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
-                    batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]  
+                    for j in range(self.geneticSettings['inner_loop']):
+                        print("batch: " + str(batch))
+                        start_batch = time.time()
+                        batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
+                        batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]  
 
-                    predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.argmax_predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
-                        self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate} )
-                    msg = "Batch: " + str(batch)
-                    np.savetxt('predicts_save.txt',predicts)
-                    np.savetxt('Y.txt',label_argmax)
+                        predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.argmax_predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
+                            self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate} )
+                        msg = "Batch: " + str(batch)
+                        np.savetxt('predicts_save.txt',predicts)
+                        np.savetxt('Y.txt',label_argmax)
 
-                    print("Mutação atual: " + str(mutate) )
-                    print("Accuracy: ")
-                    print(accuracies)
-                    print("Cost: ")
-                    print(cost)
-                    print("tempo atual: " + str(time.time() - start_time))
-                    if(max(cost) < 3):
-                       acuracias.append([max(cost)])
-                       tempos.append(time.time() - start_time)
-                    if(max(accuracies) <= last_accuracy):
-                        mutate += 0.1
-                        if(mutate > 0.7):
-                          mutate = 0.7
-                    else:
-                        mutate -= 0.1
-                        if(mutate < 0.1):
-                           mutate = 0.1
-                    last_accuracy = max(accuracies)
+                        print("Mutação atual: " + str(mutate) )
+                        print("Accuracy: ")
+                        print(accuracies)
+                        print("Cost: ")
+                        print(cost)
+                        print("tempo atual: " + str(time.time() - start_time))
+                        if(max(cost) < 3):
+                        acuracias.append([max(cost)])
+                        tempos.append(time.time() - start_time)
+                        if(max(accuracies) <= last_accuracy):
+                            mutate += 0.1
+                            if(mutate > 0.7):
+                            mutate = 0.7
+                        else:
+                            mutate -= 0.1
+                            if(mutate < 0.1):
+                            mutate = 0.1
+                        last_accuracy = max(accuracies)
             mutate = mutate * 2
         sess.close()
         plt.plot(tempos, acuracias, '-', lw=2)

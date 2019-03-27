@@ -10,7 +10,8 @@ import traceback
 
 geneticSettings = {
         'populationSize': 160,
-        'epochs': 30,
+        'epochs': 10,
+        'inner_loop': 10,
         'weights_convulation': {
             'wc1': (3,3,1,2) , #('W0', shape=(3,3,1,32), initializer=tf.contrib.layers.xavier_initializer()), 
             'wc2': (3,3,2,4) , #('W1', shape=(3,3,32,64), initializer=tf.contrib.layers.xavier_initializer()), 
