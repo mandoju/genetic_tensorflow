@@ -20,7 +20,8 @@ def apply_genetic_operatos(genetic_operators, genetic_operators_size, elite_size
     assigns_conv = []
     assigns_bias = []
 
-    conv_operators_results, bias_operators_results = zip(*[select_operator_and_apply(genetic_operator[0],genetic_operator[1],int(genetic_operators_size[idx] * populationSize),elite_size,mutationRate,best_convulations,best_biases) for idx, genetic_operator in enumerate(genetic_operators)])
+    
+    conv_operators_results, bias_operators_results = zip(*[select_operator_and_apply(genetic_operator[0],genetic_operator[1],tf.cast(genetic_operators_size[idx] * populationSize,dtype=tf.int32),elite_size,mutationRate,best_convulations,best_biases) for idx, genetic_operator in enumerate(genetic_operators)])
 
     conv_operators_results = list(conv_operators_results)
     bias_operators_results = list(bias_operators_results)
@@ -274,7 +275,7 @@ def mutation_unbiased_operator(best_conv,best_bias,tamanhoElite,mutationRate,mut
             permutations = tf.reshape(permutations, [tamanhoElite//2,2])
             keys = best_conv.keys()
 
-            for key in best_conv: 
+            for key in best_conv:
                     new_population = tf.map_fn(lambda x: mutation_unbiased(best_conv[key][x],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
                     finish_conv[key] = new_population
 
