@@ -26,8 +26,8 @@ class Population:
         self.geneticSettings = geneticSettings
         self.current_epoch = 0
         self.eliteSize = int(geneticSettings['elite'] * self.populationSize)
-        
-
+        self.slice_sizes = [self.populationSize * x for x in geneticSettings['genetic_operators_size'] ]
+        #self.slice_sizes.append(self.eliteSize)
     def run_epoch(self):
 
         #print("neural networks fitness run:")
@@ -124,6 +124,21 @@ class Population:
                             if(mutate < 0.1):
                               mutate = 0.1
                         last_accuracy = max(accuracies)
+
+                        last_population_slice = 0
+                        operators_max = []
+                        print(self.slice_sizes)
+                        for population_slice in self.slice_sizes:
+                            slice_finish = int(last_population_slice+population_slice-1)
+                            operators_max.append(max(cost[last_population_slice:slice_finish]))
+                            last_population_slice += int(population_slice)
+                        
+                        max_fitness_operator_index = operators_max.index(max(operators_max))
+                        min_fitness_operator_index = operators_max.index(min(operators_max))
+
+                        if(self.geneticSettings['genetic_operators_size'][max_fitness_operator_index] <= 0.8 and self.geneticSettings['genetic_operators_size'][min_fitness_operator_index] >= 0.2):
+                            self.geneticSettings['genetic_operators_size'][max_fitness_operator_index] += 1
+                            self.geneticSettings['genetic_operators_size'][min_fitness_operator_index] -= 1
             mutate = mutate * 2
         sess.close()
         plt.plot(tempos, acuracias, '-', lw=2)

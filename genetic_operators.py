@@ -6,7 +6,7 @@ from collections import defaultdict
 
 def select_operator_and_apply(genetic_operator,genetic_operator_param,genetic_operator_population_size,elite_size,mutatioRate,best_conv,best_bias):
     if(genetic_operator == 'crossover'): 
-        return crossover_operator(best_conv,best_bias,elite_size)
+        return crossover_operator(best_conv,best_bias,elite_size,genetic_operator_population_size)
     elif(genetic_operator == 'mutation'):
         return mutation_operator(best_conv,best_bias,elite_size,mutatioRate,genetic_operator_param,genetic_operator_population_size)
     elif(genetic_operator == 'mutation_unbiased'):
@@ -210,7 +210,7 @@ def generate_child_by_layer(mother_tensor,father_tensor,mutationRate,layers):
 
         return tf.stack(temp_neural_network)
 
-def crossover_operator(best_conv, best_bias, tamanhoElite):
+def crossover_operator(best_conv, best_bias, tamanhoElite, tamanhoCrossover):
 
     with tf.name_scope('Crossover'):
 
@@ -230,12 +230,12 @@ def crossover_operator(best_conv, best_bias, tamanhoElite):
 
         for key in best_conv: 
                 population = best_conv[key] #, best_conv[key][2], best_conv[key][3] ])
-                new_population = tf.map_fn(lambda permutation: generate_child_by_all(best_conv[key][permutation[0]],best_conv[key][permutation[1]]) ,permutations, dtype=tf.float32)
+                new_population = tf.map_fn(lambda permutation: generate_child_by_all(best_conv[key][permutation[0]],best_conv[key][permutation[1]]) ,permutations[0:(tamanhoCrossover -1)], dtype=tf.float32)
                 finish_conv[key] = new_population
 
         for key in best_bias: 
                 population = best_bias[key] #, best_bias[key][2] ,best_bias[key][3] ])
-                new_population = tf.map_fn(lambda permutation: generate_child_by_all(best_bias[key][permutation[0]],best_bias[key][permutation[1]]) ,permutations, dtype=tf.float32)
+                new_population = tf.map_fn(lambda permutation: generate_child_by_all(best_bias[key][permutation[0]],best_bias[key][permutation[1]]) ,permutations[0:(tamanhoCrossover - 1)], dtype=tf.float32)
                 finish_bias[key] = new_population
 
         return finish_conv, finish_bias
