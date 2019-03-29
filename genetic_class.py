@@ -137,10 +137,12 @@ class Population:
                         
                         max_fitness_operator_index = operators_max.index(max(operators_max))
                         min_fitness_operator_index = operators_max.index(min(operators_max))
-
-                        if(self.genetic_operators_size[max_fitness_operator_index] <= 0.8 and self.genetic_operators_size[min_fitness_operator_index] >= 0.2):
-                            self.genetic_operators_size[max_fitness_operator_index] += 1
-                            self.genetic_operators_size[min_fitness_operator_index] -= 1
+                        print(self.genetic_operators_size[max_fitness_operator_index])
+                        print(self.genetic_operators_size[min_fitness_operator_index])
+                        if(self.genetic_operators_size[max_fitness_operator_index] <= (1 - self.geneticSetting['fine_tuning_rate'] ) and self.genetic_operators_size[min_fitness_operator_index] >= self.geneticSetting['fine_tuning_rate']):
+                            print("entrei na mudanca")
+                            self.genetic_operators_size[max_fitness_operator_index] += self.geneticSettings['fine_tuning_rate']
+                            self.genetic_operators_size[min_fitness_operator_index] -= self.geneticSettings['fine_tuning_rate']
             mutate = mutate * 2
         sess.close()
         plt.plot(tempos, acuracias, '-', lw=2)
