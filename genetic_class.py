@@ -27,7 +27,8 @@ class Population:
         self.current_epoch = 0
         self.eliteSize = int(geneticSettings['elite'] * self.populationSize)
         self.slice_sizes = [self.populationSize * x for x in geneticSettings['genetic_operators_size'] ]
-        self.genetic_operators_size = geneticSettings['genetic_operators_size'] 
+        self.genetic_operators_size = geneticSettings['genetic_operators_size']
+        self.fineTuningRate = geneticSettings['fineTuningRate'] 
         #self.slice_sizes.append(self.eliteSize)
     def run_epoch(self):
 
@@ -139,10 +140,10 @@ class Population:
                         min_fitness_operator_index = operators_max.index(min(operators_max))
                         print(self.genetic_operators_size[max_fitness_operator_index])
                         print(self.genetic_operators_size[min_fitness_operator_index])
-                        if(self.genetic_operators_size[max_fitness_operator_index] <= (1 - self.geneticSetting['fine_tuning_rate'] ) and self.genetic_operators_size[min_fitness_operator_index] >= self.geneticSetting['fine_tuning_rate']):
+                        if(self.genetic_operators_size[max_fitness_operator_index] <= (1 - self.fineTuningRate ) and self.genetic_operators_size[min_fitness_operator_index] >= self.fineTuningRate):
                             print("entrei na mudanca")
-                            self.genetic_operators_size[max_fitness_operator_index] += self.geneticSettings['fine_tuning_rate']
-                            self.genetic_operators_size[min_fitness_operator_index] -= self.geneticSettings['fine_tuning_rate']
+                            self.genetic_operators_size[max_fitness_operator_index] += self.fineTuningRate
+                            self.genetic_operators_size[min_fitness_operator_index] -= self.fineTuningRate
             mutate = mutate * 2
         sess.close()
         plt.plot(tempos, acuracias, '-', lw=2)
