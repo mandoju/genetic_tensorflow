@@ -129,7 +129,7 @@ class Population:
 
                         last_population_slice = 0
                         operators_max = []
-                        print(self.slice_sizes)
+                        print(self.genetic_operators_size)
                         for population_slice in self.slice_sizes:
                             slice_finish = int(last_population_slice+population_slice-1)
                             operators_max.append(max(cost[last_population_slice:slice_finish]))
