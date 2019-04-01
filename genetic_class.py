@@ -104,6 +104,7 @@ class Population:
                         batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]  
 
                         print("Mutação atual: " + str(mutate) )
+                        print(self.genetic_operators_size)
 
                         predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.argmax_predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
                             self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.genetic_operators_size} )
