@@ -2,7 +2,7 @@
 import tensorflow as tf
 import numpy as np
 import utils
-
+import itertools
 
 def create_population(layers, in_weights, in_biases, populationSize):
 
@@ -41,9 +41,10 @@ def create_population(layers, in_weights, in_biases, populationSize):
     # }
 
     convulations_weights = {}
+    initializer = tf.contrib.layers.variance_scaling_initializer(uniform=False, factor=2.0, mode='FAN_IN', dtype=tf.float32)
     for key,val in in_weights.items():
-        convulations_weights[key] = tf.get_variable('w'+ key, shape= (populationSize,) + val, initializer=tf.random_normal_initializer())
-
+        print(list(val))
+        convulations_weights[key] = tf.Variable(initial_value=tf.stack(tf.map_fn(lambda x: initializer(list(val)) , tf.range(populationSize), dtype=tf.float32 ) ),dtype=tf.float32,name='w'+ key)#tf.get_variable('w'+ key, shape= (populationSize,) + val, initializer=tf.map_fn(lambda x: tf.keras.initializers.he_normal(), tf.range(populationSize) ) )
         
     # biases = {
     #     # 'bc1': tf.get_variable('B0', shape=(populationSize,32), initializer=tf.random_normal_initializer()),
@@ -77,6 +78,8 @@ def create_population(layers, in_weights, in_biases, populationSize):
 
     biases = {}
     for key,val in in_biases.items():
-        biases[key] = tf.get_variable(key, shape= (populationSize,val), initializer=tf.random_normal_initializer())
+        print(val)
+        biases[key] = tf.Variable(initial_value=tf.stack(tf.map_fn(lambda x: initializer([val]), tf.range(populationSize), dtype=tf.float32 )) ,dtype=tf.float32, name= key)  
+        #biases[key] = tf.get_variable(key, shape= (populationSize,val), initializer=tf.map_fn(lambda x: tf.keras.initializers.he_normal(), tf.range(populationSize) ) )
     
     return population, population_session_shape, convulations_weights, biases
