@@ -111,7 +111,7 @@ class Population:
                         msg = "Batch: " + str(batch)
                         np.savetxt('predicts_save.txt',predicts)
                         np.savetxt('Y.txt',label_argmax)
-
+                        print("Bias shape": + str(bias.shape))
                         print("Accuracy: ")
                         print(accuracies)
                         print("Cost: ")
