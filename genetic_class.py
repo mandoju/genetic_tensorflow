@@ -129,22 +129,21 @@ class Population:
                               mutate = 0.1
                         last_accuracy = max(accuracies)
 
-                        # last_population_slice = 0
-                        # operators_max = []
-                        # print(self.genetic_operators_size)
-                        # for population_slice in self.slice_sizes:
-                        #     slice_finish = int(last_population_slice+population_slice-1)
-                        #     operators_max.append(max(cost[last_population_slice:slice_finish]))
-                        #     last_population_slice += int(population_slice)
+                        last_population_slice = 0
+                        operators_max = []
+                        print(self.genetic_operators_size)
+                        for population_slice in self.slice_sizes:
+                            slice_finish = int(last_population_slice+population_slice-1)
+                            operators_max.append(max(cost[last_population_slice:slice_finish]))
+                            last_population_slice += int(population_slice)
                         
-                        # max_fitness_operator_index = operators_max.index(max(operators_max))
-                        # min_fitness_operator_index = operators_max.index(min(operators_max))
-                        # print(self.genetic_operators_size[max_fitness_operator_index])
-                        # print(self.genetic_operators_size[min_fitness_operator_index])
-                        # if(self.genetic_operators_size[max_fitness_operator_index] <= (1 - self.fineTuningRate ) and self.genetic_operators_size[min_fitness_operator_index] >= self.fineTuningRate):
-                        #     print("entrei na mudanca")
-                        #     self.genetic_operators_size[max_fitness_operator_index] += self.fineTuningRate
-                        #     self.genetic_operators_size[min_fitness_operator_index] -= self.fineTuningRate
+                        max_fitness_operator_index = operators_max.index(max(operators_max))
+                        min_fitness_operator_index = operators_max.index(min(operators_max))
+                        print(self.genetic_operators_size[max_fitness_operator_index])
+                        print(self.genetic_operators_size[min_fitness_operator_index])
+                        if(self.genetic_operators_size[max_fitness_operator_index] <= (1 - self.fineTuningRate ) and self.genetic_operators_size[min_fitness_operator_index] >= self.fineTuningRate):
+                            self.genetic_operators_size[max_fitness_operator_index] += self.fineTuningRate
+                            self.genetic_operators_size[min_fitness_operator_index] -= self.fineTuningRate
             mutate = mutate * 2
         sess.close()
         plt.plot(tempos, acuracias, '-', lw=2)
