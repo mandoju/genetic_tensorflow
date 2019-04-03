@@ -119,15 +119,15 @@ class Population:
                         # if(max(cost) < 3):
                         acuracias.append(max(cost))
                         tempos.append(time.time() - start_time)
-                        # if(max(accuracies) <= last_accuracy):
-                        #     mutate += 0.1
-                        #     if(mutate > 0.7):
-                        #       mutate = 0.7
-                        # else:
-                        #     mutate -= 0.1
-                        #     if(mutate < 0.1):
-                        #       mutate = 0.1
-                        # last_accuracy = max(accuracies)
+                        if(max(accuracies) <= last_accuracy):
+                            mutate += 0.1
+                            if(mutate > 0.7):
+                              mutate = 0.7
+                        else:
+                            mutate -= 0.1
+                            if(mutate < 0.1):
+                              mutate = 0.1
+                        last_accuracy = max(accuracies)
 
                         # last_population_slice = 0
                         # operators_max = []
