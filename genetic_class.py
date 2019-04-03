@@ -111,14 +111,15 @@ class Population:
                         msg = "Batch: " + str(batch)
                         np.savetxt('predicts_save.txt',predicts)
                         np.savetxt('Y.txt',label_argmax)
+                        print("Bias shape": + str(bias.shape))
                         print("Accuracy: ")
                         print(accuracies)
                         print("Cost: ")
                         print(cost)
                         print("tempo atual: " + str(time.time() - start_time))
                         # if(max(cost) < 3):
-                        #   acuracias.append(max(cost))
-                        #   tempos.append(time.time() - start_time)
+                        acuracias.append(max(cost))
+                        tempos.append(time.time() - start_time)
                         # if(max(accuracies) <= last_accuracy):
                         #     mutate += 0.1
                         #     if(mutate > 0.7):
