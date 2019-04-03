@@ -97,7 +97,7 @@ class Population:
             batch_size = 4000
 
             for batch in range(len(train_x)//batch_size):
-                    for j in range(self.geneticSettings['inner_loop']):
+                    #for j in range(self.geneticSettings['inner_loop']):
                         print("batch: " + str(batch))
                         start_batch = time.time()
                         batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
