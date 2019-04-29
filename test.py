@@ -7,9 +7,11 @@ from choose_best import  choose_best, create_constants, choose_best_tensor
 # from win10toast import ToastNotifier
 from genetic_class import Population
 import traceback
+import sys
 
+print(sys.argv[1])
 geneticSettings = {
-        'populationSize': 160,
+        'populationSize': int(sys.argv[1]),
         'epochs': 10,
         'inner_loop': 10,
         'weights_convulation': {
