@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pickle
 
 
-files_pickle = ['./graphs/20.pckl','./graphs/40.pckl','./graphs/80.pckl','./graphs/160.pckl','./graphs/gradient.pckl']
+files_pickle = ['./graphs/20.pckl','./graphs/40.pckl','./graphs/80.pckl','./graphs/160.pckl','./graphs/gradient_he.pckl']
 graphs = []
 
 for file_pickle in files_pickle:
