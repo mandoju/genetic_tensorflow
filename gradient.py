@@ -3,7 +3,9 @@ import numpy as np
 #import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
+from graph import Graph
 import time
+import pickle
 #import matplotlib.pyplot as plt
 
 def get_mnist_data():
@@ -201,5 +203,9 @@ with tf.Session() as sess:
             break
     # summary_writer.close()
     # plt.plot(tempos, test_accuracy, '-', lw=2)
+        with open('./graphs/gradient.pckl', 'wb') as save_graph_file:
+            save_graph = Graph(tempos,acuracias)
+            pickle.dump(save_graph,save_graph_file)
+            print('salvei em: ./graphs/gradient.pckl')
     # plt.grid(True)
     # plt.show()
