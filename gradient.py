@@ -93,40 +93,40 @@ def conv_net(x, weights, biases):
     return out
 weights = {
 
-    'wc1': tf.get_variable('W0', shape=(3,3,1,2), initializer=tf.random_normal_initializer()), 
-    'wc2': tf.get_variable('W1', shape=(3,3,2,4), initializer=tf.random_normal_initializer()),
-    'wc3': tf.get_variable('W2', shape=(3,3,4,16), initializer=tf.random_normal_initializer()),
-    'wc4': tf.get_variable('W3', shape=(3,3,16,32), initializer=tf.random_normal_initializer()),
-    'wc5': tf.get_variable('W4', shape=(3,3,32,64), initializer=tf.random_normal_initializer()),
-    'wc6': tf.get_variable('W5', shape=(3,3,64,128), initializer=tf.random_normal_initializer()),
-    'wc7': tf.get_variable('W6', shape=(3,3,128,256), initializer=tf.random_normal_initializer()),
-    'wc8': tf.get_variable('W7', shape=(3,3,256,256), initializer=tf.random_normal_initializer()),
-    'wc9': tf.get_variable('W8', shape=(3,3,256,256), initializer=tf.random_normal_initializer()),
-    'wc10': tf.get_variable('W9', shape=(3,3,256,256), initializer=tf.random_normal_initializer()),
-    'wc11': tf.get_variable('W10', shape=(3,3,256,256), initializer=tf.random_normal_initializer()),
+    'wc1': tf.get_variable('W0', shape=(3,3,1,2), initializer=tf.keras.initializers.he_normal()), 
+    'wc2': tf.get_variable('W1', shape=(3,3,2,4), initializer=tf.keras.initializers.he_normal()),
+    'wc3': tf.get_variable('W2', shape=(3,3,4,16), initializer=tf.keras.initializers.he_normal()),
+    'wc4': tf.get_variable('W3', shape=(3,3,16,32), initializer=tf.keras.initializers.he_normal()),
+    'wc5': tf.get_variable('W4', shape=(3,3,32,64), initializer=tf.keras.initializers.he_normal()),
+    'wc6': tf.get_variable('W5', shape=(3,3,64,128), initializer=tf.keras.initializers.he_normal()),
+    'wc7': tf.get_variable('W6', shape=(3,3,128,256), initializer=tf.keras.initializers.he_normal()),
+    'wc8': tf.get_variable('W7', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()),
+    'wc9': tf.get_variable('W8', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()),
+    'wc10': tf.get_variable('W9', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()),
+    'wc11': tf.get_variable('W10', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()),
 
 
-    'wd1': tf.get_variable('Wd1', shape=(256,16), initializer=tf.random_normal_initializer()), 
-    'out': tf.get_variable('Wout', shape=(16,10), initializer=tf.random_normal_initializer()), 
+    'wd1': tf.get_variable('Wd1', shape=(256,16), initializer=tf.keras.initializers.he_normal()), 
+    'out': tf.get_variable('Wout', shape=(16,10), initializer=tf.keras.initializers.he_normal()), 
 }
 biases = {
 
 
-    'bc1': tf.get_variable('B0', shape=(2), initializer=tf.random_normal_initializer()),
-    'bc2': tf.get_variable('B1', shape=(4), initializer=tf.random_normal_initializer()),
-    'bc3': tf.get_variable('B2', shape=(16), initializer=tf.random_normal_initializer()),
-    'bc4': tf.get_variable('B3', shape=(32), initializer=tf.random_normal_initializer()),
-    'bc5': tf.get_variable('B4', shape=(64), initializer=tf.random_normal_initializer()),
-    'bc6': tf.get_variable('B5', shape=(128), initializer=tf.random_normal_initializer()),
-    'bc7': tf.get_variable('B6', shape=(256), initializer=tf.random_normal_initializer()),
-    'bc8': tf.get_variable('B7', shape=(256), initializer=tf.random_normal_initializer()),
-    'bc9': tf.get_variable('B8', shape=(256), initializer=tf.random_normal_initializer()),
-    'bc10': tf.get_variable('B9', shape=(256), initializer=tf.random_normal_initializer()),
-    'bc11': tf.get_variable('B10', shape=(256), initializer=tf.random_normal_initializer()),
+    'bc1': tf.get_variable('B0', shape=(2), initializer=tf.keras.initializers.he_normal()),
+    'bc2': tf.get_variable('B1', shape=(4), initializer=tf.keras.initializers.he_normal()),
+    'bc3': tf.get_variable('B2', shape=(16), initializer=tf.keras.initializers.he_normal()),
+    'bc4': tf.get_variable('B3', shape=(32), initializer=tf.keras.initializers.he_normal()),
+    'bc5': tf.get_variable('B4', shape=(64), initializer=tf.keras.initializers.he_normal()),
+    'bc6': tf.get_variable('B5', shape=(128), initializer=tf.keras.initializers.he_normal()),
+    'bc7': tf.get_variable('B6', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc8': tf.get_variable('B7', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc9': tf.get_variable('B8', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc10': tf.get_variable('B9', shape=(256), initializer=tf.keras.initializers.he_normal()),
+    'bc11': tf.get_variable('B10', shape=(256), initializer=tf.keras.initializers.he_normal()),
   
     
-    'bd1': tf.get_variable('Bd1', shape=(16), initializer=tf.random_normal_initializer()),
-    'out': tf.get_variable('Bout', shape=(10), initializer=tf.random_normal_initializer()),
+    'bd1': tf.get_variable('Bd1', shape=(16), initializer=tf.keras.initializers.he_normal()),
+    'out': tf.get_variable('Bout', shape=(10), initializer=tf.keras.initializers.he_normal()),
 }
 pred = conv_net(X, weights, biases)
 print(pred)

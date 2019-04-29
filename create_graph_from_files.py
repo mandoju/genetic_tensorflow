@@ -12,7 +12,8 @@ for file_pickle in files_pickle:
     file_pickle_opened.close();
  
 for graph in graphs:
-    graph.performance = [x * -1 for x in graph.performance]
+    if(graph.performance[0] < 0):
+        graph.performance = [x * -1 for x in graph.performance]
 
 print(graphs[0].performance)
 mutation_20 = plt.plot(graphs[0].tempo,graphs[0].performance , '-', label="Mutation_20")
