@@ -126,11 +126,11 @@ class Population:
                             if(max(accuracies) <= last_accuracy):
                                 mutate += 0.1
                                 if(mutate > 0.7):
-                                mutate = 0.7
+                                    mutate = 0.7
                             else:
                                 mutate -= 0.1
                                 if(mutate < 0.1):
-                                mutate = 0.1
+                                    mutate = 0.1
                             last_accuracy = max(accuracies)
 
                             last_population_slice = 0
@@ -151,8 +151,9 @@ class Population:
             mutate = mutate * 2
         sess.close()
         
-        save_graph = new Graph(tempos,acuracias)
-        with open('.\graphs\\' + self.popuationSize + '.pckl', 'wb') as save_graph_file: 
+
+        with open('.\graphs\\' + self.populationSize + '.pckl', 'wb') as save_graph_file:
+            save_graph = Graph(tempos,acuracias)
             pickle.dump(save_graph,save_graph_file)
         plt.plot(tempos, acuracias, '-', lw=2)
         plt.grid(True)
