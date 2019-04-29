@@ -151,14 +151,8 @@ class Population:
             mutate = mutate * 2
         sess.close()
         
-<<<<<<< HEAD
-        save_graph = Graph(tempos,acuracias)
-        with open('.\graphs\\' + self.popuationSize + '.pckl', 'wb') as save_graph_file: 
-=======
-
-        with open('.\graphs\\' + self.populationSize + '.pckl', 'wb') as save_graph_file:
+        with open('.\graphs\\' + self.popuationSize + '.pckl', 'wb') as save_graph_file:
             save_graph = Graph(tempos,acuracias)
->>>>>>> ad8ea5f37322a1719c4f17e6445db5a159952fa0
             pickle.dump(save_graph,save_graph_file)
         plt.plot(tempos, acuracias, '-', lw=2)
         plt.grid(True)
