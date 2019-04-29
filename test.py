@@ -46,7 +46,7 @@ geneticSettings = {
         'fitness': 'cross_entropy',
         'selection': 'tournament',
         'elite': 0.20,
-        'genetic_operators': [['crossover',0.10],['mutation_unbiased',0.10],['mutation',0.1],['mutation',0.01],['mutation',0.001]],
+        'genetic_operators': [['crossover',0.10],['mutation_unbiased',0.10],['mutation',0.01],['mutation',0.001],['mutation',0.0001]],
         'genetic_operators_size': [0.10,0.10,0.20,0.20,0.20],
 	    'fineTuningRate': 0.05,
         'layers': [785,10],
@@ -62,7 +62,7 @@ mutationRate = geneticSettings['mutationRate']
 logdir = geneticSettings['logdir']
 weights_convulation = geneticSettings['weights_convulation'],
 biases = geneticSettings['biases']
- 
+
 start_time = time.time()
 begin_time = start_time
 
