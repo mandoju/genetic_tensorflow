@@ -11,3 +11,4 @@ Output/
 venv/
 predicts.txt
 *.txt
+graphs/
