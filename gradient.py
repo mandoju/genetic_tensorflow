@@ -104,15 +104,7 @@ weights = {
     'wc9': tf.get_variable('W8', shape=(3,3,256,256), initializer=tf.random_normal_initializer()),
     'wc10': tf.get_variable('W9', shape=(3,3,256,256), initializer=tf.random_normal_initializer()),
     'wc11': tf.get_variable('W10', shape=(3,3,256,256), initializer=tf.random_normal_initializer()),
-    'wc12': tf.get_variable('W11', shape=(3,3,256,256), initializer=tf.random_normal_initializer()), 
-    'wc13': tf.get_variable('W12', shape=(3,3,256,256), initializer=tf.random_normal_initializer()), 
-    'wc14': tf.get_variable('W13', shape=(3,3,256,256), initializer=tf.random_normal_initializer()), 
-    'wc15': tf.get_variable('W14', shape=(3,3,256,256), initializer=tf.random_normal_initializer()), 
-    'wc16': tf.get_variable('W15', shape=(3,3,256,256), initializer=tf.random_normal_initializer()), 
-    'wc17': tf.get_variable('W16', shape=(3,3,256,256), initializer=tf.random_normal_initializer()), 
-    'wc18': tf.get_variable('W17', shape=(3,3,256,256), initializer=tf.random_normal_initializer()), 
-    'wc19': tf.get_variable('W18', shape=(3,3,256,256), initializer=tf.random_normal_initializer()), 
-    'wc20': tf.get_variable('W19', shape=(3,3,256,256), initializer=tf.random_normal_initializer()), 
+
 
     'wd1': tf.get_variable('Wd1', shape=(256,16), initializer=tf.random_normal_initializer()), 
     'out': tf.get_variable('Wout', shape=(16,10), initializer=tf.random_normal_initializer()), 
@@ -131,15 +123,7 @@ biases = {
     'bc9': tf.get_variable('B8', shape=(256), initializer=tf.random_normal_initializer()),
     'bc10': tf.get_variable('B9', shape=(256), initializer=tf.random_normal_initializer()),
     'bc11': tf.get_variable('B10', shape=(256), initializer=tf.random_normal_initializer()),
-    'bc12': tf.get_variable('B11', shape=(256), initializer=tf.random_normal_initializer()),
-    'bc13': tf.get_variable('B12', shape=(256), initializer=tf.random_normal_initializer()),
-    'bc14': tf.get_variable('B13', shape=(256), initializer=tf.random_normal_initializer()),
-    'bc15': tf.get_variable('B14', shape=(256), initializer=tf.random_normal_initializer()),
-    'bc16': tf.get_variable('B15', shape=(256), initializer=tf.random_normal_initializer()),
-    'bc17': tf.get_variable('B16', shape=(256), initializer=tf.random_normal_initializer()),
-    'bc18': tf.get_variable('B17', shape=(256), initializer=tf.random_normal_initializer()),
-    'bc19': tf.get_variable('B18', shape=(256), initializer=tf.random_normal_initializer()),
-    'bc20': tf.get_variable('B19', shape=(256), initializer=tf.random_normal_initializer()),
+  
     
     'bd1': tf.get_variable('Bd1', shape=(16), initializer=tf.random_normal_initializer()),
     'out': tf.get_variable('Bout', shape=(10), initializer=tf.random_normal_initializer()),
