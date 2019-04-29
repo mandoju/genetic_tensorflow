@@ -154,6 +154,7 @@ class Population:
         with open('.\graphs\\' + str(self.populationSize) + '.pckl', 'wb') as save_graph_file:
             save_graph = Graph(tempos,acuracias)
             pickle.dump(save_graph,save_graph_file)
+            console.log('salvei em: ' + '.\graphs\\' + str(self.populationSize) + '.pckl')
         plt.plot(tempos, acuracias, '-', lw=2)
         plt.grid(True)
         plt.savefig('acuracias.png')
