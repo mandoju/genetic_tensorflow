@@ -51,7 +51,8 @@ geneticSettings = {
 	    'fineTuningRate': 0.05,
         'layers': [785,10],
         'mutationRate': 0.10,
-        'logdir': './log/'
+        'logdir': './log/',
+        'fineTuning': False
 }
 
 populationSize = geneticSettings['populationSize']
@@ -61,6 +62,7 @@ mutationRate = geneticSettings['mutationRate']
 logdir = geneticSettings['logdir']
 weights_convulation = geneticSettings['weights_convulation'],
 biases = geneticSettings['biases']
+ 
 start_time = time.time()
 begin_time = start_time
 

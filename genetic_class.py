@@ -31,6 +31,7 @@ class Population:
         self.slice_sizes = [self.populationSize * x for x in geneticSettings['genetic_operators_size'] ]
         self.genetic_operators_size = geneticSettings['genetic_operators_size']
         self.fineTuningRate = geneticSettings['fineTuningRate'] 
+        self.fineTuningBoolean = geneticSettings['fineTuning']
         #self.slice_sizes.append(self.eliteSize)
     def run_epoch(self):
 
@@ -121,31 +122,32 @@ class Population:
                         # if(max(cost) < 3):
                         acuracias.append(max(cost))
                         tempos.append(time.time() - start_time)
-                        if(max(accuracies) <= last_accuracy):
-                            mutate += 0.1
-                            if(mutate > 0.7):
-                              mutate = 0.7
-                        else:
-                            mutate -= 0.1
-                            if(mutate < 0.1):
-                              mutate = 0.1
-                        last_accuracy = max(accuracies)
+                        if(self.fineTuningBoolean):
+                            if(max(accuracies) <= last_accuracy):
+                                mutate += 0.1
+                                if(mutate > 0.7):
+                                mutate = 0.7
+                            else:
+                                mutate -= 0.1
+                                if(mutate < 0.1):
+                                mutate = 0.1
+                            last_accuracy = max(accuracies)
 
-                        last_population_slice = 0
-                        operators_max = []
-                        print(self.genetic_operators_size)
-                        for population_slice in self.slice_sizes:
-                            slice_finish = int(last_population_slice+population_slice-1)
-                            operators_max.append(max(cost[last_population_slice:slice_finish]))
-                            last_population_slice += int(population_slice)
-                        
-                        max_fitness_operator_index = operators_max.index(max(operators_max))
-                        min_fitness_operator_index = operators_max.index(min(operators_max))
-                        print(self.genetic_operators_size[max_fitness_operator_index])
-                        print(self.genetic_operators_size[min_fitness_operator_index])
-                        if(self.genetic_operators_size[max_fitness_operator_index] <= (1 - self.fineTuningRate ) and self.genetic_operators_size[min_fitness_operator_index] >= self.fineTuningRate):
-                            self.genetic_operators_size[max_fitness_operator_index] += self.fineTuningRate
-                            self.genetic_operators_size[min_fitness_operator_index] -= self.fineTuningRate
+                            last_population_slice = 0
+                            operators_max = []
+                            print(self.genetic_operators_size)
+                            for population_slice in self.slice_sizes:
+                                slice_finish = int(last_population_slice+population_slice-1)
+                                operators_max.append(max(cost[last_population_slice:slice_finish]))
+                                last_population_slice += int(population_slice)
+                            
+                            max_fitness_operator_index = operators_max.index(max(operators_max))
+                            min_fitness_operator_index = operators_max.index(min(operators_max))
+                            print(self.genetic_operators_size[max_fitness_operator_index])
+                            print(self.genetic_operators_size[min_fitness_operator_index])
+                            if(self.genetic_operators_size[max_fitness_operator_index] <= (1 - self.fineTuningRate ) and self.genetic_operators_size[min_fitness_operator_index] >= self.fineTuningRate):
+                                self.genetic_operators_size[max_fitness_operator_index] += self.fineTuningRate
+                                self.genetic_operators_size[min_fitness_operator_index] -= self.fineTuningRate
             mutate = mutate * 2
         sess.close()
         
