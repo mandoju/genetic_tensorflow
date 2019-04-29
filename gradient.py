@@ -204,7 +204,7 @@ with tf.Session() as sess:
     # summary_writer.close()
     # plt.plot(tempos, test_accuracy, '-', lw=2)
         with open('./graphs/gradient.pckl', 'wb') as save_graph_file:
-            save_graph = Graph(tempos,acuracias)
+            save_graph = Graph(tempos,test_loss)
             pickle.dump(save_graph,save_graph_file)
             print('salvei em: ./graphs/gradient.pckl')
     # plt.grid(True)
