@@ -5,10 +5,12 @@ from crossover import crossover, crossover_conv
 from utils import variable_summaries
 from tensorflow.python.client import timeline
 from genetic_operators import apply_genetic_operatos
+from graph import Graph
 import numpy as np
 import tensorflow as tf
 import time
 import matplotlib
+import pickle
 matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
@@ -146,6 +148,10 @@ class Population:
                             self.genetic_operators_size[min_fitness_operator_index] -= self.fineTuningRate
             mutate = mutate * 2
         sess.close()
+        
+        save_graph = new Graph(tempos,acuracias)
+        with open('.\graphs\\' + self.popuationSize + '.pckl', 'wb') as save_graph_file: 
+            pickle.dump(save_graph,save_graph_file)
         plt.plot(tempos, acuracias, '-', lw=2)
         plt.grid(True)
         plt.savefig('acuracias.png')
