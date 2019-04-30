@@ -11,6 +11,7 @@ import tensorflow as tf
 import time
 import matplotlib
 import pickle
+import sys
 matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
@@ -151,7 +152,7 @@ class Population:
             mutate = mutate * 2
         sess.close()
         
-        with open('./graphs/' + str(self.populationSize) + '_he_menor.pckl', 'wb') as save_graph_file:
+        with open('./graphs/' + str(self.populationSize)  + '_' +  sys.argv[2] +   '.pckl', 'wb') as save_graph_file:
             save_graph = Graph(tempos,acuracias)
             pickle.dump(save_graph,save_graph_file)
             print('salvei em: ' + '.\graphs\\' + str(self.populationSize) + '.pckl')

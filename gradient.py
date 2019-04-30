@@ -3,9 +3,11 @@ import numpy as np
 #import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
+from test_packs import get_gradient_convolution, get_gradient_biases 
 from graph import Graph
 import time
 import pickle
+import sys
 #import matplotlib.pyplot as plt
 
 def get_mnist_data():
@@ -91,43 +93,8 @@ def conv_net(x, weights, biases):
     out = tf.add(tf.matmul(fc1, weights['out']), biases['out'])
     print(last_conv)
     return out
-weights = {
-
-    'wc1': tf.get_variable('W0', shape=(3,3,1,2), initializer=tf.keras.initializers.he_normal()), 
-    'wc2': tf.get_variable('W1', shape=(3,3,2,4), initializer=tf.keras.initializers.he_normal()),
-    'wc3': tf.get_variable('W2', shape=(3,3,4,16), initializer=tf.keras.initializers.he_normal()),
-    'wc4': tf.get_variable('W3', shape=(3,3,16,32), initializer=tf.keras.initializers.he_normal()),
-    'wc5': tf.get_variable('W4', shape=(3,3,32,64), initializer=tf.keras.initializers.he_normal()),
-    'wc6': tf.get_variable('W5', shape=(3,3,64,128), initializer=tf.keras.initializers.he_normal()),
-    'wc7': tf.get_variable('W6', shape=(3,3,128,256), initializer=tf.keras.initializers.he_normal()),
-    'wc8': tf.get_variable('W7', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()),
-    'wc9': tf.get_variable('W8', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()),
-    'wc10': tf.get_variable('W9', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()),
-    'wc11': tf.get_variable('W10', shape=(3,3,256,256), initializer=tf.keras.initializers.he_normal()),
-
-
-    'wd1': tf.get_variable('Wd1', shape=(256,16), initializer=tf.keras.initializers.he_normal()), 
-    'out': tf.get_variable('Wout', shape=(16,10), initializer=tf.keras.initializers.he_normal()), 
-}
-biases = {
-
-
-    'bc1': tf.get_variable('B0', shape=(2), initializer=tf.keras.initializers.he_normal()),
-    'bc2': tf.get_variable('B1', shape=(4), initializer=tf.keras.initializers.he_normal()),
-    'bc3': tf.get_variable('B2', shape=(16), initializer=tf.keras.initializers.he_normal()),
-    'bc4': tf.get_variable('B3', shape=(32), initializer=tf.keras.initializers.he_normal()),
-    'bc5': tf.get_variable('B4', shape=(64), initializer=tf.keras.initializers.he_normal()),
-    'bc6': tf.get_variable('B5', shape=(128), initializer=tf.keras.initializers.he_normal()),
-    'bc7': tf.get_variable('B6', shape=(256), initializer=tf.keras.initializers.he_normal()),
-    'bc8': tf.get_variable('B7', shape=(256), initializer=tf.keras.initializers.he_normal()),
-    'bc9': tf.get_variable('B8', shape=(256), initializer=tf.keras.initializers.he_normal()),
-    'bc10': tf.get_variable('B9', shape=(256), initializer=tf.keras.initializers.he_normal()),
-    'bc11': tf.get_variable('B10', shape=(256), initializer=tf.keras.initializers.he_normal()),
-  
-    
-    'bd1': tf.get_variable('Bd1', shape=(16), initializer=tf.keras.initializers.he_normal()),
-    'out': tf.get_variable('Bout', shape=(10), initializer=tf.keras.initializers.he_normal()),
-}
+weights = get_gradient_convolution(sys.argv[2])
+biases = get_gradient_biases(sys.argv[2])
 pred = conv_net(X, weights, biases)
 print(pred)
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
