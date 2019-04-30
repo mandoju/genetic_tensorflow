@@ -1,3 +1,4 @@
+import tensorflow as tf
 def get_weight_convolution(number_layer):
     if(number_layer == 10):
         return {
@@ -31,12 +32,12 @@ def get_weight_convolution(number_layer):
     else:
         return {
             # ('W0', shape=(3,3,1,32), initializer=tf.contrib.layers.xavier_initializer()),
-            'wc1': (3, 3, 1, 2),
+            'wc1': (3, 3, 1, 4),
             # ('W1', shape=(3,3,32,64), initializer=tf.contrib.layers.xavier_initializer()),
-            'wc2': (3, 3, 2, 4),
+            'wc2': (3, 3, 4, 8),
             # ('W2', shape=(3,3,64,128), initializer=tf.contrib.layers.xavier_initializer()),
-            'wc3': (3, 3, 4, 16),
-            'wd1': (16, 16),
+            'wc3': (3, 3, 8, 16),
+            'wd1': (256, 16),
             'out': (16, 10)
         }
 
@@ -67,8 +68,8 @@ def get_biases(number_layer):
             'out': (10), }
     else:
         return {
-            'bc1': (2),
-            'bc2': (4),
+            'bc1': (4),
+            'bc2': (8),
             'bc3': (16),
             'bd1': (16),
             'out': (10), }
@@ -114,7 +115,7 @@ def get_gradient_convolution(number_layer):
             'wc3': tf.get_variable('W2', shape=(3, 3, 4, 16), initializer=tf.keras.initializers.he_normal()),
 
 
-            'wd1': tf.get_variable('Wd1', shape=(16, 16), initializer=tf.keras.initializers.he_normal()),
+            'wd1': tf.get_variable('Wd1', shape=(256, 16), initializer=tf.keras.initializers.he_normal()),
             'out': tf.get_variable('Wout', shape=(16, 10), initializer=tf.keras.initializers.he_normal()),
         } 
 

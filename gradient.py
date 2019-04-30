@@ -93,8 +93,8 @@ def conv_net(x, weights, biases):
     out = tf.add(tf.matmul(fc1, weights['out']), biases['out'])
     print(last_conv)
     return out
-weights = get_gradient_convolution(sys.argv[2])
-biases = get_gradient_biases(sys.argv[2])
+weights = get_gradient_convolution(sys.argv[1])
+biases = get_gradient_biases(sys.argv[1])
 pred = conv_net(X, weights, biases)
 print(pred)
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
@@ -153,7 +153,7 @@ with tf.Session() as sess:
             break
     # summary_writer.close()
     # plt.plot(tempos, test_accuracy, '-', lw=2)
-        with open('./graphs/gradient_' + sys.argv[2] + '.pckl', 'wb') as save_graph_file:
+        with open('./graphs/gradient_' + sys.argv[1] + '.pckl', 'wb') as save_graph_file:
             save_graph = Graph(tempos,test_loss)
             pickle.dump(save_graph,save_graph_file)
             print('salvei em: ./graphs/gradient.pckl')
