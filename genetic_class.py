@@ -24,7 +24,7 @@ class Population:
         self.layers = geneticSettings['layers']
         self.mutationRate = geneticSettings['mutationRate']
         self.population, self.populationShape, self.convulations, self.bias = create_population(geneticSettings['layers'], geneticSettings['weights_convulation'],geneticSettings['biases'],geneticSettings['populationSize'])
-        self.neural_networks = Negural_network(
+        self.neural_networks = Neural_network(
            geneticSettings['populationSize'] , geneticSettings['layers'], self.convulations,self.bias, './log/')
         self.geneticSettings = geneticSettings
         self.current_epoch = 0
