@@ -151,7 +151,7 @@ class Population:
                             if(self.slice_sizes[max_fitness_operator_index] <= (1 - self.fineTuningRate * self.populationSize ) and self.slice_sizes[min_fitness_operator_index] >= self.fineTuningRate * self.populationSize):
                                 self.slice_sizes[max_fitness_operator_index] += int(self.fineTuningRate * self.populationSize)
                                 self.slice_sizes[min_fitness_operator_index] -= int(self.fineTuningRate * self.populationSize)
-            mutate = mutate * 2
+            #mutate = mutate * 2
         sess.close()
 
         file_string = []
