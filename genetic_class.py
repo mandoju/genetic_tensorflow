@@ -92,7 +92,7 @@ class Population:
         print("batchs: " + str(len(train_x)//125))
         mutate = self.geneticSettings['mutationRate']
         print(mutate)
-        last_accuracy = 0
+        last_cost = 0
         for i in range(self.geneticSettings['epochs']):
             
             print("época: " + str(i))
@@ -134,7 +134,7 @@ class Population:
                             #     mutate -= 0.1
                             #     if(mutate < 0.1):
                             #         mutate = 0.1
-                            last_accuracy = max(accuracies)
+                            last_cost = max(cost)
 
                             last_population_slice = 0
                             operators_max = []
@@ -148,7 +148,7 @@ class Population:
                             min_fitness_operator_index = operators_max.index(min(operators_max))
                             print(self.slice_sizes[max_fitness_operator_index])
                             print(self.slice_sizes[min_fitness_operator_index])
-                            if(self.slice_sizes[max_fitness_operator_index] <= (1 - self.fineTuningRate * self.populationSize ) and self.slice_sizes[min_fitness_operator_index] >= self.fineTuningRate * self.populationSize):
+                            if(self.slice_sizes[min_fitness_operator_index] >= 2):
                                 self.slice_sizes[max_fitness_operator_index] += int(self.fineTuningRate * self.populationSize)
                                 self.slice_sizes[min_fitness_operator_index] -= int(self.fineTuningRate * self.populationSize)
             # mutate = mutate * 2
