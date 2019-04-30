@@ -25,33 +25,8 @@ weights_convulation_input = {
     'wc9': (3, 3, 256, 256),
     'wc10': (3, 3, 256, 256),
 
-            'wd1': (256,16),
-            'out': (16,10) , #('W6', shape=(128,9), initializer=tf.contrib.layers.xavier_initializer()), 
-        },
-        'biases': {
-            'bc1': (2),
-            'bc2': (4),
-            'bc3': (16),
-            'bc4': (32),
-            'bc5': (64),
-            'bc6': (128),
-            'bc7': (256),
-            'bc8': (256),
-            'bc9': (256),
-            'bc10': (256),
-            'bd1': (16),
-            'out': (10),
-        },
-        'fitness': 'cross_entropy',
-        'selection': 'tournament',
-        'elite': 0.20,
-        'genetic_operators': [['crossover',0.10],['mutation_unbiased',0.10],['mutation',0.01],['mutation',0.001],['mutation',0.0001]],
-        'genetic_operators_size': [0.10,0.10,0.20,0.20,0.20],
-	    'fineTuningRate': 0.05,
-        'layers': [785,10],
-        'mutationRate': 0.10,
-        'logdir': './log/',
-        'fineTuning': True
+    'wd1': (256, 16),
+    'out': (16, 10)
 }
 
 biases_input = {
