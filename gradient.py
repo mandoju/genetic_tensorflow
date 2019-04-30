@@ -185,8 +185,13 @@ with tf.Session() as sess:
         print("Testing Accuracy:","{:.5f}".format(test_acc))
         if(time_passed >= 750):
             break
-    # summary_writer.close()
-    # plt.plot(tempos, test_accuracy, '-', lw=2)
+        # summary_writer.close()
+        # plt.plot(tempos, test_accuracy, '-', lw=2)
+        file_string = ''
+        if(len(sys.argv) > 1):
+          file_string = './graphs/gradient_' + sys.argv[1] + '.pckl'
+        else:
+          file_string = './graphs/gradient_10.pckl'
         with open('./graphs/gradient_' + sys.argv[1] + '.pckl', 'wb') as save_graph_file:
             save_graph = Graph(tempos,test_loss)
             pickle.dump(save_graph,save_graph_file)

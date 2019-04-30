@@ -151,7 +151,12 @@ class Population:
                                 self.slice_sizes[min_fitness_operator_index] -= int(self.fineTuningRate * self.populationSize)
             mutate = mutate * 2
         sess.close()
-        
+
+        file_string = []
+        if(len(sys.argv) > 2):
+          file_string = './graphs/' + str(self.populationSize)  + '_' +  sys.argv[2] +   '.pckl'
+        else:
+          file_string = './graphs/' + str(self.populationSize)  + '_10.pckl'
         with open('./graphs/' + str(self.populationSize)  + '_' +  sys.argv[2] +   '.pckl', 'wb') as save_graph_file:
             save_graph = Graph(tempos,acuracias)
             pickle.dump(save_graph,save_graph_file)
