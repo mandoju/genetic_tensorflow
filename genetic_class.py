@@ -149,8 +149,8 @@ class Population:
                             print(self.slice_sizes[max_fitness_operator_index])
                             print(self.slice_sizes[min_fitness_operator_index])
                             if(self.slice_sizes[min_fitness_operator_index] >= 2):
-                                self.slice_sizes[max_fitness_operator_index] += int(self.fineTuningRate * self.populationSize)
-                                self.slice_sizes[min_fitness_operator_index] -= int(self.fineTuningRate * self.populationSize)
+                                self.slice_sizes[max_fitness_operator_index] += 1
+                                self.slice_sizes[min_fitness_operator_index] -= 1
             # mutate = mutate * 2
         sess.close()
 
