@@ -43,7 +43,7 @@ biases_input = {
     'bd1': (16),
     'out': (10)}
 
-if(sys.argv[2]):
+if(len(sys.argv) > 2):
     weights_convulation_input = get_weight_convolution(sys.argv[2])
     biases_input = get_biases(sys.argv[2])
 
