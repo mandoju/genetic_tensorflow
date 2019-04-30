@@ -39,7 +39,7 @@ def get_weight_convolution(number_layer):
             'wc2': (3, 3, 32, 64),
             # ('W2', shape=(3,3,64,128), initializer=tf.contrib.layers.xavier_initializer()),
             'wc3': (3, 3, 64, 128),
-            'wd1': (4*4*4128, 128),
+            'wd1': (4*4*128, 128),
             'out': (128, 10)
         }
 
