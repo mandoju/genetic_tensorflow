@@ -2,21 +2,23 @@ import tensorflow as tf
 def get_weight_convolution(number_layer):
     if(number_layer == 10):
         return {
-            # ('W0', shape=(3,3,1,32), initializer=tf.contrib.layers.xavier_initializer()),
-            'wc1': (3, 3, 1, 2),
-            # ('W1', shape=(3,3,32,64), initializer=tf.contrib.layers.xavier_initializer()),
-            'wc2': (3, 3, 2, 4),
-            # ('W2', shape=(3,3,64,128), initializer=tf.contrib.layers.xavier_initializer()),
-            'wc3': (3, 3, 4, 16),
-            'wc4': (3, 3, 16, 32),
-            'wc5': (3, 3, 32, 64),
-            'wc6': (3, 3, 64, 128),
-            'wc7': (3, 3, 128, 256),
-            'wc8': (3, 3, 256, 256),
-            'wc9': (3, 3, 256, 256),
-            'wc10': (3, 3, 256, 256),
-            'wd1': (256, 16),
-            'out': (16, 10)}
+    # ('W0', shape=(3,3,1,32), initializer=tf.contrib.layers.xavier_initializer()),
+    'wc1': (3, 3, 1, 2),
+    # ('W1', shape=(3,3,32,64), initializer=tf.contrib.layers.xavier_initializer()),
+    'wc2': (3, 3, 2, 4),
+    # ('W2', shape=(3,3,64,128), initializer=tf.contrib.layers.xavier_initializer()),
+    'wc3': (3, 3, 4, 16),
+    'wc4': (3, 3, 16, 32),
+    'wc5': (3, 3, 32, 64),
+    'wc6': (3, 3, 64, 128),
+    'wc7': (3, 3, 128, 256),
+    'wc8': (3, 3, 256, 256),
+    'wc9': (3, 3, 256, 256),
+    'wc10': (3, 3, 256, 256),
+
+    'wd1': (256, 16),
+    'out': (16, 10)
+}
     elif(number_layer == 5):
         return {
             # ('W0', shape=(3,3,1,32), initializer=tf.contrib.layers.xavier_initializer()),
