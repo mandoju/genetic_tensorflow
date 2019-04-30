@@ -182,7 +182,7 @@ with tf.Session() as sess:
         tempos.append(time_passed)
         test_accuracy.append(test_acc)
         print("Testing Accuracy:","{:.5f}".format(test_acc))
-        if(time_passed >= 750):
+        if(time_passed >= 460):
             break
     # summary_writer.close()
     # plt.plot(tempos, test_accuracy, '-', lw=2)
