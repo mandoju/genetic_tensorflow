@@ -5,7 +5,10 @@ import pickle
 
 #files_pickle = ['./graphs/20.pckl','./graphs/40.pckl','./graphs/80.pckl','./graphs/160.pckl','./graphs/gradient_he.pckl']
 #files_pickle = ['./graphs/20_he.pckl','./graphs/40_he.pckl','./graphs/80_he.pckl','./graphs/160_he.pckl','./graphs/gradient_he.pckl']
-files_pickle = ['./graphs/20_he_menor.pckl','./graphs/40_he_menor.pckl','./graphs/80_he_menor.pckl','./graphs/160_he_menor.pckl','./graphs/gradient.pckl']
+#files_pickle = ['./graphs/20_he_menor.pckl','./graphs/40_he_menor.pckl','./graphs/80_he_menor.pckl','./graphs/160_he_menor.pckl','./graphs/gradient.pckl']
+files_pickle = ['./graphs/20_3.pckl','./graphs/40_3.pckl','./graphs/80_3.pckl','./graphs/gradient_3.pckl']
+#files_pickle = ['./graphs/20_he_menor.pckl','./graphs/40_he_menor.pckl','./graphs/80_he_menor.pckl','./graphs/160_he_menor.pckl','./graphs/gradient.pckl']
+
 
 graphs = []
 
