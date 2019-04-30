@@ -24,7 +24,7 @@ class Population:
         self.layers = geneticSettings['layers']
         self.mutationRate = geneticSettings['mutationRate']
         self.population, self.populationShape, self.convulations, self.bias = create_population(geneticSettings['layers'], geneticSettings['weights_convulation'],geneticSettings['biases'],geneticSettings['populationSize'])
-        self.neural_networks = Neural_network(
+        self.neural_networks = Negural_network(
            geneticSettings['populationSize'] , geneticSettings['layers'], self.convulations,self.bias, './log/')
         self.geneticSettings = geneticSettings
         self.current_epoch = 0
@@ -98,7 +98,7 @@ class Population:
             print("época: " + str(i))
             start_generation = time.time()
 
-            batch_size = 4000
+            batch_size = 128
 
             for batch in range(len(train_x)//batch_size):
                     #for j in range(self.geneticSettings['inner_loop']):
@@ -126,14 +126,14 @@ class Population:
                         acuracias.append(max(cost))
                         tempos.append(time.time() - start_time)
                         if(self.fineTuningBoolean):
-                            if(max(accuracies) <= last_accuracy):
-                                mutate += 0.1
-                                if(mutate > 0.7):
-                                    mutate = 0.7
-                            else:
-                                mutate -= 0.1
-                                if(mutate < 0.1):
-                                    mutate = 0.1
+                            # if(max(accuracies) <= last_accuracy):
+                            #     mutate += 0.1
+                            #     if(mutate > 0.7):
+                            #         mutate = 0.7
+                            # else:
+                            #     mutate -= 0.1
+                            #     if(mutate < 0.1):
+                            #         mutate = 0.1
                             last_accuracy = max(accuracies)
 
                             last_population_slice = 0

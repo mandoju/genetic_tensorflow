@@ -29,9 +29,9 @@ def get_mnist_data():
 train_x,train_y,test_x,test_y = get_mnist_data()   
 train_x = train_x.reshape(-1, 28, 28, 1)
 test_x =  test_x.reshape(-1, 28, 28, 1)
-training_iters = 2000
-learning_rate = 0.00001 
-batch_size = 4000
+training_iters = 200
+learning_rate = 0.001
+batch_size = 128
 n_classes = 10
 x_size = train_x.shape[1]
 y_size = train_y.shape[1]  # Number of outcomes (3 iris flowers)
@@ -50,8 +50,8 @@ def maxpool2d(x, k=2):
 
 
 def conv_net(x, weights, biases):  
-
     # here we call the conv2d function we had defined above and pass the input image x, weights wc1 and bias bc1.
+# here we call the conv2d function we had defined above and pass the input image x, weights wc1 and bias bc1.
     conv1 = conv2d(x, weights['wc1'], biases['bc1'])
     # Max Pooling (down-sampling), this chooses the max value from a 2*2 matrix window and outputs a 14*14 matrix.
     conv1 = maxpool2d(conv1, k=2)
@@ -91,60 +91,78 @@ def conv_net(x, weights, biases):
     # Output, class prediction
     # finally we multiply the fully connected layer with the weights and add a bias term. 
     out = tf.add(tf.matmul(fc1, weights['out']), biases['out'])
-    print(last_conv)
     return out
+
+    #here we call the conv2d function we had defined above and pass the input image x, weights wc1 and bias bc1.
+    """conv1 = conv2d(x, weights['wc1'], biases['bc1'])
+    # Max Pooling (down-sampling), this chooses the max value from a 2*2 matrix window and outputs a 14*14 matrix.
+    conv1 = maxpool2d(conv1, k=2)
+
+    # Convolution Layer
+    # here we call the conv2d function we had defined above and pass the input image x, weights wc2 and bias bc2.
+
+    convs = []
+    convs.append(conv1)
+    print(len(weights.keys()) - 3)
+    for i in range(len(weights.keys()) - 3):
+        #conv = conv2d(convs[i], weights['wc' + str(i+2)], biases['bc' + str(i+2)]) 
+        #conv = maxpool2d(conv, k=2) 
+        convs.append( maxpool2d(conv2d(convs[i], weights['wc' + str(i+2)], biases['bc' + str(i+2)]), k=2))
+    # Fully connected layer
+    # Reshape conv2 output to fit fully connected layer input
+    last_conv = convs.pop()
+
+    fc1 = tf.reshape(last_conv, [-1, weights['wd1'].get_shape().as_list()[0]])
+    fc1 = tf.add(tf.matmul(fc1, weights['wd1']), biases['bd1'])
+    fc1 = tf.nn.relu(fc1)
+    # Output, class prediction
+    # finally we multiply the fully connected layer with the weights and add a bias term. 
+    out = tf.add(tf.matmul(fc1, weights['out']), biases['out'])
+    print(last_conv)
+    return out """
+
+
 if(len(sys.argv) > 1):
     weights = get_gradient_convolution(sys.argv[1])
     biases = get_gradient_biases(sys.argv[1])
 else:
     weights = {
 
-            'wc1': tf.get_variable('W0', shape=(3, 3, 1, 2), initializer=tf.keras.initializers.he_normal()),
-            'wc2': tf.get_variable('W1', shape=(3, 3, 2, 4), initializer=tf.keras.initializers.he_normal()),
-            'wc3': tf.get_variable('W2', shape=(3, 3, 4, 16), initializer=tf.keras.initializers.he_normal()),
-            'wc4': tf.get_variable('W3', shape=(3, 3, 16, 32), initializer=tf.keras.initializers.he_normal()),
-            'wc5': tf.get_variable('W4', shape=(3, 3, 32, 64), initializer=tf.keras.initializers.he_normal()),
-            'wc6': tf.get_variable('W5', shape=(3, 3, 64, 128), initializer=tf.keras.initializers.he_normal()),
-            'wc7': tf.get_variable('W6', shape=(3, 3, 128, 256), initializer=tf.keras.initializers.he_normal()),
-            'wc8': tf.get_variable('W7', shape=(3, 3, 256, 256), initializer=tf.keras.initializers.he_normal()),
-            'wc9': tf.get_variable('W8', shape=(3, 3, 256, 256), initializer=tf.keras.initializers.he_normal()),
-            'wc10': tf.get_variable('W9', shape=(3, 3, 256, 256), initializer=tf.keras.initializers.he_normal()),
+            'wc1': tf.get_variable('W0', shape=(3, 3, 1, 32), initializer=tf.keras.initializers.he_normal()),
+            'wc2': tf.get_variable('W1', shape=(3, 3, 32, 64), initializer=tf.keras.initializers.he_normal()),
+            'wc3': tf.get_variable('W2', shape=(3, 3, 64, 128), initializer=tf.keras.initializers.he_normal()),
 
 
-            'wd1': tf.get_variable('Wd1', shape=(256, 16), initializer=tf.keras.initializers.he_normal()),
-            'out': tf.get_variable('Wout', shape=(16, 10), initializer=tf.keras.initializers.he_normal()),
+            'wd1': tf.get_variable('Wd1', shape=(4*4*128, 128), initializer=tf.keras.initializers.he_normal()),
+            'out': tf.get_variable('Wout', shape=(128, 10), initializer=tf.keras.initializers.he_normal()),
         }
     biases = {
-            'bc1': tf.get_variable('B0', shape=(2), initializer=tf.keras.initializers.he_normal()),
-            'bc2': tf.get_variable('B1', shape=(4), initializer=tf.keras.initializers.he_normal()),
-            'bc3': tf.get_variable('B2', shape=(16), initializer=tf.keras.initializers.he_normal()),
-            'bc4': tf.get_variable('B3', shape=(32), initializer=tf.keras.initializers.he_normal()),
-            'bc5': tf.get_variable('B4', shape=(64), initializer=tf.keras.initializers.he_normal()),
-            'bc6': tf.get_variable('B5', shape=(128), initializer=tf.keras.initializers.he_normal()),
-            'bc7': tf.get_variable('B6', shape=(256), initializer=tf.keras.initializers.he_normal()),
-            'bc8': tf.get_variable('B7', shape=(256), initializer=tf.keras.initializers.he_normal()),
-            'bc9': tf.get_variable('B8', shape=(256), initializer=tf.keras.initializers.he_normal()),
-            'bc10': tf.get_variable('B9', shape=(256), initializer=tf.keras.initializers.he_normal()),
+            'bc1': tf.get_variable('B0', shape=(32), initializer=tf.keras.initializers.he_normal()),
+            'bc2': tf.get_variable('B1', shape=(64), initializer=tf.keras.initializers.he_normal()),
+            'bc3': tf.get_variable('B2', shape=(128), initializer=tf.keras.initializers.he_normal()),
+
             
-            'bd1': tf.get_variable('Bd1', shape=(16), initializer=tf.keras.initializers.he_normal()),
+            'bd1': tf.get_variable('Bd1', shape=(128), initializer=tf.keras.initializers.he_normal()),
             'out': tf.get_variable('Bout', shape=(10), initializer=tf.keras.initializers.he_normal()),
         }
+#pred = conv_net(X, weights, biases)
+#print(pred)
+#cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
+
 pred = conv_net(X, weights, biases)
-print(pred)
+
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
 
 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
-
 #Here you check whether the index of the maximum value of the predicted image is equal to the actual labelled image. and both will be a column vector.
 correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
 
 #calculate accuracy across all the given images and average them out. 
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-
 # Initializing the variables
 init = tf.global_variables_initializer()
 
-with tf.Session() as sess:
+""" with tf.Session() as sess:
     sess.run(init) 
     train_loss = []
     test_loss = []
@@ -166,7 +184,16 @@ with tf.Session() as sess:
             predict,loss, acc = sess.run([pred,cost, accuracy], feed_dict={X: batch_x,
                                                               y: batch_y})
         #print("predict = ")
-        
+
+        # Calculate accuracy for all 10000 mnist test images
+        test_acc,valid_loss = sess.run([accuracy,cost], feed_dict={X: test_x,y : test_y})
+        train_loss.append(loss)
+        test_loss.append(valid_loss)
+        train_accuracy.append(acc)
+        time_passed = time.time() - iter_time
+        tempos.append(time_passed)
+        test_accuracy.append(test_acc)
+        print("Testing Accuracy:","{:.5f}".format(test_acc))
         print("Iter " + str(i) + ", Loss= " + \
                     "{:.6f}".format(loss) + ", Training Accuracy= " + \
                     "{:.5f}".format(acc))
@@ -174,27 +201,48 @@ with tf.Session() as sess:
         print("tempo atual: " + str(time_passed) )
         print("Batch Finished!")
         
+        # summary_writer.close()
+        # plt.plot(tempos, test_accuracy, '-', lw=2)
+    file_string = ''
+    if(len(sys.argv) > 1):
+        file_string = './graphs/gradient_' + sys.argv[1] + '.pckl'
+    else:
+        file_string = './graphs/gradient_10.pckl'
+    with open(file_string, 'wb') as save_graph_file:
+        save_graph = Graph(tempos,test_loss)
+        pickle.dump(save_graph,save_graph_file)
+        print('salvei em: ./graphs/gradient.pckl')
+    # plt.grid(True)
+    # plt.show()
+ """
+
+with tf.Session() as sess:
+    sess.run(init) 
+    train_loss = []
+    test_loss = []
+    train_accuracy = []
+    test_accuracy = []
+    summary_writer = tf.summary.FileWriter('./Output', sess.graph)
+    for i in range(training_iters):
+        for batch in range(len(train_x)//batch_size):
+            batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
+            batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]    
+            # Run optimization op (backprop).
+                # Calculate batch loss and accuracy
+            opt = sess.run(optimizer, feed_dict={X: batch_x,
+                                                              y: batch_y})
+            loss, acc = sess.run([cost, accuracy], feed_dict={X: batch_x,
+                                                              y: batch_y})
+        print("Iter " + str(i) + ", Loss= " + \
+                      "{:.6f}".format(loss) + ", Training Accuracy= " + \
+                      "{:.5f}".format(acc))
+        print("Optimization Finished!")
 
         # Calculate accuracy for all 10000 mnist test images
         test_acc,valid_loss = sess.run([accuracy,cost], feed_dict={X: test_x,y : test_y})
         train_loss.append(loss)
         test_loss.append(valid_loss)
         train_accuracy.append(acc)
-        tempos.append(time_passed)
         test_accuracy.append(test_acc)
         print("Testing Accuracy:","{:.5f}".format(test_acc))
-        if(time_passed >= 750):
-            break
-        # summary_writer.close()
-        # plt.plot(tempos, test_accuracy, '-', lw=2)
-        file_string = ''
-        if(len(sys.argv) > 1):
-          file_string = './graphs/gradient_' + sys.argv[1] + '.pckl'
-        else:
-          file_string = './graphs/gradient_10.pckl'
-        with open('./graphs/gradient_' + sys.argv[1] + '.pckl', 'wb') as save_graph_file:
-            save_graph = Graph(tempos,test_loss)
-            pickle.dump(save_graph,save_graph_file)
-            print('salvei em: ./graphs/gradient.pckl')
-    # plt.grid(True)
-    # plt.show()
+    summary_writer.close()
