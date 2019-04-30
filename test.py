@@ -10,43 +10,11 @@ from test_packs import get_biases, get_weight_convolution
 import traceback
 import sys
 
-weights_convulation_input = {
-    # ('W0', shape=(3,3,1,32), initializer=tf.contrib.layers.xavier_initializer()),
-    'wc1': (3, 3, 1, 2),
-    # ('W1', shape=(3,3,32,64), initializer=tf.contrib.layers.xavier_initializer()),
-    'wc2': (3, 3, 2, 4),
-    # ('W2', shape=(3,3,64,128), initializer=tf.contrib.layers.xavier_initializer()),
-    'wc3': (3, 3, 4, 16),
-    'wc4': (3, 3, 16, 32),
-    'wc5': (3, 3, 32, 64),
-    'wc6': (3, 3, 64, 128),
-    'wc7': (3, 3, 128, 256),
-    'wc8': (3, 3, 256, 256),
-    'wc9': (3, 3, 256, 256),
-    'wc10': (3, 3, 256, 256),
-
-    'wd1': (256, 16),
-    'out': (16, 10)
-}
-
-biases_input = {
-    'bc1': (2),
-    'bc2': (4),
-    'bc3': (16),
-    'bc4': (32),
-    'bc5': (64),
-    'bc6': (128),
-    'bc7': (256),
-    'bc8': (256),
-    'bc9': (256),
-    'bc10': (256),
-    'bd1': (16),
-    'out': (10)}
 
 if(len(sys.argv) > 2):
-    weights_convulation_input = get_weight_convolution(sys.argv[2])
-    biases_input = get_biases(sys.argv[2])
-
+    weights_convulation_input = get_weight_convolution(int(sys.argv[2]))
+    biases_input = get_biases(int(sys.argv[2]))
+print(weights_convulation_input);
 
 geneticSettings = {
     'populationSize': int(sys.argv[1]),

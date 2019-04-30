@@ -18,7 +18,7 @@ def get_weight_convolution(number_layer):
 
     'wd1': (256, 16),
     'out': (16, 10)
-}
+	}
     elif(number_layer == 5):
         return {
             # ('W0', shape=(3,3,1,32), initializer=tf.contrib.layers.xavier_initializer()),
@@ -34,12 +34,12 @@ def get_weight_convolution(number_layer):
     else:
         return {
             # ('W0', shape=(3,3,1,32), initializer=tf.contrib.layers.xavier_initializer()),
-            'wc1': (3, 3, 1, 4),
+            'wc1': (3, 3, 1, 2),
             # ('W1', shape=(3,3,32,64), initializer=tf.contrib.layers.xavier_initializer()),
-            'wc2': (3, 3, 4, 8),
+            'wc2': (3, 3, 2, 4),
             # ('W2', shape=(3,3,64,128), initializer=tf.contrib.layers.xavier_initializer()),
-            'wc3': (3, 3, 8, 16),
-            'wd1': (256, 16),
+            'wc3': (3, 3, 4, 8),
+            'wd1': (128, 16),
             'out': (16, 10)
         }
 
@@ -70,9 +70,9 @@ def get_biases(number_layer):
             'out': (10), }
     else:
         return {
-            'bc1': (4),
-            'bc2': (8),
-            'bc3': (16),
+            'bc1': (2),
+            'bc2': (4),
+            'bc3': (8),
             'bd1': (16),
             'out': (10), }
 
