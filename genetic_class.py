@@ -107,10 +107,10 @@ class Population:
                         batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]  
 
                         print("Mutação atual: " + str(mutate) )
-                        print(self.genetic_operators_size)
+                        print(self.slice_sizes)
 
                         predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.argmax_predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
-                            self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.genetic_operators_size} )
+                            self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes} )
                         msg = "Batch: " + str(batch)
                         np.savetxt('predicts_save.txt',predicts)
                         np.savetxt('Y.txt',label_argmax)
@@ -135,7 +135,7 @@ class Population:
 
                             last_population_slice = 0
                             operators_max = []
-                            print(self.genetic_operators_size)
+                            print(self.slice_sizes)
                             for population_slice in self.slice_sizes:
                                 slice_finish = int(last_population_slice+population_slice-1)
                                 operators_max.append(max(cost[last_population_slice:slice_finish]))
@@ -143,11 +143,11 @@ class Population:
                             
                             max_fitness_operator_index = operators_max.index(max(operators_max))
                             min_fitness_operator_index = operators_max.index(min(operators_max))
-                            print(self.genetic_operators_size[max_fitness_operator_index])
-                            print(self.genetic_operators_size[min_fitness_operator_index])
-                            if(self.genetic_operators_size[max_fitness_operator_index] <= (1 - self.fineTuningRate ) and self.genetic_operators_size[min_fitness_operator_index] >= self.fineTuningRate):
-                                self.genetic_operators_size[max_fitness_operator_index] += self.fineTuningRate
-                                self.genetic_operators_size[min_fitness_operator_index] -= self.fineTuningRate
+                            print(self.slice_sizes[max_fitness_operator_index])
+                            print(self.slice_sizes[min_fitness_operator_index])
+                            if(self.slice_sizes[max_fitness_operator_index] <= (1 - self.fineTuningRate * self.populationSize ) and self.slice_sizes[min_fitness_operator_index] >= self.fineTuningRate * self.populationSize):
+                                self.slice_sizes[max_fitness_operator_index] += int(self.fineTuningRate * self.populationSize)
+                                self.slice_sizes[min_fitness_operator_index] -= int(self.fineTuningRate * self.populationSize)
             mutate = mutate * 2
         sess.close()
         

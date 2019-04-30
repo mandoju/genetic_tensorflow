@@ -21,7 +21,7 @@ def apply_genetic_operatos(genetic_operators, genetic_operators_size, elite_size
     assigns_bias = []
 
     
-    conv_operators_results, bias_operators_results = zip(*[select_operator_and_apply(genetic_operator[0],genetic_operator[1],tf.cast(genetic_operators_size[idx] * populationSize,dtype=tf.int32),elite_size,mutationRate,best_convulations,best_biases) for idx, genetic_operator in enumerate(genetic_operators)])
+    conv_operators_results, bias_operators_results = zip(*[select_operator_and_apply(genetic_operator[0],genetic_operator[1],tf.cast(genetic_operators_size[idx] ,dtype=tf.int32),elite_size,mutationRate,best_convulations,best_biases) for idx, genetic_operator in enumerate(genetic_operators)])
 
     conv_operators_results = list(conv_operators_results)
     bias_operators_results = list(bias_operators_results)
