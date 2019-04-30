@@ -157,7 +157,7 @@ class Population:
           file_string = './graphs/' + str(self.populationSize)  + '_' +  sys.argv[2] +   '.pckl'
         else:
           file_string = './graphs/' + str(self.populationSize)  + '_10.pckl'
-        with open('./graphs/' + str(self.populationSize)  + '_' +  sys.argv[2] +   '.pckl', 'wb') as save_graph_file:
+        with open(file_string, 'wb') as save_graph_file:
             save_graph = Graph(tempos,acuracias)
             pickle.dump(save_graph,save_graph_file)
             print('salvei em: ' + '.\graphs\\' + str(self.populationSize) + '.pckl')
