@@ -152,10 +152,11 @@ class Population:
                             #minimum_not_one = possible_slices[operators_max.index(min(operators_max))]
                             slice_with_operator = np.column_stack((self.slice_sizes,operators_max,range(len(self.slice_sizes))))
                             slice_with_operator = list(filter(lambda x: x[0] > 1,slice_with_operator))
+                            print(slice_with_operator)
                             min_fitness_slice = min(slice_with_operator,key=lambda x: x[1])
-
-
-                            min_fitness_operator_index = min_fitness_slice[2]
+                            print(min_fitness_slice)
+                            min_fitness_operator_index = int(min_fitness_slice[2])
+                            print(min_fitness_operator_index)
                             if(self.slice_sizes[min_fitness_operator_index] > 1):
                                 self.slice_sizes[max_fitness_operator_index] += 1
                                 self.slice_sizes[min_fitness_operator_index] -= 1
