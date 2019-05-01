@@ -229,12 +229,12 @@ def crossover_operator(best_conv, best_bias, tamanhoElite, tamanhoCrossover):
         for key in best_conv: 
                 #population = best_conv[key] #, best_conv[key][2], best_conv[key][3] ])
                 #new_population = 
-                finish_conv[key] = tf.map_fn(lambda permutation: generate_child_by_all(best_conv[key][permutation[0]],best_conv[key][permutation[1]]) ,permutations[0:(tamanhoCrossover - 1)], dtype=tf.float32)
+                finish_conv[key] = tf.map_fn(lambda permutation: generate_child_by_all(best_conv[key][permutation[0]],best_conv[key][permutation[1]]) ,permutations[0:(tamanhoCrossover)], dtype=tf.float32)
 
         for key in best_bias: 
                 #population = best_bias[key] #, best_bias[key][2] ,best_bias[key][3] ])
                 #new_population = 
-                finish_bias[key] = tf.map_fn(lambda permutation: generate_child_by_all(best_bias[key][permutation[0]],best_bias[key][permutation[1]]) ,permutations[0:(tamanhoCrossover - 1)], dtype=tf.float32)
+                finish_bias[key] = tf.map_fn(lambda permutation: generate_child_by_all(best_bias[key][permutation[0]],best_bias[key][permutation[1]]) ,permutations[0:(tamanhoCrossover)], dtype=tf.float32)
 
         return finish_conv, finish_bias
 
