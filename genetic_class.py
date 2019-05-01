@@ -141,6 +141,7 @@ class Population:
                             print(self.slice_sizes)
                             for population_slice in self.slice_sizes:
                                 slice_finish = int(last_population_slice+population_slice-1)
+                                print(str(last_population_slice) + str(population_slice))
                                 print(cost[last_population_slice:slice_finish])
                                 operators_max.append(max(cost[last_population_slice:slice_finish]))
                                 last_population_slice += int(population_slice)
