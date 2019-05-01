@@ -149,7 +149,7 @@ class Population:
                             
                             max_fitness_operator_index = operators_max.index(max(operators_max))
 
-                            while(min(operators_max) < 2):
+                            while(self.slice_sizes[operators_max.index(min(operators_max))] < 2):
                                 operators_max.remove(min(operators_max))
                             min_fitness_operator_index = operators_max.index(min(operators_max))
                             print(self.slice_sizes[max_fitness_operator_index])
@@ -159,7 +159,6 @@ class Population:
                                 self.slice_sizes[min_fitness_operator_index] -= 1
             # mutate = mutate * 2
         sess.close()
-
         file_string = []
         if(len(sys.argv) > 2):
           file_string = './graphs/' + str(self.populationSize)  + '_' +  sys.argv[2] +   '.pckl'
