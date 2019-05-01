@@ -215,8 +215,7 @@ def crossover_operator(best_conv, best_bias, tamanhoElite, tamanhoCrossover):
 
         #size_neural_networks = tournamentSize 
         size_neural_networks = 3
-         
-        
+
         finish = []
         finish_conv = {}
         finish_bias = {}
