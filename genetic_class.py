@@ -147,11 +147,14 @@ class Population:
                                     operators_max.append(cost[last_population_slice])
                                 last_population_slice += int(population_slice)
                             
+                            while(min(operators_max) < 2):
+                                operators_max.remove(min(operators_max))
+                                
                             max_fitness_operator_index = operators_max.index(max(operators_max))
                             min_fitness_operator_index = operators_max.index(min(operators_max))
                             print(self.slice_sizes[max_fitness_operator_index])
                             print(self.slice_sizes[min_fitness_operator_index])
-                            if(self.slice_sizes[min_fitness_operator_index] >= 2):
+                            if(self.slice_sizes[min_fitness_operator_index] > 1):
                                 self.slice_sizes[max_fitness_operator_index] += 1
                                 self.slice_sizes[min_fitness_operator_index] -= 1
             # mutate = mutate * 2
