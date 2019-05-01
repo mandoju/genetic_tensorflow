@@ -31,7 +31,7 @@ geneticSettings = {
     'layers': [785, 10],
     'mutationRate': 0.10,
     'logdir': './log/',
-    'fineTuning': False
+    'fineTuning': True
 }
 
 populationSize = geneticSettings['populationSize']
