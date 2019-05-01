@@ -141,9 +141,10 @@ class Population:
                             print(self.slice_sizes)
                             for population_slice in self.slice_sizes:
                                 slice_finish = int(last_population_slice+population_slice-1)
-                                print(str(last_population_slice) + str(population_slice))
-                                print(cost[last_population_slice:slice_finish])
-                                operators_max.append(max(cost[last_population_slice:slice_finish]))
+                                if(population_slice > 1):
+                                    operators_max.append(max(cost[last_population_slice:slice_finish]))
+                                else:
+                                    operators_max.append(cost[last_population_slice])
                                 last_population_slice += int(population_slice)
                             
                             max_fitness_operator_index = operators_max.index(max(operators_max))
