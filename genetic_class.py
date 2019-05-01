@@ -149,10 +149,12 @@ class Population:
                             
                             max_fitness_operator_index = operators_max.index(max(operators_max))
 
-                            print(operators_max)
-                            while(self.slice_sizes[operators_max.index(min(operators_max))] < 2):
-                                print(self.slice_sizes[operators_max.index(min(operators_max))])
+                            
+                            minimum_not_one = self.slice_sizes[operators_max.index(min(operators_max))]
+                            while(minimum_not_one < 2):
                                 operators_max.remove(min(operators_max))
+                                minimum_not_one = self.slice_sizes[operators_max.index(min(operators_max))]
+
                             min_fitness_operator_index = operators_max.index(min(operators_max))
                             if(self.slice_sizes[min_fitness_operator_index] > 1):
                                 self.slice_sizes[max_fitness_operator_index] += 1
