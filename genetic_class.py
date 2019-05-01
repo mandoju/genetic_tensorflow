@@ -138,7 +138,6 @@ class Population:
 
                             last_population_slice = 0
                             operators_max = []
-                            print(self.slice_sizes)
                             for population_slice in self.slice_sizes:
                                 slice_finish = int(last_population_slice+population_slice-1)
                                 if(population_slice > 1):
@@ -148,14 +147,15 @@ class Population:
                                 last_population_slice += int(population_slice)
                             
                             max_fitness_operator_index = operators_max.index(max(operators_max))
-
                             
-                            minimum_not_one = self.slice_sizes[operators_max.index(min(operators_max))]
-                            while(minimum_not_one < 2):
-                                operators_max.remove(self.slice_sizes[operators_max.index(min(operators_max))].index)
-                                minimum_not_one = self.slice_sizes[operators_max.index(min(operators_max))]
+                            #possible_slices_remove = self.slice_sizes
+                            #minimum_not_one = possible_slices[operators_max.index(min(operators_max))]
+                            slice_with_operator = np.column_stack((self.slice_sizes,operators_max,range(len(self.slice_sizes))))
+                            slice_with_operator = list(filter(lambda x: x[0] > 1,slice_with_operator))
+                            min_fitness_slice = min(slice_with_operator,key=lambda x: x[1])
 
-                            min_fitness_operator_index = operators_max.index(min(operators_max))
+
+                            min_fitness_operator_index = min_fitness_slice[2]
                             if(self.slice_sizes[min_fitness_operator_index] > 1):
                                 self.slice_sizes[max_fitness_operator_index] += 1
                                 self.slice_sizes[min_fitness_operator_index] -= 1
