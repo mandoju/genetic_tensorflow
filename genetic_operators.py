@@ -27,7 +27,6 @@ def apply_genetic_operatos(genetic_operators, genetic_operators_size, elite_size
     bias_operators_results = list(bias_operators_results)
 
     conv_operators_results.append(best_convulations)
-    print(best_convulations)
     bias_operators_results.append(best_biases)
     for item in conv_operators_results:
         for k, v in item.items():
@@ -220,8 +219,8 @@ def crossover_operator(best_conv, best_bias, tamanhoElite, tamanhoCrossover):
         finish_conv = {}
         finish_bias = {}
 #        tamanhoCrossover = tamanhoElite
-        permutations = tf.range(tamanhoElite)
-        permutations = tf.reshape(permutations, [tamanhoElite//2,2])
+        permutations = tf.concat(tf.range(tamanhoElite) , tf.range(tamanhoElite) )
+        permutations = tf.reshape(permutations, [tamanhoElite,2])
         keys = best_conv.keys()
 
 
