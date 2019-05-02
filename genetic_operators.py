@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from mutation import mutation, mutation_unbiased, mutation_all
+from mutation import mutation, mutation_unbiased, mutation_by_node
 from itertools import chain
 from collections import defaultdict
 
@@ -274,11 +274,11 @@ def mutation_operator_by_layer(best_conv,best_bias,tamanhoElite,mutationRate,mut
             
             for key in best_conv: 
                     shape_module = tf.shape(best_conv[key])[0]
-                    finish_conv[key] = tf.map_fn(lambda x: tf.conf(tf.random_uniform(shape=null) < mutationRate ,mutation_all(best_conv[key][x%shape_module],mutationRate,mutationPercent),best_conv[key][x%shape_module]),tf.range( tamanhoMutacoes), dtype=tf.float32)
+                    finish_conv[key] = tf.map_fn(lambda x: mutation_by_node(best_conv[key][x%shape_module],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
 
             for key in best_bias: 
                     shape_module = tf.shape(best_bias[key])[0]
-                    finish_bias[key] = tf.map_fn(lambda x: tf.conf( tf.random_uniform(shape=null) < mutationRate,mutation_all(best_bias[key][x%shape_module],mutationRate,mutationPercent),best_bias[key][x%shape_module]),tf.range( tamanhoMutacoes)), dtype=tf.float32)
+                    finish_bias[key] = tf.map_fn(lambda x: mutation_by_node(best_bias[key][x%shape_module],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
 
         return finish_conv, finish_bias
 
