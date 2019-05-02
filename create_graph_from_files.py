@@ -8,7 +8,7 @@ import pickle
 #files_pickle = ['./graphs/20_he_menor.pckl','./graphs/40_he_menor.pckl','./graphs/80_he_menor.pckl','./graphs/160_he_menor.pckl','./graphs/gradient.pckl']
 #files_pickle = ['./graphs/20_3.pckl','./graphs/40_3.pckl','./graphs/80_3.pckl','./graphs/160_3.pckl','./graphs/gradient_3.pckl']
 #files_pickle = ['./graphs/20_5.pckl','./graphs/40_5.pckl','./graphs/80_5.pckl','./graphs/160_5.pckl','./graphs/gradient_5.pckl']
-files_pickle = ['./graphs/20_10.pckl','./graphs/40_10.pckl','./graphs/80_10.pckl','./graphs/160_10.pckl','./graphs/gradient_10.pckl']
+files_pickle = ['./graphs/20_3.pckl','./graphs/40_3.pckl','./graphs/80_3.pckl','./graphs/160_3.pckl','./graphs/gradient_3.pckl']
 #files_pickle = ['./graphs/20_he_menor.pckl','./graphs/40_he_menor.pckl','./graphs/80_he_menor.pckl','./graphs/160_he_menor.pckl','./graphs/gradient.pckl']
 
 
