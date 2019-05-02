@@ -18,7 +18,7 @@ print(weights_convulation_input);
 
 geneticSettings = {
     'populationSize': int(sys.argv[1]),
-    'epochs': 10,
+    'epochs': 1,
     'inner_loop': 10,
     'weights_convulation': weights_convulation_input,
     'biases': biases_input,
