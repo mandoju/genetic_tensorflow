@@ -160,45 +160,29 @@ class Population:
                                     cost[last_population_slice])
                             last_population_slice += int(population_slice)
 
-                        max_fitness_operator_index = operators_max.index(
-                            max(operators_max))
+                            last_population_slice = 0
+                            operators_max = []
+                            for population_slice in self.slice_sizes:
+                                slice_finish = int(last_population_slice+population_slice-1)
+                                if(population_slice > 1):
+                                    operators_max.append(max(cost[last_population_slice:slice_finish]))
+                                else:
+                                    operators_max.append(cost[last_population_slice])
+                                last_population_slice += int(population_slice)
+                            
+                            max_fitness_operator_index = operators_max.index(max(operators_max))
+                            
+                            #possible_slices_remove = self.slice_sizes
+                            #minimum_not_one = possible_slices[operators_max.index(min(operators_max))]
+                            slice_with_operator = np.column_stack((self.slice_sizes,operators_max,range(len(self.slice_sizes))))
+                            slice_with_operator = list(filter(lambda x: x[0] > 1,slice_with_operator))
+                            min_fitness_slice = min(slice_with_operator,key=lambda x: x[1])
 
-                        # possible_slices_remove = self.slice_sizes
-                        # minimum_not_one = possible_slices[operators_max.index(min(operators_max))]
-                        slice_with_operator = np.column_stack(
-                            (self.slice_sizes, operators_max, range(len(self.slice_sizes))))
-                        slice_with_operator = list(
-                            filter(lambda x: x[0] > 1, slice_with_operator))
-                        print(slice_with_operator)
-                        min_fitness_slice = min(
-                            slice_with_operator, key=lambda x: x[1])
-                        print(min_fitness_slice)
-                        min_fitness_operator_index = int(min_fitness_slice[2])
-                        print(min_fitness_operator_index)
-                        if(self.slice_sizes[min_fitness_operator_index] > 1):
-                            self.slice_sizes[max_fitness_operator_index] += 1
-                            self.slice_sizes[min_fitness_operator_index] -= 1
-            else:
-                    for batch in range(len(train_x)//batch_size):
-                        batch_x = train_x[batch *
-                                          batch_size:min((batch+1)*batch_size, len(train_x))]
-                        batch_y = train_y[batch *
-                                          batch_size:min((batch+1)*batch_size, len(train_y))]
-                        # Run optimization op (backprop).
-                    # Calculate batch loss and accuracy
-                        opt = sess.run(optimizer, feed_dict={self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y,
-                                       self.mutationRate: mutate, self.operatorSize: self.slice_sizes}, options=run_options)
-                        loss = sess.run(cost, feed_dict={self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes}, options=run_options)
-                    print("Iter " + str(i) + ", Loss= " +
-                          "{:.6f}".format(loss) )
-                    print("Optimization Finished!")
 
-                    # Calculate accuracy for all 10000 mnist test images
-                    # test_acc,valid_loss = sess.run([accuracy,cost], feed_dict={
-                    #           self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes}, options=run_options ))
-                    acuracias.append(loss)
-                    tempos.append(time.time() - start_time)
-
+                            min_fitness_operator_index = min_fitness_slice[2]
+                            if(self.slice_sizes[min_fitness_operator_index] > 1):
+                                self.slice_sizes[max_fitness_operator_index] += 1
+                                self.slice_sizes[min_fitness_operator_index] -= 1
             # mutate = mutate * 2
         sess.close()
         file_string=[]
