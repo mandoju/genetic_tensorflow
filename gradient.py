@@ -29,7 +29,7 @@ def get_mnist_data():
 train_x,train_y,test_x,test_y = get_mnist_data()   
 train_x = train_x.reshape(-1, 28, 28, 1)
 test_x =  test_x.reshape(-1, 28, 28, 1)
-training_iters = 200
+training_iters = 20
 learning_rate = 0.001
 batch_size = 128
 n_classes = 10
@@ -222,6 +222,9 @@ with tf.Session() as sess:
     test_loss = []
     train_accuracy = []
     test_accuracy = []
+    tempos = []
+    iter_time = time.time()
+
     summary_writer = tf.summary.FileWriter('./Output', sess.graph)
     for i in range(training_iters):
         for batch in range(len(train_x)//batch_size):
@@ -233,6 +236,10 @@ with tf.Session() as sess:
                                                               y: batch_y})
             loss, acc = sess.run([cost, accuracy], feed_dict={X: batch_x,
                                                               y: batch_y})
+            train_loss.append(loss)
+            train_accuracy.append(acc)
+            time_passed = time.time() - iter_time
+            tempos.append(time_passed)
         print("Iter " + str(i) + ", Loss= " + \
                       "{:.6f}".format(loss) + ", Training Accuracy= " + \
                       "{:.5f}".format(acc))
@@ -241,8 +248,21 @@ with tf.Session() as sess:
         # Calculate accuracy for all 10000 mnist test images
         test_acc,valid_loss = sess.run([accuracy,cost], feed_dict={X: test_x,y : test_y})
         train_loss.append(loss)
+        time_passed = time.time() - iter_time
+        tempos.append(time_passed)
         test_loss.append(valid_loss)
         train_accuracy.append(acc)
         test_accuracy.append(test_acc)
         print("Testing Accuracy:","{:.5f}".format(test_acc))
     summary_writer.close()
+    file_string = ''
+    if(len(sys.argv) > 1):
+        file_string = './graphs/gradient_' + sys.argv[1] + '.pckl'
+    else:
+        file_string = './graphs/gradient_10.pckl'
+    with open(file_string, 'wb') as save_graph_file:
+        save_graph = Graph(tempos,train_loss)
+        pickle.dump(save_graph,save_graph_file)
+        print('salvei em: ./graphs/gradient.pckl')
+    # plt.grid(True)
+    # plt.show()
