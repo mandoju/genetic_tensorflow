@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from mutation import mutation, mutation_unbiased, mutation_by_node
+from mutation import mutation, mutation_unbiased
 from itertools import chain
 from collections import defaultdict
 
@@ -9,8 +9,6 @@ def select_operator_and_apply(genetic_operator,genetic_operator_param,genetic_op
         return crossover_operator(best_conv,best_bias,elite_size,genetic_operator_population_size)
     elif(genetic_operator == 'mutation'):
         return mutation_operator(best_conv,best_bias,elite_size,mutatioRate,genetic_operator_param,genetic_operator_population_size)
-    elif(genetic_operator == 'mutate_by_layer'):
-        return mutation_operator_by_layer(best_conv,best_bias,elite_size,mutatioRate,genetic_operator_param,genetic_operator_population_size)
     elif(genetic_operator == 'mutation_unbiased'):
         return mutation_unbiased_operator(best_conv,best_bias,elite_size,mutatioRate,genetic_operator_param,genetic_operator_population_size)
 def apply_genetic_operatos(genetic_operators, genetic_operators_size, elite_size, input_convulations, input_bias, best_convulations, best_biases, populationShape , populationSize, mutationRate,tournamentSize,layers):
@@ -252,33 +250,11 @@ def mutation_operator(best_conv,best_bias,tamanhoElite,mutationRate,mutationPerc
             
             for key in best_conv: 
                     shape_module = tf.shape(best_conv[key])[0]
-                    finish_conv[key] = tf.map_fn(lambda x: mutation_by_node(best_conv[key][x%shape_module],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
+                    finish_conv[key] = tf.map_fn(lambda x: mutation(best_conv[key][x%shape_module],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
 
             for key in best_bias: 
                     shape_module = tf.shape(best_bias[key])[0]
                     finish_bias[key] = tf.map_fn(lambda x: mutation(best_bias[key][x%shape_module],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
-
-        return finish_conv, finish_bias
-
-def mutation_operator_by_layer(best_conv,best_bias,tamanhoElite,mutationRate,mutationPercent,tamanhoMutacoes):
-
-        with tf.name_scope('Crossover'):
-                
-            finish = []
-            finish_conv = {}
-            finish_bias = {}
-            tamanhoCrossover = tamanhoElite
-            permutations = tf.range(tamanhoElite)
-            permutations = tf.reshape(permutations, [tamanhoElite//2,2])
-            keys = best_conv.keys()
-            
-            for key in best_conv: 
-                    shape_module = tf.shape(best_conv[key])[0]
-                    finish_conv[key] = tf.map_fn(lambda x: mutation_by_node(best_conv[key][x%shape_module],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
-
-            for key in best_bias: 
-                    shape_module = tf.shape(best_bias[key])[0]
-                    finish_bias[key] = tf.map_fn(lambda x: mutation_by_node(best_bias[key][x%shape_module],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
 
         return finish_conv, finish_bias
 
