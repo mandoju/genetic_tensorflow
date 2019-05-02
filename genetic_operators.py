@@ -278,7 +278,7 @@ def mutation_operator_by_layer(best_conv,best_bias,tamanhoElite,mutationRate,mut
 
             for key in best_bias: 
                     shape_module = tf.shape(best_bias[key])[0]
-                    finish_bias[key] = tf.map_fn(lambda x: tf.conf( tf.random_uniform(shape=null) < mutationRate,mutation_all(best_bias[key][x%shape_module],mutationRate,mutationPercent),best_bias[key][x%shape_module]),tf.range( tamanhoMutacoes)), dtype=tf.float32)
+                    finish_bias[key] = tf.map_fn(lambda x: tf.conf( tf.random_uniform(shape=null) < mutationRate,mutation_all(best_bias[key][x%shape_module],mutationRate,mutationPercent),best_bias[key][x%shape_module]),tf.range( tamanhoMutacoes), dtype=tf.float32)
 
         return finish_conv, finish_bias
 
