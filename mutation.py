@@ -12,7 +12,7 @@ def mutation(tensor, mutationRate,mutationTax):
 
 
         shapeSize = tf.shape(tensor)
-        random_array_binary =  tf.random_uniform(dtype=tf.float32, minval=0, maxval=100, shape=shapeSize)
+        random_array_binary =  tf.random_uniform(dtype=tf.float32, minval=0, maxval=100, shape=shapeSize )
  
         #random_array_binary =  tf.map_fn(lambda x: function_map(x,mutationRate), random_array_binary, dtype=tf.float32)
 
@@ -20,7 +20,7 @@ def mutation(tensor, mutationRate,mutationTax):
 
         comparison = tf.math.greater( random_array_binary, mutationRate * 100 )
 
-        random_array_binary =  tf.where (comparison, tf.zeros_like(random_array_binary), tf.ones_like(random_array_binary)) 
+        random_array_binary =  tf.where (comparison, tf.ones_like(random_array_binary), tf.zeros_like(random_array_binary)) 
 
         random_array_values =  tf.random_uniform(dtype=tf.float32, minval=(1-mutationTax), maxval=(1+mutationTax), shape=shapeSize)
 

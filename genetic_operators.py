@@ -219,8 +219,8 @@ def crossover_operator(best_conv, best_bias, tamanhoElite, tamanhoCrossover):
         finish_conv = {}
         finish_bias = {}
 #        tamanhoCrossover = tamanhoElite
-        permutations = tf.concat( [ tf.range(tamanhoElite) , tf.range(tamanhoElite) , tf.range(tamanhoElite), , tf.range(tamanhoElite) ], 0 )
-        permutations = tf.reshape(permutations, [tamanhoElite*2,2])
+        permutations = tf.concat( [ tf.range(tamanhoElite) , tf.range(tamanhoElite) , tf.range(tamanhoElite), tf.range(tamanhoElite),  tf.range(tamanhoElite) , tf.range(tamanhoElite) , tf.range(tamanhoElite), tf.range(tamanhoElite) ], 0 )
+        permutations = tf.reshape(permutations, [tamanhoElite*4,2])
         keys = best_conv.keys()
 
 
