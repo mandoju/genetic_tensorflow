@@ -261,7 +261,7 @@ with tf.Session() as sess:
     else:
         file_string = './graphs/gradient_10.pckl'
     with open(file_string, 'wb') as save_graph_file:
-        save_graph = Graph(tempos,train_loss)
+        save_graph = Graph(tempos,train_loss,train_accuracy)
         pickle.dump(save_graph,save_graph_file)
         print('salvei em: ./graphs/gradient.pckl')
     # plt.grid(True)

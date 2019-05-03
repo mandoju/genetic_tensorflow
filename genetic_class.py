@@ -123,7 +123,8 @@ class Population:
                         print(cost)
                         print("tempo atual: " + str(time.time() - start_time))
                         # if(max(cost) < 3):
-                        acuracias.append(max(cost))
+                        fitnesses.append(max(cost))
+                        acuracias.append(cost.index(max(cost)))
                         tempos.append(time.time() - start_time)
                         if(self.fineTuningBoolean):
                             # if(max(accuracies) <= last_accuracy):
@@ -168,7 +169,7 @@ class Population:
         else:
           file_string = './graphs/' + str(self.populationSize)  + '_10.pckl'
         with open(file_string, 'wb') as save_graph_file:
-            save_graph = Graph(tempos,acuracias)
+            save_graph = Graph(tempos,fitnesses,acuracias)
             pickle.dump(save_graph,save_graph_file)
             print('salvei em: ' + '.\graphs\\' + str(self.populationSize) + '.pckl')
         plt.plot(tempos, acuracias, '-', lw=2)
