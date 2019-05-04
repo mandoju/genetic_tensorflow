@@ -124,7 +124,7 @@ class Population:
                         print("tempo atual: " + str(time.time() - start_time))
                         # if(max(cost) < 3):
                         fitnesses.append(max(cost))
-                        acuracias.append(cost.index(max(cost)))
+                        acuracias.append(max(accuracies))
                         tempos.append(time.time() - start_time)
                         if(self.fineTuningBoolean):
                             # if(max(accuracies) <= last_accuracy):
