@@ -12,3 +12,5 @@ venv/
 predicts.txt
 *.txt
 graphs/
+
+acuracias\.png
