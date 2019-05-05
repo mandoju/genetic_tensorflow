@@ -172,8 +172,8 @@ def generate_child_by_layer(mother_tensor,father_tensor,mutationRate,layers):
         random_array_select = tf.math.round(random_array_select)
 
         #Criando o array inverso para definir o número ao contrário para criar a quantidade recebida pelo pai
-        random_array_inverse = tf.map_fn(lambda x: (1 - x), random_array_binary, dtype=tf.float32)
-
+        #random_array_inverse = tf.map_fn(lambda x: (1 - x), random_array_binary, dtype=tf.float32)
+        random_array_inverse = 1 - random_array_binary
         #Criação o array de taxa de mistura para ambos
         #random_array_start = tf.cast(
         #    tf.random_uniform(dtype=tf.int32, minval=0, maxval=1, shape=[shape_size[0]]), tf.float32)
@@ -251,7 +251,6 @@ def mutation_operator(best_conv,best_bias,tamanhoElite,mutationRate,mutationPerc
             for key in best_conv: 
                     shape_module = tf.shape(best_conv[key])[0]
                     finish_conv[key] = tf.map_fn(lambda x: mutation(best_conv[key][x%shape_module],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
-
             for key in best_bias: 
                     shape_module = tf.shape(best_bias[key])[0]
                     finish_bias[key] = tf.map_fn(lambda x: mutation(best_bias[key][x%shape_module],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
