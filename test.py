@@ -25,13 +25,13 @@ geneticSettings = {
     'fitness': 'cross_entropy',
     'selection': 'truncate',
     'elite': 0.20,
-    'genetic_operators': [['crossover', 0.10], ['mutation', 0.01], ['mutation', 0.00001], ['mutation', 0.000001], ['mutation', 0.0000001]],
+    'genetic_operators': [['crossover', 0.10], ['mutation', 0.01], ['mutation', 0.0001], ['mutation', 0.00001], ['mutation', 0.000001]],
     'genetic_operators_size': [0.10, 0.10, 0.20, 0.20, 0.20],
     'fineTuningRate': 0.05,
     'layers': [785, 10],
-    'mutationRate': 0.05,
+    'mutationRate': 0.01,
     'logdir': './log/',
-    'fineTuning': True
+    'fineTuning': False
 }
 
 populationSize = geneticSettings['populationSize']
