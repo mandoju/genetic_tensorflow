@@ -238,7 +238,7 @@ def crossover_operator(best_conv, best_bias, tamanhoElite, tamanhoCrossover):
 
 def mutation_operator(best_conv,best_bias,tamanhoElite,mutationRate,mutationPercent,tamanhoMutacoes):
 
-        with tf.name_scope('Crossover'):
+        with tf.name_scope('Mutation'):
                 
             finish = []
             finish_conv = {}
@@ -260,7 +260,7 @@ def mutation_operator(best_conv,best_bias,tamanhoElite,mutationRate,mutationPerc
 
 def mutation_unbiased_operator(best_conv,best_bias,tamanhoElite,mutationRate,mutationPercent,tamanhoMutacoes):
 
-        with tf.name_scope('Crossover'):
+        with tf.name_scope('Mutation Unbiased'):
                 
             finish = []
             finish_conv = {}
