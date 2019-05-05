@@ -6,12 +6,14 @@ from utils import variable_summaries
 from tensorflow.python.client import timeline
 from genetic_operators import apply_genetic_operatos
 from graph import Graph
+from statistics import mean 
 import numpy as np
 import tensorflow as tf
 import time
 import matplotlib
 import pickle
 import sys
+
 matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
@@ -41,7 +43,6 @@ class Population:
         start = time.time()
         
         self.neural_networks.run()
-        
         self.mutationRate = tf.placeholder(tf.float32,shape=[])
         self.operatorSize = tf.placeholder(tf.float32,shape=[len(self.geneticSettings['genetic_operators_size'])])
         if(self.geneticSettings['fitness'] == 'cross_entropy'):
@@ -64,9 +65,9 @@ class Population:
         self.current_epoch += 1
        
         sess = tf.Session()
-        # writer = tf.summary.FileWriter(self.neural_networks.logdir, sess.graph)
-        # run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
-        # run_metadata = tf.RunMetadata()
+        writer = tf.summary.FileWriter(self.neural_networks.logdir, sess.graph)
+        run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+        run_metadata = tf.RunMetadata()
 
         start = time.time()
         sess.run(tf.global_variables_initializer())
@@ -81,10 +82,7 @@ class Population:
         finished_array = []
         
         train_x = self.neural_networks.train_x
-        #test_x = self.neural_networks.test_x
         train_y = self.neural_networks.train_y
-        #test_y = self.neural_networks.test_y
-        # print(len(train_x))
         start_time = time.time()
         acuracias = []
         fitnesses = []
@@ -110,10 +108,14 @@ class Population:
                         print("Mutação atual: " + str(mutate) )
                         print(self.slice_sizes)
 
-                        run_options = tf.RunOptions(report_tensor_allocations_upon_oom = True)
+
+                        session_time = time.time()
 
                         predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.argmax_predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
-                            self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes}, options=run_options )
+                                self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes}, options=run_options, run_metadata=run_metadata )
+
+                        print("sessao demorou: " +  str(time.time() - session_time))
+                        writer.add_run_metadata(run_metadata,'step%d' % batch)
                         msg = "Batch: " + str(batch)
                         np.savetxt('predicts_save.txt',predicts)
                         np.savetxt('Y.txt',label_argmax)
@@ -142,7 +144,7 @@ class Population:
                             for population_slice in self.slice_sizes:
                                 slice_finish = int(last_population_slice+population_slice-1)
                                 if(population_slice > 1):
-                                    operators_max.append(max(cost[last_population_slice:slice_finish]))
+                                    operators_max.append(np.mean(cost[last_population_slice:slice_finish]))
                                 else:
                                     operators_max.append(cost[last_population_slice])
                                 last_population_slice += int(population_slice)
@@ -152,7 +154,7 @@ class Population:
                             #possible_slices_remove = self.slice_sizes
                             #minimum_not_one = possible_slices[operators_max.index(min(operators_max))]
                             slice_with_operator = np.column_stack((self.slice_sizes,operators_max,range(len(self.slice_sizes))))
-                            slice_with_operator = list(filter(lambda x: x[0] > 1,slice_with_operator))
+                            slice_with_operator = list(filter(lambda x: x[0] > 3,slice_with_operator))
                             print(slice_with_operator)
                             min_fitness_slice = min(slice_with_operator,key=lambda x: x[1])
                             print(min_fitness_slice)
