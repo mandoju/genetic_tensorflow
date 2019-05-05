@@ -228,12 +228,16 @@ with tf.Session() as sess:
     summary_writer = tf.summary.FileWriter('./Output', sess.graph)
     for i in range(training_iters):
         for batch in range(len(train_x)//batch_size):
+            print(batch)
             batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
             batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]    
             # Run optimization op (backprop).
                 # Calculate batch loss and accuracy
+            session_time = time.time()
             opt = sess.run(optimizer, feed_dict={X: batch_x,
                                                               y: batch_y})
+            print("sessao demorou:" + str(time.time() - session_time))
+
             loss, acc = sess.run([cost, accuracy], feed_dict={X: batch_x,
                                                               y: batch_y})
             train_loss.append(loss)
@@ -254,6 +258,7 @@ with tf.Session() as sess:
         train_accuracy.append(acc)
         test_accuracy.append(test_acc)
         print("Testing Accuracy:","{:.5f}".format(test_acc))
+        print("ficamos com:", time.time() - iter_time)
     summary_writer.close()
     file_string = ''
     if(len(sys.argv) > 1):
