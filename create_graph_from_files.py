@@ -59,17 +59,53 @@ import sys
 
 # plt.grid(True)
 # plt.show()
+class Graph_file:
+    def __init__(self,graph,name):
+        self.graph = graph
+        self.name = name
 
 files_pickle = []
 graphs = []
 for argv in sys.argv[1:]:
-     file_pickle_opened = open('./graphs/' + argv, 'rb') 
-     graphs.append(pickle.load(file_pickle_opened) )
+     file_pickle_opened = open('./graphs/' + argv, 'rb')
+     file_graph = pickle.load(file_pickle_opened) 
+     graph = Graph_file(file_graph,argv)
+     graphs.append( graph )
      file_pickle_opened.close();
  
-for graph in graphs:
+for graph_file in graphs:
+    graph = graph_file.graph
     if(graph.performance[0] < 0):
         graph.performance = [x * -1 for x in graph.performance]
-    plt.plot(graph.tempo,graph.performance , '-')
+    plt.plot(graph.tempo,graph.performance , '-',label=graph_file.name)
+plt.legend(loc='upper right')
+plt.grid(True)
+plt.show()
+
+for graph_file in graphs:
+    graph = graph_file.graph
+    if(graph.performance[0] < 0):
+        graph.performance = [x * -1 for x in graph.performance]
+    plt.plot(graph.tempo,graph.accuracy , '-', label=graph_file.name)
+plt.legend(loc='upper right')
+plt.grid(True)
+plt.show()
+
+
+for graph_file in graphs:
+    graph = graph_file.graph
+    if(graph.performance[0] < 0):
+        graph.performance = [x * -1 for x in graph.performance]
+    plt.plot(graph.validation_tempo,graph.validation_performance , '-', label=graph_file.name)
+plt.legend(loc='upper right')
+plt.grid(True)
+plt.show()
+
+for graph_file in graphs:
+    graph = graph_file.graph
+    if(graph.performance[0] < 0):
+        graph.performance = [x * -1 for x in graph.performance]
+    plt.plot(graph.validation_tempo,graph.validation_accuracy , '-', label=graph_file.name)
+plt.legend(loc='upper right')
 plt.grid(True)
 plt.show()

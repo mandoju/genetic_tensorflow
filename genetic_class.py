@@ -83,14 +83,21 @@ class Population:
         
         train_x = self.neural_networks.train_x
         train_y = self.neural_networks.train_y
-        start_time = time.time()
+        
         acuracias = []
         fitnesses = []
+        validation_fitnesses = []
+        validation_acuracias = []
         tempos = []
+        tempos_validation = []
+        fine_tuning_graph = []
+
         print("batchs: " + str(len(train_x)//125))
         mutate = self.geneticSettings['mutationRate']
         print(mutate)
         last_cost = 0
+        last_best_cost = -99999
+        start_time = time.time()
         for i in range(self.geneticSettings['epochs']):
             
             print("época: " + str(i))
@@ -98,24 +105,24 @@ class Population:
 
             batch_size = 128
 
-            for batch in range(len(train_x)//batch_size):
+            for batch in range( (len(train_x)//batch_size ) - 1 ):
                     #for j in range(self.geneticSettings['inner_loop']):
                         print("batch: " + str(batch))
                         start_batch = time.time()
                         batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
                         batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]  
 
-                        print("Mutação atual: " + str(mutate) )
+                        #print("Mutação atual: " + str(mutate) )
                         print(self.slice_sizes)
-
+                        fine_tuning_graph.append(self.slice_sizes)
 
                         session_time = time.time()
 
                         predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.argmax_predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
-                                self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes}, options=run_options, run_metadata=run_metadata )
+                                self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes})#, options=run_options, run_metadata=run_metadata )
 
                         print("sessao demorou: " +  str(time.time() - session_time))
-                        writer.add_run_metadata(run_metadata,'step%d' % batch)
+                        #writer.add_run_metadata(run_metadata,'step%d' % batch)
                         msg = "Batch: " + str(batch)
                         np.savetxt('predicts_save.txt',predicts)
                         np.savetxt('Y.txt',label_argmax)
@@ -139,7 +146,7 @@ class Population:
                             #         mutate = 0.1
                             last_cost = max(cost)
 
-                            last_population_slice = 0
+                            last_population_slice = self.eliteSize
                             operators_max = []
                             for population_slice in self.slice_sizes:
                                 slice_finish = int(last_population_slice+population_slice-1)
@@ -154,7 +161,7 @@ class Population:
                             #possible_slices_remove = self.slice_sizes
                             #minimum_not_one = possible_slices[operators_max.index(min(operators_max))]
                             slice_with_operator = np.column_stack((self.slice_sizes,operators_max,range(len(self.slice_sizes))))
-                            slice_with_operator = list(filter(lambda x: x[0] > 3,slice_with_operator))
+                            slice_with_operator = list(filter(lambda x: x[0] > self.populationSize * 0.05,slice_with_operator))
                             print(slice_with_operator)
                             min_fitness_slice = min(slice_with_operator,key=lambda x: x[1])
                             print(min_fitness_slice)
@@ -163,6 +170,28 @@ class Population:
                             if(self.slice_sizes[min_fitness_operator_index] > 1):
                                 self.slice_sizes[max_fitness_operator_index] += 1
                                 self.slice_sizes[min_fitness_operator_index] -= 1
+                            # if(batch % 30 == 0):
+                            #     if(self.slice_sizes[1] > 18 or self.slice_sizes[2] > 18):
+                            #         mutate = mutate * 10
+                            #         print('mutei')
+                            #     if(self.slice_sizes[0] > 18 or self.slice_sizes[4] > 18):
+                            #         mutate = mutate / 10
+                            #         print('mutei')
+                            #     last_best_cost = max(cost)
+
+                            
+
+            batch = (len(train_x)//batch_size ) - 1
+            batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
+            batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]  
+            accuracies,cost = sess.run([self.neural_networks.accuracies,fitness], feed_dict={
+                                self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes})#, options=run_options, run_metadata=run_metadata )
+            print("acuracia:" + str(accuracies[0]))
+            validation_acuracias.append(accuracies[0])
+            print("fitness:" + str(cost[0]))
+            validation_fitnesses.append(cost[0])
+            tempos_validation.append(time.time() - start_time)
+            
             # mutate = mutate * 2
         sess.close()
         file_string = []
@@ -171,7 +200,7 @@ class Population:
         else:
           file_string = './graphs/' + str(self.populationSize)  + '_10.pckl'
         with open(file_string, 'wb') as save_graph_file:
-            save_graph = Graph(tempos,fitnesses,acuracias)
+            save_graph = Graph(tempos,fitnesses,acuracias,tempos_validation,validation_fitnesses,validation_acuracias,fine_tuning_graph)
             pickle.dump(save_graph,save_graph_file)
             print('salvei em: ' + '.\graphs\\' + str(self.populationSize) + '.pckl')
         plt.plot(tempos, acuracias, '-', lw=2)

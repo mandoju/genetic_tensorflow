@@ -33,7 +33,7 @@ def mutation(tensor, mutationRate,mutationTax):
 
 def mutation_unbiased(tensor, mutationRate,mutationTax):
     # depois fazer matrix mascara (a.k.a recomendacao do gabriel)
-    with tf.name_scope('Mutation'):
+    with tf.name_scope('Mutation_Unbiased'):
 
 
         shapeSize = tf.shape(tensor)
@@ -58,7 +58,7 @@ def mutation_unbiased(tensor, mutationRate,mutationTax):
 
 def mutation_by_node(tensor, mutationRate):
     # depois fazer matrix mascara (a.k.a recomendacao do gabriel)
-    with tf.name_scope('Mutation'):
+    with tf.name_scope('Mutation_node'):
 
 
         shapeSize = tf.shape(tensor)

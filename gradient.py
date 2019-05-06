@@ -30,7 +30,7 @@ train_x,train_y,test_x,test_y = get_mnist_data()
 train_x = train_x.reshape(-1, 28, 28, 1)
 test_x =  test_x.reshape(-1, 28, 28, 1)
 training_iters = 20
-learning_rate = 0.001
+learning_rate = 0.0001
 batch_size = 128
 n_classes = 10
 x_size = train_x.shape[1]
@@ -215,7 +215,8 @@ init = tf.global_variables_initializer()
     # plt.grid(True)
     # plt.show()
  """
-
+time_to_stop = 1000
+time_begin = time.time()
 with tf.Session() as sess:
     sess.run(init) 
     train_loss = []
@@ -223,11 +224,14 @@ with tf.Session() as sess:
     train_accuracy = []
     test_accuracy = []
     tempos = []
+    tempos_validation = []
     iter_time = time.time()
 
     summary_writer = tf.summary.FileWriter('./Output', sess.graph)
-    for i in range(training_iters):
-        for batch in range(len(train_x)//batch_size):
+    #for i in range(training_iters):
+    i = 0
+    while( time.time() - time_begin < time_to_stop):
+        for batch in range((len(train_x)//batch_size) - 1):
             print(batch)
             batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
             batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]    
@@ -244,21 +248,30 @@ with tf.Session() as sess:
             train_accuracy.append(acc)
             time_passed = time.time() - iter_time
             tempos.append(time_passed)
+            if(time.time() - time_begin < time_to_stop):
+                break
         print("Iter " + str(i) + ", Loss= " + \
                       "{:.6f}".format(loss) + ", Training Accuracy= " + \
                       "{:.5f}".format(acc))
         print("Optimization Finished!")
 
+
         # Calculate accuracy for all 10000 mnist test images
-        test_acc,valid_loss = sess.run([accuracy,cost], feed_dict={X: test_x,y : test_y})
-        train_loss.append(loss)
+        batch = (len(train_x)//batch_size ) - 1
+        validate_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
+        validate_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]  
+        test_acc,valid_loss = sess.run([accuracy,cost], feed_dict={X: validate_x,y : validate_y})
+        #train_loss.append(loss)
         time_passed = time.time() - iter_time
-        tempos.append(time_passed)
+        tempos_validation.append(time_passed)
         test_loss.append(valid_loss)
-        train_accuracy.append(acc)
+        #train_accuracy.append(acc)
         test_accuracy.append(test_acc)
         print("Testing Accuracy:","{:.5f}".format(test_acc))
         print("ficamos com:", time.time() - iter_time)
+        print(time.time())
+
+        i += 1
     summary_writer.close()
     file_string = ''
     if(len(sys.argv) > 1):
@@ -266,7 +279,7 @@ with tf.Session() as sess:
     else:
         file_string = './graphs/gradient_10.pckl'
     with open(file_string, 'wb') as save_graph_file:
-        save_graph = Graph(tempos,train_loss,train_accuracy)
+        save_graph = Graph(tempos,train_loss,train_accuracy,tempos_validation,test_loss,test_accuracy)
         pickle.dump(save_graph,save_graph_file)
         print('salvei em: ./graphs/gradient.pckl')
     # plt.grid(True)

@@ -219,47 +219,77 @@ def crossover_operator(best_conv, best_bias, tamanhoElite, tamanhoCrossover):
         finish_conv = {}
         finish_bias = {}
 #        tamanhoCrossover = tamanhoElite
-        permutations = tf.concat( [ tf.range(tamanhoElite) , tf.range(tamanhoElite) , tf.range(tamanhoElite), tf.range(tamanhoElite),  tf.range(tamanhoElite) , tf.range(tamanhoElite) , tf.range(tamanhoElite), tf.range(tamanhoElite) ], 0 )
-        permutations = tf.reshape(permutations, [tamanhoElite*4,2])
+#        permutations = tf.concat( [ tf.range(tamanhoElite) , tf.range(tamanhoElite) , tf.range(tamanhoElite), tf.range(tamanhoElite),  tf.range(tamanhoElite) , tf.range(tamanhoElite) , tf.range(tamanhoElite), tf.range(tamanhoElite) ], 0 )
+        
+        #ceil = tf.ceil(tamanhoCrossover/2) 
+        #tf.print(ceil)
+        #tamanhoPermutacao = tf.cast(tf.ceil(tamanhoCrossover/2) * 2,dtype=tf.int32)
+        permutations = tf.range(tamanhoCrossover * 2)
+        permutations = permutations % tamanhoElite
+        #permutations = tf.random_shuffle(permutations)
+        permutations = tf.reshape(permutations, [2,-1])
         keys = best_conv.keys()
 
 
         for key in best_conv: 
                 #population = best_conv[key] #, best_conv[key][2], best_conv[key][3] ])
                 #new_population = 
-                finish_conv[key] = tf.map_fn(lambda permutation: generate_child_by_all(best_conv[key][permutation[0]],best_conv[key][permutation[1]]) ,permutations[0:(tamanhoCrossover)], dtype=tf.float32)
+
+                father_tensor = tf.gather(best_conv[key],permutations[0])
+                mother_tensor = tf.gather(best_conv[key],permutations[1])
+                finish_conv[key] = generate_child_by_all(father_tensor,mother_tensor)
+                #finish_conv[key] = tf.map_fn(lambda permutation: generate_child_by_all(best_conv[key][permutation[0]],best_conv[key][permutation[1]]) ,permutations[0:(tamanhoCrossover)], dtype=tf.float32)
 
         for key in best_bias: 
                 #population = best_bias[key] #, best_bias[key][2] ,best_bias[key][3] ])
                 #new_population = 
-                finish_bias[key] = tf.map_fn(lambda permutation: generate_child_by_all(best_bias[key][permutation[0]],best_bias[key][permutation[1]]) ,permutations[0:(tamanhoCrossover)], dtype=tf.float32)
+                father_tensor = tf.gather(best_bias[key],permutations[0])
+                mother_tensor = tf.gather(best_bias[key],permutations[1])
+                finish_bias[key] = generate_child_by_all(father_tensor,mother_tensor)
+                #finish_bias[key] = tf.map_fn(lambda permutation: generate_child_by_all(best_bias[key][permutation[0]],best_bias[key][permutation[1]]) ,permutations[0:(tamanhoCrossover)], dtype=tf.float32)
 
         return finish_conv, finish_bias
 
 def mutation_operator(best_conv,best_bias,tamanhoElite,mutationRate,mutationPercent,tamanhoMutacoes):
 
-        with tf.name_scope('Mutation'):
+        with tf.name_scope('Mutation_new'):
                 
             finish = []
             finish_conv = {}
             finish_bias = {}
             tamanhoCrossover = tamanhoElite
-            permutations = tf.range(tamanhoElite)
-            permutations = tf.reshape(permutations, [tamanhoElite//2,2])
+            #permutations = tf.range(tamanhoElite)
+            #permutations = tf.reshape(permutations, [tamanhoElite//2,2])
             keys = best_conv.keys()
             
             for key in best_conv: 
-                    shape_module = tf.shape(best_conv[key])[0]
-                    finish_conv[key] = tf.map_fn(lambda x: mutation(best_conv[key][x%shape_module],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
+                    shape_module = tf.shape(best_conv[key])
+
+                    elite_key = tf.strided_slice(best_conv[key], [0]  , [tamanhoElite],name="Stride_elite_mutation")
+                    times_to_repeat = ( tamanhoMutacoes // tamanhoElite ) + 1
+                    shape_with_ones = tf.ones_like(tf.shape(elite_key[0]))
+                    saida_shape = tf.concat([ [times_to_repeat], shape_with_ones ], axis=0, name="concat" )
+                    tensors_to_mutate = tf.strided_slice(tf.tile(elite_key, saida_shape),[0],[tamanhoMutacoes],name="stride_tensor_to_mutate")
+
+                    finish_conv[key] = mutation(tensors_to_mutate , mutationRate , mutationPercent)
+                    #finish_conv[key] = tf.map_fn(lambda x: mutation(best_conv[key][x%shape_module],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
             for key in best_bias: 
                     shape_module = tf.shape(best_bias[key])[0]
-                    finish_bias[key] = tf.map_fn(lambda x: mutation(best_bias[key][x%shape_module],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
+                    
+                    elite_key = best_bias[key][ 0 : tamanhoElite]
+                    times_to_repeat = ( tamanhoMutacoes // tamanhoElite ) + 1
+                    shape_with_ones = tf.ones_like(tf.shape(elite_key[0]))
+                    saida_shape = tf.concat([ [times_to_repeat], shape_with_ones ], axis=0 )
+                    tensors_to_mutate = tf.tile(elite_key, saida_shape)[0:tamanhoMutacoes]
+
+                    finish_bias[key] = mutation(tensors_to_mutate , mutationRate , mutationPercent)
+                    #finish_bias[key] = tf.map_fn(lambda x: mutation(best_bias[key][x%shape_module],mutationRate,mutationPercent),tf.range( tamanhoMutacoes), dtype=tf.float32)
 
         return finish_conv, finish_bias
 
 def mutation_unbiased_operator(best_conv,best_bias,tamanhoElite,mutationRate,mutationPercent,tamanhoMutacoes):
 
-        with tf.name_scope('Mutation Unbiased'):
+        with tf.name_scope('Mutatio_unbiased'):
                 
             finish = []
             finish_conv = {}
