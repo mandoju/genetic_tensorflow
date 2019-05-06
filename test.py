@@ -23,7 +23,7 @@ geneticSettings = {
     'weights_convulation': weights_convulation_input,
     'biases': biases_input,
     'fitness': 'cross_entropy',
-    'selection': 'tournament',
+    'selection': 'truncate',
     'elite': 0.20,
     'genetic_operators': [['crossover', 0.10],  ['mutation', 0.1], ['mutation', 0.01], ['mutation', 0.001], ['mutation', 0.0001], ['mutation', 0.00001],['mutation', 0.000001], ['mutation', 0.0000001]],
     'genetic_operators_size': [0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10],

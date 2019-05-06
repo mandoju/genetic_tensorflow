@@ -215,7 +215,7 @@ init = tf.global_variables_initializer()
     # plt.grid(True)
     # plt.show()
  """
-time_to_stop = 1000
+time_to_stop = 291
 time_begin = time.time()
 with tf.Session() as sess:
     sess.run(init) 

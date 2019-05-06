@@ -7,6 +7,7 @@ from tensorflow.python.client import timeline
 from genetic_operators import apply_genetic_operatos
 from graph import Graph
 from statistics import mean 
+from tensorflow.python import debug as tf_debug
 import numpy as np
 import tensorflow as tf
 import time
@@ -65,6 +66,7 @@ class Population:
         self.current_epoch += 1
        
         sess = tf.Session()
+        #sess = tf_debug.TensorBoardDebugWrapperSession(sess, "galeao.cos.ufrj.br:6007")
         writer = tf.summary.FileWriter(self.neural_networks.logdir, sess.graph)
         run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
         run_metadata = tf.RunMetadata()
@@ -119,7 +121,7 @@ class Population:
                         session_time = time.time()
 
                         predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.argmax_predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
-                                self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes})#, options=run_options, run_metadata=run_metadata )
+                                self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes}) #, options=run_options, run_metadata=run_metadata )
 
                         print("sessao demorou: " +  str(time.time() - session_time))
                         #writer.add_run_metadata(run_metadata,'step%d' % batch)
