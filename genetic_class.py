@@ -116,7 +116,7 @@ class Population:
 
                         #print("Mutação atual: " + str(mutate) )
                         print(self.slice_sizes)
-                        fine_tuning_graph.append(self.slice_sizes)
+                        fine_tuning_graph.append(self.slice_sizes[:])
 
                         session_time = time.time()
 
