@@ -79,6 +79,10 @@ for graph_file in graphs:
         graph.performance = [x * -1 for x in graph.performance]
     plt.plot(graph.tempo,graph.performance , '-',label=graph_file.name)
 plt.legend(loc='upper right')
+plt.title("Loss x Tempo do conjunto de treino")
+plt.xlabel("Tempo (s)")
+plt.ylabel("Loss (softmax cross entropy)")
+plt.ylim(0,5)
 plt.grid(True)
 plt.show()
 
@@ -88,10 +92,14 @@ for graph_file in graphs:
         graph.performance = [x * -1 for x in graph.performance]
     plt.plot(graph.tempo,graph.accuracy , '-', label=graph_file.name)
 plt.legend(loc='upper right')
+plt.title("Acurácia x Tempo do conjunto de treino")
+plt.xlabel("Tempo (s)")
+plt.ylabel("Acurácia")
 plt.grid(True)
+plt.ylim(0,1)
 plt.show()
 
-
+""" 
 for graph_file in graphs:
     graph = graph_file.graph
     if(graph.performance[0] < 0):
@@ -108,4 +116,4 @@ for graph_file in graphs:
     plt.plot(graph.validation_tempo,graph.validation_accuracy , '-', label=graph_file.name)
 plt.legend(loc='upper right')
 plt.grid(True)
-plt.show()
+plt.show() """
