@@ -15,7 +15,7 @@ import matplotlib
 import pickle
 import sys
 
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
 
@@ -104,7 +104,7 @@ class Population:
             print("época: " + str(i))
             start_generation = time.time()
 
-            batch_size = 100
+            batch_size = 5
 
             for batch in range( (len(train_x)//batch_size ) - 1 ):
                     #for j in range(self.geneticSettings['inner_loop']):
@@ -122,7 +122,6 @@ class Population:
                         predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
                                 self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes}, options=run_options, run_metadata=run_metadata )
                
-                        print(predicts)
                         print("sessao demorou: " +  str(time.time() - session_time))
                         writer.add_run_metadata(run_metadata,'step%s' % (str(batch) + '_' +str(i)) )
                         msg = "Batch: " + str(batch)
@@ -183,11 +182,11 @@ class Population:
 
                             
 
-            batch = (len(train_x)//batch_size ) - 1
-            batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
-            batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]  
-            accuracies,cost = sess.run([self.neural_networks.accuracies,fitness], feed_dict={
-                                self.neural_networks.X: train_x, self.neural_networks.Y: train_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes})#, options=run_options, run_metadata=run_metadata )
+            #batch = (len(train_x)//batch_size ) - 1
+            #batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
+            #batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]  
+            final_predict,accuracies,cost = sess.run([self.neural_networks.predicts,self.neural_networks.accuracies,fitness], feed_dict={
+                                self.neural_networks.X: train_x, self.neural_networks.Y: train_y})
             print("acuracia:" + str(accuracies[0]))
             validation_acuracias.append(accuracies[0])
             print("fitness:" + str(cost[0]))
@@ -205,6 +204,10 @@ class Population:
             save_graph = Graph(tempos,fitnesses,acuracias,tempos_validation,validation_fitnesses,validation_acuracias,fine_tuning_graph)
             pickle.dump(save_graph,save_graph_file)
             print('salvei em: ' + '.\graphs\\' + str(self.populationSize) + '.pckl')
-        plt.plot(tempos, acuracias, '-', lw=2)
+        #plt.plot(tempos, acuracias, '-', lw=2)
+        #plt.grid(True)
+        #plt.savefig('acuracias.png')
+        plt.plot(train_x,train_y,'-',label="seno")
+        plt.plot(train_x,final_predict[0],'-',label="neural_network")
         plt.grid(True)
-        plt.savefig('acuracias.png')
+        plt.show()

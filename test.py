@@ -23,7 +23,7 @@ geneticSettings = {
     'test_x': test_x,
     'test_y': test_y,
     'populationSize': int(sys.argv[1]),
-    'epochs': 1000,
+    'epochs': 10,
     'inner_loop': 10,
     'weights_convulation': weights_convulation_input,
     'biases': biases_input,
@@ -34,7 +34,7 @@ geneticSettings = {
     'genetic_operators_size': [0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10],
     'fineTuningRate': 0.05,
     'layers': [785, 10],
-    'mutationRate': 0.01,
+    'mutationRate': 0.1,
     'logdir': './log/',
     'fineTuning': True
 }

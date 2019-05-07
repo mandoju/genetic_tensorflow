@@ -37,7 +37,7 @@ def get_mnist_data_reshape():
 
 def get_sine_data():
     
-    x = np.arange(200).reshape(-1,1) / 50
+    x = np.arange(350).reshape(-1,1) / 50
     y = np.sin(x) + 1
     print(y)
     return x , y , x , y 
