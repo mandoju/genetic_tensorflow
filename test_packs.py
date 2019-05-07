@@ -43,6 +43,19 @@ def get_weight_convolution(number_layer):
             'out': (128, 10)
         }
 
+def get_weight_dense(number_layer,input):
+    return {
+            'wd1': (1, 40),
+            'wd2': (40 , 12),
+            'out': (12, 1)
+        }
+
+def get_biases_dense(number_layer):
+    return{
+            'bc1': (40),
+            'bc2': (12),
+            'out': (1),
+    }
 
 def get_biases(number_layer):
     if(number_layer == 10):

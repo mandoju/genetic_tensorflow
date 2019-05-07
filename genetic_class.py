@@ -28,7 +28,7 @@ class Population:
         self.mutationRate = geneticSettings['mutationRate']
         self.population, self.populationShape, self.convulations, self.bias = create_population(geneticSettings['layers'], geneticSettings['weights_convulation'],geneticSettings['biases'],geneticSettings['populationSize'])
         self.neural_networks = Neural_network(
-           geneticSettings['populationSize'] , geneticSettings['layers'], self.convulations,self.bias, './log/')
+           geneticSettings['populationSize'] , geneticSettings['layers'], self.convulations,self.bias, geneticSettings['train_x'], geneticSettings['train_y'], geneticSettings['test_x'], geneticSettings['test_y'],'./log/')
         self.geneticSettings = geneticSettings
         self.current_epoch = 0
         self.eliteSize = int(geneticSettings['elite'] * self.populationSize)
@@ -64,9 +64,9 @@ class Population:
         merged = tf.summary.merge_all()
 
         self.current_epoch += 1
-       
         sess = tf.Session()
-        #sess = tf_debug.TensorBoardDebugWrapperSession(sess, "galeao.cos.ufrj.br:6007")
+        sess = tf_debug.TensorBoardDebugWrapperSession(sess, "localhost:6064")
+
         writer = tf.summary.FileWriter(self.neural_networks.logdir, sess.graph)
         run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
         run_metadata = tf.RunMetadata()
@@ -105,7 +105,7 @@ class Population:
             print("época: " + str(i))
             start_generation = time.time()
 
-            batch_size = 128
+            batch_size = 1
 
             for batch in range( (len(train_x)//batch_size ) - 1 ):
                     #for j in range(self.geneticSettings['inner_loop']):
@@ -120,10 +120,11 @@ class Population:
 
                         session_time = time.time()
 
-                        predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.argmax_predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
-                                self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes}) #, options=run_options, run_metadata=run_metadata )
+                        predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
+                                self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes}, options=run_options, run_metadata=run_metadata )
 
                         print("sessao demorou: " +  str(time.time() - session_time))
+                        print(predicts)
                         #writer.add_run_metadata(run_metadata,'step%d' % batch)
                         msg = "Batch: " + str(batch)
                         np.savetxt('predicts_save.txt',predicts)

@@ -4,26 +4,32 @@ import time
 from crossover import crossover
 from create_population import create_population
 from choose_best import choose_best, create_constants, choose_best_tensor
+from datasets.datasets import get_mnist_data_reshape , get_sine_data
 # from win10toast import ToastNotifier
 from genetic_class import Population
-from test_packs import get_biases, get_weight_convolution
+from test_packs import get_biases, get_weight_convolution, get_weight_dense, get_biases_dense
 import traceback
 import sys
 
 
 if(len(sys.argv) > 2):
-    weights_convulation_input = get_weight_convolution(int(sys.argv[2]))
-    biases_input = get_biases(int(sys.argv[2]))
+    weights_convulation_input = get_weight_dense(int(sys.argv[2]),0)
+    biases_input = get_biases_dense(int(sys.argv[2]))
 print(weights_convulation_input);
 
+train_x, train_y, test_x, test_y = get_sine_data()
 geneticSettings = {
+    'train_x': train_x,
+    'train_y': train_y,
+    'test_x': test_x,
+    'test_y': test_y,
     'populationSize': int(sys.argv[1]),
     'epochs': 10,
     'inner_loop': 10,
     'weights_convulation': weights_convulation_input,
     'biases': biases_input,
-    'fitness': 'cross_entropy',
-    'selection': 'truncate',
+    'fitness': 'root_square_mean_error',
+    'selection': 'tournament',
     'elite': 0.20,
     'genetic_operators': [['crossover', 0.10],  ['mutation', 0.1], ['mutation', 0.01], ['mutation', 0.001], ['mutation', 0.0001], ['mutation', 0.00001],['mutation', 0.000001], ['mutation', 0.0000001]],
     'genetic_operators_size': [0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10],
