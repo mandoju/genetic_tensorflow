@@ -65,7 +65,6 @@ class Population:
 
         self.current_epoch += 1
         sess = tf.Session()
-        sess = tf_debug.TensorBoardDebugWrapperSession(sess, "localhost:6064")
 
         writer = tf.summary.FileWriter(self.neural_networks.logdir, sess.graph)
         run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
@@ -105,7 +104,7 @@ class Population:
             print("época: " + str(i))
             start_generation = time.time()
 
-            batch_size = 1
+            batch_size = 100
 
             for batch in range( (len(train_x)//batch_size ) - 1 ):
                     #for j in range(self.geneticSettings['inner_loop']):
@@ -122,13 +121,13 @@ class Population:
 
                         predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
                                 self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes}, options=run_options, run_metadata=run_metadata )
-
-                        print("sessao demorou: " +  str(time.time() - session_time))
+               
                         print(predicts)
-                        #writer.add_run_metadata(run_metadata,'step%d' % batch)
+                        print("sessao demorou: " +  str(time.time() - session_time))
+                        writer.add_run_metadata(run_metadata,'step%s' % (str(batch) + '_' +str(i)) )
                         msg = "Batch: " + str(batch)
-                        np.savetxt('predicts_save.txt',predicts)
-                        np.savetxt('Y.txt',label_argmax)
+                        #np.savetxt('predicts_save.txt',predicts)
+                        #np.savetxt('Y.txt',label_argmax)
                         print("Accuracy: ")
                         print(accuracies)
                         print("Cost: ")
@@ -188,7 +187,7 @@ class Population:
             batch_x = train_x[batch*batch_size:min((batch+1)*batch_size,len(train_x))]
             batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]  
             accuracies,cost = sess.run([self.neural_networks.accuracies,fitness], feed_dict={
-                                self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes})#, options=run_options, run_metadata=run_metadata )
+                                self.neural_networks.X: train_x, self.neural_networks.Y: train_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes})#, options=run_options, run_metadata=run_metadata )
             print("acuracia:" + str(accuracies[0]))
             validation_acuracias.append(accuracies[0])
             print("fitness:" + str(cost[0]))

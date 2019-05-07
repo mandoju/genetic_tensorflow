@@ -21,16 +21,6 @@ class Neural_network:
         self.populationSize = populationSize
         self.classification = False
 
-    def conv2d(self, x, W, b, strides=1):
-        # Conv2D wrapper, with bias and relu activation
-        x = tf.nn.conv2d(
-            x, W, strides=[1, strides, strides, 1], padding='SAME')
-        x = tf.nn.bias_add(x, b)
-        return tf.nn.relu(x)
-
-    def maxpool2d(self, x, k=2):
-        return tf.nn.max_pool(x, ksize=[1, k, k, 1], strides=[1, k, k, 1], padding='SAME')
-
     """ def conv_net(self):
 
         weights = self.convulations
@@ -104,20 +94,20 @@ class Neural_network:
         #     self.populationSize), dtype=tf.float32)
         return tf.stack(out) """
 
-    def conv_net(self):
+    def conv_net(self,X):
         
         weights = self.convulations
         biases = self.biases
         
-        layer_1 = Layer(self.populationSize,weights['wd1'], biases['bc1'],'wd1','relu')
-        layer_2 = Layer(self.populationSize,weights['wd2'], biases['bc2'],'wd2','relu')
-        layer_3 = Layer(self.populationSize,weights['out'], biases['out'],'wdout')
+        layer_1 = Layer(self.populationSize,weights['wd1'], biases['bc1'],'wd',tf.nn.sigmoid)
+        layer_2 = Layer(self.populationSize,weights['wd2'], biases['bc2'],'wd',tf.nn.sigmoid)
+        layer_3 = Layer(self.populationSize,weights['out'], biases['out'],'wd')
 
-        layer_1_out = layer_1.run(self.X)
+        layer_1_out = layer_1.run_fist_layer(X)
         layer_2_out = layer_2.run(layer_1_out)
         layer_3_out = layer_3.run(layer_2_out)
 
-        return tf.stack(layer_3_out)
+        return layer_3_out
     def conv_net_best(self):
 
         weights = self.convulations
@@ -149,38 +139,8 @@ class Neural_network:
         out = tf.map_fn(lambda x: tf.add(tf.matmul(fc1[x], weights['out'][x]), biases['out'][x]), tf.range(1), dtype=tf.float32)
         return out
 
-
-    def forwardprop(self, X, w_1, w_2):
-        """
-        Forward-propagation.
-        IMPORTANT: yhat is not softmax since TensorFlow's softmax_cross_entropy_with_logits() does that internally.
-        """
-
-        with tf.name_scope('foward_propagation') as scope:
-            h = tf.nn.sigmoid(tf.matmul(X, w_1))  # The \sigma function
-            yhat = tf.matmul(h, w_2)  # The \varphi function
-        return yhat
-
-    def forwardprop_hidden(self, w_1, w_2):
-        """
-        Forward-propagation.
-        IMPORTANT: yhat is not softmax since TensorFlow's softmax_cross_entropy_with_logits() does that internally.
-        """
-        with tf.name_scope('foward_propagation_hidden') as scope:
-            h = tf.nn.sigmoid(w_1)  # The \sigma function
-            yhat = tf.matmul(h, w_2)  # The \varphi function
-        return yhat
-
     def get_accuracies(self, predict):
 
-            # arg = tf.cast(tf.argmax(
-            #     self.Y, axis=1, name="label_test_argmax_sme"),tf.float32)
-            # arg2 = tf.cast(tf.argmax(
-            #     predict, axis=1, name="label_test_argmax_sme"),tf.float32)
-            # correct_prediction = tf.equal(arg, tf.cast(arg2,tf.float32))
-            # accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-
-                # Here you check whether the index of the maximum value of the predicted image is equal to the actual labelled image. and both will be a column vector.
         if(self.classification):
             correct_prediction = tf.equal(
                 tf.argmax(predict, 1), tf.argmax(self.Y, 1))
@@ -208,53 +168,8 @@ class Neural_network:
         return square_mean_error[0]
         # return cost
 
-    def get_predicts(self, neural_network, X, layers):
-
-        with tf.name_scope('rede_neural_') as scope:
-
-            # Forward propagation
-            yhat = forwardprop(X, tf.slice(neural_network[0], [0, 0], [
-                               layers[0], layers[1]]), tf.slice(neural_network[1], [0, 0], [layers[1], layers[2]]))
-            for i in range(neural_network.shape[0] - 2):
-                yhat = forwardprop_hidden(yhat, tf.slice(
-                    neural_network[i+2], [0, 0], [layers[i+1], layers[i+2]]))
-
-            return tf.cast(tf.argmax(yhat, axis=1), tf.float32)
-
-    def convulation(self, input_data, weights, bias, pool_shape):
-        # setup the convolutional layer operation
-        out_layer = tf.nn.conv2d(input_data, weights, [
-                                 1, 1, 1, 1], padding='SAME')
-
-        # add the bias
-        out_layer += bias
-
-        # apply a ReLU non-linear activation
-        out_layer = tf.nn.relu(out_layer)
-
-        # now perform max pooling
-        ksize = [1, pool_shape[0], pool_shape[1], 1]
-        strides = [1, 2, 2, 1]
-        out_layer = tf.nn.max_pool(out_layer, ksize=ksize, strides=strides,
-                                   padding='SAME')
-
-        return out_layer
-
     def get_cost_functions(self, predict, train, test):
         with tf.name_scope('calculo_da_acuracia') as scope:
-            # train_accuracy = tf.reduce_mean(np.argmax(train_y, axis=1) == predict)
-
-            # label_train = tf.argmax(
-            #    train, axis=1, name="label_train_argmax")
-            #train_cost = -tf.reduce_sum( label_train * tf.log(predict) )
-
-            # tf.metrics.accuracy(
-                # labels=label_train, predictions=predict)
-
-            # test_accuracy = tf.reduce_mean(np.argmax(test_y, axis=1) == predict)
-            # label_test = tf.argmax(
-            #    test, axis=1, name="label_test_argmax")
-            #test_cost = -tf.reduce_sum( test * tf.log(predict) )
 
             return tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=train, logits=predict))
 
@@ -278,11 +193,10 @@ class Neural_network:
             X = self.X
             Y = self.Y
 
-            i = 0
-
             with tf.name_scope('predicts') as scope:
 
-                predicts = self.conv_net()
+                self.predicts = self.conv_net(X)
+                predicts = tf.stack(self.predicts)
                 print(predicts)
 
             with tf.name_scope('accuracies') as scope:
@@ -312,7 +226,7 @@ class Neural_network:
                     tf.reduce_mean(tf.square(tf.subtract(Y, pred)))), predicts, dtype=tf.float32)
            
             # Utilizacao das acuracias e predicts como tensores
-            self.predicts = predicts
+            #self.predicts = predicts
             if(self.classification):
                 self.argmax_predicts = tf.argmax(predicts[0], 1)
             else:

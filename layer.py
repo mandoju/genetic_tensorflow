@@ -21,13 +21,16 @@ class Layer:
         return out
 
     def run_slice(self,input,slice):
-        out = []
         if(self.type == 'wc'):
             out =  self.conv2d(input, self.weight[slice], self.bias[slice])
         if(self.type == 'wd'):
             out = tf.add(tf.matmul(input, self.weight[slice]), self.bias[slice])
-        if(self.activation == 'relu'):
-            out = tf.nn.relu(out)
+        # if(self.activation == 'relu'):
+        #     out = tf.nn.relu(out)
+        # if(self.activation == 'sigmoid'):
+        #     out = tf.nn.sigmoid(out)
+        if(self.activation):
+            out = self.activation(out)
         return out
 
     def conv2d(self, x, W, b, strides=1):
