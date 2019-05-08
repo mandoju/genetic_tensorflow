@@ -8,6 +8,7 @@ from genetic_operators import apply_genetic_operatos
 from graph import Graph
 from statistics import mean 
 from tensorflow.python import debug as tf_debug
+import tkinter as tk
 import numpy as np
 import tensorflow as tf
 import time
@@ -104,9 +105,10 @@ class Population:
             print("época: " + str(i))
             start_generation = time.time()
 
-            batch_size = 5
+            batch_size = 10000
 
-            for batch in range( (len(train_x)//batch_size ) - 1 ):
+            for batch in range(1):
+            #for batch in range( (len(train_x)//batch_size ) - 1 ):
                     #for j in range(self.geneticSettings['inner_loop']):
                         print("batch: " + str(batch))
                         start_batch = time.time()

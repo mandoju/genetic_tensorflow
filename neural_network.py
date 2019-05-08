@@ -99,8 +99,8 @@ class Neural_network:
         weights = self.convulations
         biases = self.biases
         
-        layer_1 = Layer(self.populationSize,weights['wd1'], biases['bc1'],'wd',tf.nn.sigmoid)
-        layer_2 = Layer(self.populationSize,weights['wd2'], biases['bc2'],'wd',tf.nn.sigmoid)
+        layer_1 = Layer(self.populationSize,weights['wd1'], biases['bc1'],'wd',tf.math.tanh)
+        layer_2 = Layer(self.populationSize,weights['wd2'], biases['bc2'],'wd',tf.math.tanh)
         layer_3 = Layer(self.populationSize,weights['out'], biases['out'],'wd')
 
         layer_1_out = layer_1.run_fist_layer(X)
