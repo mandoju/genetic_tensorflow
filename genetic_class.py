@@ -58,7 +58,7 @@ class Population:
         else:
             fitness = self.neural_networks.accuracies
         
-        best_conv, best_bias, the_best_conv, the_best_bias, mutate_conv, mutate_bias = choose_best(self.geneticSettings['selection'],self.neural_networks.convulations, self.neural_networks.biases, fitness, self.eliteSize)
+        best_conv, best_bias = choose_best(self.geneticSettings['selection'],self.neural_networks.convulations, self.neural_networks.biases, fitness, self.eliteSize)
         
         finish_conv, finish_bias = apply_genetic_operatos(self.geneticSettings['genetic_operators'],self.operatorSize,self.eliteSize,self.convulations,self.bias, best_conv, best_bias, self.populationShape , self.populationSize, self.mutationRate,2,len(self.layers))
             
@@ -93,6 +93,7 @@ class Population:
         tempos = []
         tempos_validation = []
         fine_tuning_graph = []
+        session_times = []
 
         print("batchs: " + str(len(train_x)//125))
         mutate = self.geneticSettings['mutationRate']
@@ -122,9 +123,16 @@ class Population:
                         session_time = time.time()
 
                         predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
-                                self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes}, options=run_options, run_metadata=run_metadata )
+                               self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes})#, options=run_options, run_metadata=run_metadata )
                
-                        print("sessao demorou: " +  str(time.time() - session_time))
+
+                        #predicts,label_argmax,accuracies,cost,sess_best_conv , sess_best_bias = sess.run([self.neural_networks.predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,best_conv,best_bias], feed_dict={
+                        #        self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes})#, options=run_options, run_metadata=run_metadata )
+
+                        #finished_conv = [1]
+                        #finished_bias = [2]
+                        #print("sessao demorou: " +  str(time.time() - session_time))
+                        session_times.append(str(time.time() - session_time))
                         writer.add_run_metadata(run_metadata,'step%s' % (str(batch) + '_' +str(i)) )
                         msg = "Batch: " + str(batch)
                         #np.savetxt('predicts_save.txt',predicts)
@@ -206,6 +214,16 @@ class Population:
             save_graph = Graph(tempos,fitnesses,acuracias,tempos_validation,validation_fitnesses,validation_acuracias,fine_tuning_graph)
             pickle.dump(save_graph,save_graph_file)
             print('salvei em: ' + '.\graphs\\' + str(self.populationSize) + '.pckl')
+        
+        if(len(sys.argv) > 2):
+          file_string = './session_times/all_' + str(self.populationSize)  + '_' +  sys.argv[2] +   '.pckl'
+        else:
+          file_string = './session_times/all_' + str(self.populationSize)  + '_10.pckl'
+        with open(file_string, 'wb') as save_graph_file:
+            save_graph = session_times
+            pickle.dump(save_graph,save_graph_file)
+            print('salvei em: ' + '.\session_times\\' + str(self.populationSize) + '.pckl')
+
         #plt.plot(tempos, acuracias, '-', lw=2)
         #plt.grid(True)
         #plt.savefig('acuracias.png')

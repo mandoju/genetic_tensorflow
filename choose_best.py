@@ -73,7 +73,7 @@ def choose_best_tensor_conv(convulations, biases, fitnesses, chooseNumber):
 
 
         print(top_indices)
-        return convulation_weights_output, biases_output, convulation_weights_best_output, biases_output_best, convulation_weights_mutate_output, biases_output_mutate
+        return convulation_weights_output , biases_output #, convulation_weights_best_output, biases_output_best, convulation_weights_mutate_output, biases_output_mutate
 
 
 def tournament(fitnesses, indexes):
@@ -133,7 +133,7 @@ def choose_best_tensor_tournament(convulations, biases, fitnesses, chooseNumber)
 
 
 def choose_best(chooseType,convulations, biases, fitnesses, chooseNumber):
-    if(chooseType == 'tournament'):
-        return choose_best_tensor_tournament(convulations, biases, fitnesses, chooseNumber)
-    else:
+    #if(chooseType == 'tournament'):
+    #    return choose_best_tensor_tournament(convulations, biases, fitnesses, chooseNumber)
+    #else:
         return choose_best_tensor_conv(convulations, biases, fitnesses, chooseNumber)
