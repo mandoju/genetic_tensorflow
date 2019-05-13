@@ -122,7 +122,8 @@ class Population:
 
                         session_time = time.time()
 
-                        predicts,label_argmax,accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.predicts,self.neural_networks.label_argmax,self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
+
+                        accuracies,cost,finished_conv,finished_bias = sess.run([self.neural_networks.accuracies,fitness,finish_conv,finish_bias], feed_dict={
                                self.neural_networks.X: batch_x, self.neural_networks.Y: batch_y, self.mutationRate: mutate, self.operatorSize: self.slice_sizes})#, options=run_options, run_metadata=run_metadata )
                
 
